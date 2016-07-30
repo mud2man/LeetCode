@@ -104,7 +104,6 @@ int main()
 	root->right->left = new TreeNode(6);
 	root->right->right = new TreeNode(7);
 
-
     /* Tree generation */
 	inorder = sol.inorderTraversal(root);
 
