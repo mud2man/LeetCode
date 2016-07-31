@@ -19,11 +19,11 @@ class TreeNode
 public class BSTIterator 
 {
 	/* Store the elements along left offsprings */
-	Stack nextList;
+	private Stack<TreeNode> nextList;
 
     BSTIterator(TreeNode root) 
 	{
-		nextList = new Stack();
+		nextList = new Stack<>();
 		pushLefts(root);
 	}
 
@@ -32,7 +32,7 @@ public class BSTIterator
 	{
 		while(node != null)
 		{
-			this.nextList.push(node);
+			nextList.push(node);
 			node = node.left;
 		}
 	}
@@ -55,7 +55,7 @@ public class BSTIterator
 	{
 		TreeNode node;
     
-		node = (TreeNode)nextList.pop();
+		node = (TreeNode)this.nextList.pop();
     
 		if(node.right != null)
 		{
