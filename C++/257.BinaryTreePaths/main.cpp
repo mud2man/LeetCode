@@ -28,7 +28,6 @@ public:
 	void addPath(vector<string>&, string&);
 	void stringPush(string&, int&);
 	void stringPop(string&);
-	string NumberToString(int);
 	void dump();
 
 private:
@@ -85,7 +84,7 @@ void Solution::dfs(TreeNode* node){
 
 void Solution::stringPush(string& stack, int& val){
 
-	stack.append(NumberToString(val));
+	stack.append(to_string(val));
 	stack.append("->");
 }
 
@@ -106,13 +105,6 @@ void Solution::addPath(vector<string>& allPaths, string& stack){
 	stack.erase(stack.length() - 2, 2);
 	
 	allPaths.push_back(stack);
-}
-
-string Solution::NumberToString(int num )
-{
-	ostringstream convert;
-	convert << num;
-	return convert.str();
 }
 
 void Solution::dump(){
