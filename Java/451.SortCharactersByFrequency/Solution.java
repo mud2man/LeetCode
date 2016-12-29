@@ -5,6 +5,15 @@
 
 import java.util.*; // Stack
 
+class FreqComparator implements Comparator<Map.Entry<Character, Integer>>{
+ 
+	@Override
+	public int compare(Map.Entry<Character, Integer> o1, Map.Entry<Character, Integer> o2 )
+    {
+        return (o2.getValue()).compareTo(o1.getValue());
+    }
+}
+
 public class Solution {
     public String frequencySort(String s) {
         int i;
@@ -27,14 +36,8 @@ public class Solution {
         }
         
         freqList = new LinkedList<Map.Entry<Character, Integer>>(freqMap.entrySet());
-        Collections.sort(freqList, new Comparator<Map.Entry<Character, Integer>>()
-                         {
-                             public int compare(Map.Entry<Character, Integer> o1, Map.Entry<Character, Integer> o2 )
-                             {
-                                 return (o2.getValue()).compareTo(o1.getValue());
-                             }
-                         } );
-        
+        Collections.sort(freqList, new FreqComparator());
+
         for(Map.Entry<Character, Integer> entry: freqList){
             for(i = 0; i < entry.getValue(); ++i){
                 sb.append(entry.getKey());
