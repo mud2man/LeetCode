@@ -1,7 +1,7 @@
 /* Stack: O(n), but optimal solution is on leetcode while use only O(1) space
- * 1. If preorder[i + 1] > preorder[i], which always valid
+ * 1. If preorder[i + 1] > preorder[i], which is always valid
  * 2. Pop stack untio stack.top > preorder[i], and update the lower bound under the case
- * 3. If preorder[i + 1] > preorder[i], check if preorder[i] > lower bound
+ * 3. If preorder[i] > preorder[i + 1], check if preorder[i] > lower bound
  * ex: preorder = [4, 2, 1, 5, 3]
  * 
  * time[0]: lb = -max, stack = [4]
