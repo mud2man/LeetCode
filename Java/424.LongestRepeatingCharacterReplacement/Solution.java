@@ -1,4 +1,4 @@
-/* .
+/* O(n)
  * 1. Devide the case into 26 characters
  * 2. Keep a posList to record the modified positions
  * 3. If str.charAt(idx) == target, keep scanning to right
