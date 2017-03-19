@@ -1,4 +1,4 @@
-/* O(n), This solution has round error flaw
+/* O(n), This solution has round error flaw. We can use cross product instead
  * 1. Accumulate all the angles
  * 2. If the sum of angles = (n - 2)PI, it is a convex polygon
  */
