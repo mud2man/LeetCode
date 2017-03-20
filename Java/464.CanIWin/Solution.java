@@ -1,4 +1,4 @@
-/* Devide and counquer: NP-complete
+/* Devide and counquer: O(2^n), while O(n!) without memory
  * 1. Record all the taken steps into an array, and caculate the identifier by 2's weight
  * 2. Keep records of loseSet and winSet to save avoid duplicated searching
  * 3. If the step is taken by me, any one of step can make me force a win, then I win
