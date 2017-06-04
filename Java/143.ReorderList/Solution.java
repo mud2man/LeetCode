@@ -80,34 +80,34 @@ public class Solution{
         }
     }
 
-	public static void main(String[] args){
-		Solution sol;
-		ListNode head;
-		ListNode node;
-		int x;
+    public static void main(String[] args){
+        Solution sol;
+        ListNode head;
+        ListNode node;
+        int x;
 
-		sol = new Solution();
-		head = new ListNode(1);
-		head.next = new ListNode(2);
-		head.next.next = new ListNode(3);
-		head.next.next.next = new ListNode(4);
-		head.next.next.next.next = new ListNode(5);
-		
-		System.out.println("before reorder: ");
-		node = head;
-		while(node != null){	
-			System.out.print(node.val + "->");
-			node = node.next;
-		}
-		
-		sol.reorderList(head);
+        sol = new Solution();
+        head = new ListNode(1);
+        head.next = new ListNode(2);
+        head.next.next = new ListNode(3);
+        head.next.next.next = new ListNode(4);
+        head.next.next.next.next = new ListNode(5);
+        
+        System.out.println("before reorder: ");
+        node = head;
+        while(node != null){    
+            System.out.print(node.val + "->");
+            node = node.next;
+        }
+        
+        sol.reorderList(head);
 
-		System.out.println("\nafter reorder: ");
-		node = head;
-		while(node != null){
-			System.out.print(node.val + "->");
-			node = node.next;
-		}
-		System.out.println("");
-	}
+        System.out.println("\nafter reorder: ");
+        node = head;
+        while(node != null){
+            System.out.print(node.val + "->");
+            node = node.next;
+        }
+        System.out.println("");
+    }
 }

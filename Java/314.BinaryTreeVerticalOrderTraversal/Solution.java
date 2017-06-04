@@ -19,10 +19,10 @@ import java.util.*; // Stack
 /* Definition for binary tree */
 class TreeNode 
 {
-	int val;
-	TreeNode left;
-	TreeNode right;
-	TreeNode(int x) { val = x; }
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
 }
 
 public class Solution {
@@ -129,27 +129,27 @@ public class Solution {
     {
         List<List<Integer>> list;
         TreeNode root;
-		Solution sol;
+        Solution sol;
         
-		/* Generate a input tree
-		 *     3
-		 *    / \
-		 *   9   20
-		 *       / \
-		 *      15  7
-		 */
-		root = new TreeNode(3);
-		root.left = new TreeNode(9);
-		root.right = new TreeNode(20);
-		root.right.left = new TreeNode(15);
-		root.right.right = new TreeNode(7);
+        /* Generate a input tree
+         *     3
+         *    / \
+         *   9   20
+         *       / \
+         *      15  7
+         */
+        root = new TreeNode(3);
+        root.left = new TreeNode(9);
+        root.right = new TreeNode(20);
+        root.right.left = new TreeNode(15);
+        root.right.right = new TreeNode(7);
 
-		sol = new Solution();
-		list = sol.verticalOrder(root);
+        sol = new Solution();
+        list = sol.verticalOrder(root);
 
-		System.out.println("vertical order traversal: ");
-		for(List<Integer> col: list){
-			System.out.println(col);
-		}
-	}
+        System.out.println("vertical order traversal: ");
+        for(List<Integer> col: list){
+            System.out.println(col);
+        }
+    }
 }

@@ -51,35 +51,35 @@ public class Solution{
         return oddList.next;
     }
 
-	public static void main(String[] args){
-		Solution sol;
-		ListNode head;
-		ListNode node;
-		int x;
+    public static void main(String[] args){
+        Solution sol;
+        ListNode head;
+        ListNode node;
+        int x;
 
-		x = 3;
-		sol = new Solution();
-		head = new ListNode(1);
-		head.next = new ListNode(2);
-		head.next.next = new ListNode(3);
-		head.next.next.next = new ListNode(4);
-		head.next.next.next.next = new ListNode(5);
-		
-		System.out.println("before split: ");
-		node = head;
-		while(node != null){	
-			System.out.print(node.val + "->");
-			node = node.next;
-		}
-		
-		sol.oddEvenList(head);
+        x = 3;
+        sol = new Solution();
+        head = new ListNode(1);
+        head.next = new ListNode(2);
+        head.next.next = new ListNode(3);
+        head.next.next.next = new ListNode(4);
+        head.next.next.next.next = new ListNode(5);
+        
+        System.out.println("before split: ");
+        node = head;
+        while(node != null){    
+            System.out.print(node.val + "->");
+            node = node.next;
+        }
+        
+        sol.oddEvenList(head);
 
-		System.out.println("\nafter split: ");
-		node = head;
-		while(node != null){
-			System.out.print(node.val + "->");
-			node = node.next;
-		}
-		System.out.println("");
-	}
+        System.out.println("\nafter split: ");
+        node = head;
+        while(node != null){
+            System.out.print(node.val + "->");
+            node = node.next;
+        }
+        System.out.println("");
+    }
 }
