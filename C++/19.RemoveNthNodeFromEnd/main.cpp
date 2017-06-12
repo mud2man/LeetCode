@@ -1,6 +1,14 @@
-/* Complexity: O(n)
- * 1. Tarverse list from right end and store nodes into a stack
- * 2. Pop the stack to fullfill back traverse, and delete the Nth node
+/* Two pointers: O(n)
+ * 1. Find the ending pointer given n
+ * 2. Assign the starting pointer to the head, and move the ending pointer right until reaching NULL
+ * 3. Remove the starting pointer
+ *
+ * ex: 1->2->3->4->5, n = 2
+ * time[0]: dummy->1->2->3->4->5, tail = 3, prev = dummy
+ * time[1]: dummy->1->2->3->4->5, tail = 4, prev = 1
+ * time[2]: dummy->1->2->3->4->5, tail = 5, prev = 2
+ * time[3]: dummy->1->2->3->4->5, tail = NULL, prev = 3
+ * time[4]: dummy->1->2->3->5
  */
 
 #include <iostream>
@@ -20,10 +28,6 @@ public:
 	Solution();
 	~Solution();
     ListNode* removeNthFromEnd(ListNode* head, int n);
-	void dump();
-
-private:
-     vector<ListNode*> stack;
 
 };/*End of class Solution */
 
@@ -34,52 +38,30 @@ Solution::~Solution(){
 };
 
 ListNode* Solution::removeNthFromEnd(ListNode* head, int n) {
-    int i;
-    ListNode* pNode;
-    ListNode* pNextNode;
-    ListNode* pPreviousNode;
+    ListNode *tail, *prev, *dummy;
+
+    dummy = new ListNode(0);
+    dummy->next = head;
     
-    pNode = head;
-    while(pNode != NULL){
-        stack.push_back(pNode);
-        pNode = pNode->next;
+    tail = head;
+    for(int i = 0; i < n; ++i){
+        tail = tail->next;
     }
     
-    if(stack.size() <= 1){
-        delete head;
-        return NULL;
+    prev = dummy;
+    while(tail != NULL){
+        prev = prev->next;
+        tail = tail->next;
     }
     
-    for(i = 0; i < n; i++){
-        pNode = stack.back();
-        pNextNode = pNode->next;
-        stack.pop_back();
-        if(!stack.empty()){
-            pPreviousNode = stack.back();
-        }
-        else{
-            pPreviousNode = NULL;
-        }
-    }
-    
-    if(pPreviousNode == NULL){
-        head = pNextNode;
-    }
-    else{
-        pPreviousNode->next = pNextNode;
-    }
-    
-    delete pNode;
-    
+    prev->next = prev->next->next;
+    head = dummy->next;
+    delete dummy;
+
     return head;
 }
 
-void Solution::dump(){
-};
-
 int main(){
-	int i;
-   	int num;
     Solution sol;
 	ListNode* head;
 	ListNode* pNode;;
@@ -87,6 +69,8 @@ int main(){
 	head = new ListNode(1);
 	head->next = new ListNode(2);
 	head->next->next = new ListNode(3);
+	head->next->next->next = new ListNode(4);
+	head->next->next->next->next = new ListNode(5);
 
 	for(pNode = head; pNode != NULL; pNode = pNode->next){
 		cout << pNode->val << ",";
