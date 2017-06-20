@@ -1,76 +1,60 @@
-/* DFS + Sort + HashMap: O(n!)
- * 1. Sort and caculated used list to store (first index - 1) for every distinct element
- * 2. Call the DFS helper recursively
- * 3. For every candidate, their index must be accumulated to prevent dupliucated permutation
- * 4. Do push and pop
+/* Sort + Backtrack: O(n!)
+ * 1. Sort
+ * 2. Call the helper recursively
+ * 3. Only insert the number from remain only the current value is different with the previous one
  *
- * ex: nums={1, 1, 2}, remain={0, 1, 2}, used={{1, -1}, {2, 1}}, permutation={}
+ * ex: nums={2, 1, 1}, remain={1, 1, 2}, permutation={}, 
  *
- * time[0]: remain={}, used={{1, 1}, {2, 2}}, permutation={1, 1, 2} (O)
- * time[1]: remain={}, used={{1, 1}, {2, 2}}, permutation={1, 2, 1} (O)
- * time[2]: remain={0, 2}, used={{1, -1}, {2, 1}}, permutation={}, candidate=1 (skip, because candidate=1, which is not equal to -1+1)
- * time[3]: remain={}, used={{1, 1}, {2, 2}}, permutation={2, 1, 1} (O)
- * time[4]: remain={0}, used={{1, -1}, {2, 2}}, permutation={2}, candidate=1 (skip, because candidate=1, which is not equal to -1+1)
+ * time[0]: remain={1, 2}, permutation = {1}
+ *   time[1]: remain={2}, permutation = {1 ,1}
+ *     time[2]: remain={}, permutation = {1 ,1, 2} => return
+ *   time[3]: remain={1}, permutation = {1 ,2}
+ *     time[4]: remain={}, permutation = {1 ,2, 1} => return
+ * time[5]: remain={1, 1}, permutation = {2}
+ *   time[6]: remain={1}, permutation = {2, 1}
+ *     time[7]: remain={}, permutation = {2, 1, 1} => return
  */          
 
 import java.util.*;
 
 public class Solution {
-    public void dfs(int[] nums, List<List<Integer>> permutations, ArrayList<Integer> permutation, HashMap<Integer, Integer> used, ArrayList<Integer> remain){
-        int idx, size, candidate;
+    public void helper(LinkedList<Integer> remain, LinkedList<Integer> permutation, List<List<Integer>> permutations){
+        int i, preVal, size;
         
         if(remain.isEmpty()){
-            permutations.add(new ArrayList<Integer>(permutation));
+            permutations.add(new LinkedList<Integer>(permutation));
             return;
         }
         
+        preVal = remain.get(0) - 1;
         size = remain.size();
-        for(idx = 0; idx < size; idx++){
-            candidate = remain.get(idx);
-
-            if(used.get(nums[candidate]) != candidate - 1){
-                continue;
+        for(i = 0; i < size; ++i){
+            if(preVal != remain.get(i)){
+                preVal = remain.get(i);
+                permutation.add(remain.remove(i));
+                helper(remain, permutation, permutations);
+                remain.add(i, permutation.pollLast());
             }
-            
-            //push
-            permutation.add(nums[candidate]);
-            used.put(nums[candidate], candidate);
-            remain.remove(idx);
-                    
-            dfs(nums, permutations, permutation, used, remain);
-                    
-            //pop
-            permutation.remove(permutation.size() - 1);
-            used.put(nums[candidate], candidate - 1);
-            remain.add(idx, candidate);
         }
     }
     
     public List<List<Integer>> permuteUnique(int[] nums) {
+        LinkedList<Integer> permutation, remain;
         List<List<Integer>> permutations;
-        ArrayList<Integer> permutation;
-        HashMap<Integer, Integer> used;
-        ArrayList<Integer> remain;
+        
+        permutation = new LinkedList<Integer>();
+        remain = new LinkedList<Integer>();
+        permutations = new LinkedList<List<Integer>>();
         
         Arrays.sort(nums);
-        
-        permutations = new ArrayList<List<Integer>>(); 
-        permutation = new ArrayList<Integer>();
-        used = new HashMap<Integer, Integer>();
-        remain = new ArrayList<Integer>();
-        
-        for(int idx = 0; idx < nums.length; idx++){
-            remain.add(idx);
-            if(idx == 0 || nums[idx - 1] != nums[idx]){
-                used.put(nums[idx], idx - 1);
-            }
+        for(int num: nums){
+            remain.add(num);
         }
         
-        dfs(nums, permutations, permutation, used, remain);
-        
+        helper(remain, permutation, permutations);
         return permutations;
     }
-  
+    
     public static void main(String[] args){
         Solution sol;
         int[] nums = {1, 1, 2};
