@@ -1,5 +1,19 @@
-/* Break down like onion
- * 1. Complexity: O(n^2)
+/* O(n^2)
+ * 1. Swap the right upper part
+ * 2. Reverse row by row
+ *
+ * EX: matrix:{{1, 2, 3}
+ *             {4, 5, 6}
+ *             {7, 8, 9}}
+ *
+ * time[0](swap): matrix: {{1, 4, 7}
+ *                         {2, 5, 8}
+ *                         {3, 6, 9}}
+ *
+ * time[0](reverse): matrix: {{7, 4, 1}
+ *                            {8, 5, 2}
+ *                            {9, 8, 7}}
+ *
  */
 
 #include <iostream>
@@ -26,64 +40,34 @@ Solution::Solution(){
 Solution::~Solution(){
 }
 
-void Solution::rotateEdge( vector<vector<int> >& matrix, int rowId, int colId, int edgeLen){
-    vector<int> upperEdge;
-    int size;
-    int i;
-    int x;
-    
-    size = edgeLen - 1;
-    
-    /* backup upper edge */
-    for(i = 0; i < size; ++i){
-        upperEdge.push_back(matrix[rowId][colId + i]);
-    }
-    
-    /* move left edge to upper edge */
-    for(i = 0; i < size; ++i){
-        x = matrix[rowId + size - i][colId];
-        matrix[rowId][colId + i] = x;
-    }
-    
-    /* move lower edge to left edge */
-    for(i = 0; i < size; ++i){
-        x = matrix[rowId + size][colId + size - i];
-        matrix[rowId + size - i][colId] = x;
-    }
-    
-    /* move right edge to lower edge */
-    for(i = 0; i < size; ++i){
-        x = matrix[rowId + i][colId + size];
-        matrix[rowId + size][colId + size - i] = x;
-    }
-    
-    /* move upper edge to right edge */
-    for(i = 1; i <= size; ++i){
-        x = upperEdge.back();
-        upperEdge.pop_back();
-        matrix[rowId + size -i][colId + size] = x;
-    }
-}
-
 void Solution::rotate(vector< vector<int> >& matrix) {
-    int edgeLen;
-    int rowId;
-    int colId;
-    int i;
+    int y, x, len, tmp;
     
-    edgeLen = matrix.size();
+    len = matrix.size();
     
-    rowId = 0;
-    colId = 0;
-    for(i = 0; i < (edgeLen / 2); ++i){
-        rotateEdge(matrix, rowId + i, colId + i, edgeLen - i*2);
+    //swap
+    for(y = 0; y < len; ++y){
+        for(x = y; x < len; ++x){
+            tmp = matrix[y][x];
+            matrix[y][x] = matrix[x][y];
+            matrix[x][y] = tmp;
+        }
+    }
+    
+    //reverse
+    for(y = 0; y < len; ++y){
+        for(x = 0; x < (len / 2); ++x){
+            tmp = matrix[y][x];
+            matrix[y][x] = matrix[y][len - x - 1];
+            matrix[y][len - x - 1] = tmp;
+        }
     }
 }
 
 int main(){
     Solution sol;
-    int i;
-    int j;
+    unsigned int i;
+    unsigned int j;
     vector< vector<int> > matrix;
 	vector<int> row0;
 	vector<int> row1;
