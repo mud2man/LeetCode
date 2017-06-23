@@ -6,8 +6,8 @@
 #
 
 # define the C compiler to use
-CC = g++-apple-4.2 
-#CC = g++
+#CC = g++-apple-4.2 
+CC = g++
 
 # define any compile-time flags
 #CFLAGS = -Wall -g
