@@ -24,15 +24,24 @@ public class Solution{
         StringBuilder permutation = new StringBuilder("");
         ArrayList<Integer> remain = new ArrayList<Integer>();
         int pos;
+        int[] factorial = new int[n + 1];
+
+        // build the factorial series
+        factorial[0] = 1;
+        for(int i = 1; i <= n; ++i){
+            factorial[i] = factorial[i - 1] * i;
+        }
+
+        // build the list of non-used number
         for(int i = 1; i <= n; ++i){
            remain.add(i); 
         }
         
         while(!remain.isEmpty()){
-            pos = (k - 1) / factorial(remain.size() - 1);
+            pos = (k - 1) / factorial[remain.size() - 1];
             permutation.append(remain.get(pos));
             remain.remove(pos);
-            k = k - pos * factorial(remain.size());
+            k = k - pos * factorial[remain.size()];
         }
         return permutation.toString();
     }
