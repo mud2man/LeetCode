@@ -13,13 +13,6 @@
 import java.util.*;
 
 public class Solution{
-    public int factorial(int n){
-        if(n == 0){
-            return 1;
-        }
-        return n * factorial(n - 1);
-    }
-    
     public String getPermutation(int n, int k) {
         StringBuilder permutation = new StringBuilder("");
         ArrayList<Integer> remain = new ArrayList<Integer>();
