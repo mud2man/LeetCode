@@ -5,11 +5,12 @@
 # 'make clean'  removes all .o and executable files
 #
 
-# define the C compiler to use
-CC = g++-apple-4.2 
+## define the C compiler to use
+CC = javac
+#CC = g++-apple-4.2
 
 # define any compile-time flags
-CFLAGS = -Wall -g
+CFLAGS = -g -Xlint 
 
 # define any directories containing header files other than /usr/include
 #
@@ -26,7 +27,7 @@ LFLAGS =
 LIBS = 
 
 # define the C source files
-SRCS = $(wildcard *.cpp)
+SRCS = $(wildcard *.java)
 
 # define the C object files 
 #
@@ -36,10 +37,10 @@ SRCS = $(wildcard *.cpp)
 # Below we are replacing the suffix .c of all words in the macro SRCS
 # with the .o suffix
 #
-OBJS = $(SRCS:.cpp=.o)
+OBJS =
 
 # define the executable file 
-MAIN = mycc
+MAIN = namoApp
 
 #
 # The following part of the makefile is generic; it can be used to 
@@ -50,20 +51,18 @@ MAIN = mycc
 .PHONY: depend clean
 
 all:    $(MAIN)
-	@echo  Simple compiler named mycc has been compiled
+	@echo  Simple compiler named *.class has been compiled
 
-$(MAIN): $(OBJS) 
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJS) $(LFLAGS) $(LIBS)
+$(MAIN): $(SRCS) 
+	$(CC) $(CFLAGS) $(SRCS)
 
 # this is a suffix replacement rule for building .o's from .c's
 # it uses automatic variables $<: the name of the prerequisite of
 # the rule(a .c file) and $@: the name of the target of the rule (a .o file) 
 # (see the gnu make manual section about automatic variables)
-.cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-	$(RM) *.o *~ $(MAIN)
+	$(RM) *.class *~ $(MAIN)
 	$(RM) -r *$(MAIN)** 
 
 depend: $(SRCS)
