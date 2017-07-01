@@ -6,12 +6,12 @@
  * 5. Otherwise, put the current transaction into list lastTwoTransactions, and reset localMin = Integer.MAX_VALUE
  * 
  * ex: prices = 0, 2, 1, 7, 3, 6, lastTwoTransactions = {}, localMin = MAX
-                0  1  2  3  4  5
+ *              0  1  2  3  4  5
  * time[0]: lastTwoTransactions = {}, localMin = 0
  * time[1]: lastTwoTransactions = {{0, 2}}, localMin = MAX
  * time[2]: lastTwoTransactions = {{0, 2}}, localMin = 1
  * time[3]: lastTwoTransactions = {{0, 2}, {1, 7}}, localMin = MAX
- * time[4]: lastTwoTransactions = {{0, 2}, {1, 7}}, localMin = 3
+ * time[4]: lastTwoTransactions = {{0, 2}, {1, 7}}, localMin = 3 (merge {0, 2} and {1, 7})
  * time[5]: lastTwoTransactions = {{0, 7}, {3, 6}}, localMin = MAX
  */
 
