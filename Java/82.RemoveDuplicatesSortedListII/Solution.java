@@ -1,18 +1,18 @@
 /* O(n)
  * 1. Create a dummy node s.t. summy.next = head
- * 2. Use "tail" to record the sub-list without duplicates, and "preTail" to record the previous node of tail
- * 3. Only go back from "tail" to "preTail" only on the first time encountered consecutive nodes
+ * 2. Use "tail" to record the sub-list without duplicates
+ * 3. If curr.next == null || curr.val != curr.next.val, tail.next = curr and curr = curr.next 
+ * 4. Otherwise, shift curr until curr.val != preVal
  * 
  * ex: list = 1->2->3->3->3->4->4->5, tail = list[0], preTail = dummy (dummy.val = 0)
  *            0  1  2  3  4  5  6  7
- * time[0]: currNode = list[1], tail = list[0], preTail = dummy, subList = 0->1
- * time[1]: currNode = list[1], tail = list[1], preTail = list[0], subList = 0->1->2
- * time[2]: currNode = list[2], tail = list[2], preTail = list[1], subList = 0->1->2->3
- * time[3]: currNode = list[3], tail = list[1], preTail = list[1], subList = 0->1->2
- * time[4]: currNode = list[4], tail = list[1], preTail = list[1], subList = 0->1->2
- * time[5]: currNode = list[5], tail = list[5], preTail = list[1], subList = 0->1->2->4
- * time[6]: currNode = list[6], tail = list[1], preTail = list[1], subList = 0->1->2
- * time[7]: currNode = list[7], tail = list[7], preTail = list[1], subList = 0->1->2->5
+ * time[0]: curr = list[0], tail = list[0], subList = dummy->0
+ * time[1]: curr = list[1], tail = list[0], subList = dummy->0->1
+ * time[2]: curr = list[2], tail = list[2], subList = dummy->0->1->2
+ * time[3]: curr = list[5], tail = list[2], subList = dummy->0->1->2
+ * time[4]: curr = list[7], tail = list[2], subList = dummy->0->1->2->5
+ * time[5]: curr = list[8], tail = list[7], subList = dummy->0->1->2->5
+ * time[6]: curr = list[8], tail = list[7], subList = dummy->0->1->2->5->null
  */
 
 import java.util.*;
@@ -27,45 +27,29 @@ class ListNode {
  
 public class Solution{
     public ListNode deleteDuplicates(ListNode head) {
-        ListNode dummy, tail, prevTail, currNode, preNode;
-        int currVal, prevVal;
-        
-        if(head == null){
-            return head;
-        }
-        
-        dummy = new ListNode(head.val - 1);
+        ListNode dummy = new ListNode(0);
+        ListNode tail, curr;
+        int preVal;
         dummy.next = head;
-        prevTail = dummy;
-        tail = head;
-        prevVal = head.val;
         
-        currNode = head.next;
-        preNode = head;
-        while(currNode != null){
-            currVal = currNode.val;
-            if(prevVal != currVal){
-                tail.next = currNode;
-                prevTail = tail;
-                tail = currNode;
-                prevVal = currVal;
+        curr = head;
+        tail = dummy;
+        
+        while(curr != null){
+            if(curr.next == null || curr.val != curr.next.val){
+                tail.next = curr;
+                tail = curr;
+                curr = curr.next;
             }
             else{
-                //only go back on the first time encountered consecutive nodes
-                if(tail.val == currNode.val){
-                    tail = prevTail;
+                preVal = curr.val;
+                while(curr != null && curr.val == preVal){
+                    curr = curr.next;
                 }
             }
-            preNode = currNode;
-            currNode = currNode.next;
-        }
-        
-        //correct if the list has the same value on the first 2 nodes
-        if(tail != preNode){
-            tail.next = null;
-        }
-        
-        return dummy.next;
+        } 
+        tail.next = null;
+        return dummy.next; 
     }
 
     public static void main(String[] args){
