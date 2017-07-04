@@ -15,52 +15,41 @@ class ListNode {
  
 public class Solution{
     public ListNode partition(ListNode head, int x) {
-        ListNode lastSmallNode;
-        ListNode currNode;
-        ListNode prevNode;
-        ListNode tmpNode;
+        ListNode dummy = new ListNode(0);
+        ListNode tail, curr, next, prev;
         
-        lastSmallNode = null;
-        prevNode = null;
-        currNode = head;
+        dummy.next = head;
+        tail = dummy;
+        curr = head;
+        prev = dummy;
         
-        //find the first node with val >= x
-        while(currNode != null){
-            if(currNode.val < x){
-                prevNode = currNode;
-                currNode = currNode.next;
-            }
-            else{
-                break;
-            }
-        }
-        lastSmallNode = prevNode;
-        
-        while(currNode != null){
-            if(currNode.val < x){
-                if(lastSmallNode == null){
-                    lastSmallNode = currNode;
-                    currNode = currNode.next;
-                    prevNode.next = currNode;
-                    lastSmallNode.next = head;
-                    head = lastSmallNode;
+        while(curr != null){
+            if(curr.val < x){
+                if(tail.next != curr){
+                    next = curr.next;
+                    curr.next = tail.next;
+                    tail.next = curr;
+                    tail = tail.next;
+                    curr = next;
+                    prev.next = curr;
                 }
                 else{
-                    tmpNode = currNode;
-                    currNode = currNode.next;
-                    prevNode.next = currNode;
-                    tmpNode.next = lastSmallNode.next;
-                    lastSmallNode.next = tmpNode;
-                    lastSmallNode = tmpNode;
+                    tail = tail.next;
+                    prev = curr;
+                    curr = curr.next;
                 }
             }
             else{
-                prevNode = currNode;
-                currNode = currNode.next;
+                prev = curr;
+                curr = curr.next;
             }
         }
         
-        return head;
+        if(prev != dummy){
+            prev.next = null;
+        }
+        
+        return dummy.next;
     }
 
     public static void main(String[] args){
