@@ -1,4 +1,4 @@
-/* Reverse twice: O(n),
+/* Backtrack: O(n), where n is the number of gray code
  * 1. Traverse backward the current list and add pow(2, i)
  * ex: 0, 1 += 11, 10
  *     00, 01, 10, 11 += 111, 110, 101, 100
@@ -9,32 +9,28 @@ import java.util.*;
 
 public class Solution{
     public List<Integer> grayCode(int n) {
-        List<Integer> grayCodes;
-        int i;
-        int j;
-        int k;
+        List<Integer> ans = new ArrayList<Integer>();
+        int base = 1;
         
-        grayCodes = new ArrayList<Integer>();
-        grayCodes.add(0);
-        
-        for(i = 0; i < n; i++){
-            j = (int)Math.pow(2, i);
-            for(k = j - 1; k >= 0; --k){
-                grayCodes.add(grayCodes.get(k) + j); 
+        ans.add(0);
+        for(int i = 0; i < n; ++i){
+            for(int j = ans.size() - 1; j >= 0; --j){
+                ans.add(ans.get(j) + base);
             }
+            base = base * 2;
         }
-        return grayCodes;
+        return ans;
     }
  
     public static void main(String[] args){
-		List<Integer> grayCodes;
-		Solution sol;
+        List<Integer> grayCodes;
+        Solution sol;
         int n;
 
-       	n = 3;
-		sol = new Solution();
-		grayCodes = sol.grayCode(n);
+           n = 3;
+        sol = new Solution();
+        grayCodes = sol.grayCode(n);
 
         System.out.println("grayCodes(" + n + "): " + grayCodes);
-	}
+    }
 }
