@@ -13,47 +13,32 @@ import java.util.*;
 
 public class Solution {
     public int numDecodings(String s) {
-        int i, len, lastDigitNum, lastTwoDigitNum;
-        int[] dp;
-        String lastTwoDigit, lastDigit;
+        int[] dp = new int [s.length() + 1];
+        int tens, digits;
         
-        if((len = s.length()) == 0){
+        if(s.length() == 0){
             return 0;
         }
         
-        dp = new int [len + 1];
-        i = 1;
-        dp[0] = 1;
+        digits = Integer.parseInt(s.substring(0, 1));
+        if(digits == 0){
+            return 0;
+        }
 
-        //find the first characetr != "0"
-        if(Integer.parseInt(s.substring(0, 1)) > 0){
-            dp[1] = 1;
-            i = 2;
-        }
-        else{
-            while(i <= len && Integer.parseInt(s.substring(i - 1, i)) == 0){
-                dp[i] = 0;
-                ++i;
-            }
-        }
-        
-        //dynamic programming 
-        for(i = i; i <= len; i++){
-            lastDigit = s.substring(i - 1, i);
-            lastTwoDigit = s.substring(i - 2, i);
-            lastDigitNum = Integer.parseInt(lastDigit);
-            lastTwoDigitNum = Integer.parseInt(lastTwoDigit);
-            dp[i] = 0;
-            if(lastDigitNum > 0){
-                dp[i] += dp[i - 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        for(int i = 1; i < s.length(); ++i){
+            tens = Integer.parseInt(s.substring(i - 1, i + 1));
+            digits = Integer.parseInt(s.substring(i, i + 1));
+            if(tens >= 1 && tens <= 26 && s.charAt(i - 1) != '0'){
+                dp[i + 1] += dp[i - 1];
             }
             
-            if(lastTwoDigitNum < 27 && lastTwoDigitNum > 9){
-                dp[i] += dp[i - 2];
+            if(digits > 0){
+                dp[i + 1] += dp[i];
             }
         }
-        
-        return dp[len];
+        return dp[s.length()];
     }
  
     public static void main(String[] args){
