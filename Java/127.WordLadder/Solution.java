@@ -1,4 +1,4 @@
-/* Math: O(n^2*k), where k = length of word, because each pair only compare once
+/* BFS: O(n^2*k), where k = length of word, because each pair only compare once
  * 1. Create currBeginWords to store the current beginning words
  * 2. Iterate every words in wordList, and compare them with the word in currBeginWords
  * 3. If only one letter changed, put it into nextBeginWords and remove it from wordList. 
