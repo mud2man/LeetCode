@@ -1,6 +1,6 @@
 /* DFS + HashMap: O(n)
  * 1. Use DFS to visit every node, and clone all the neighbors
- * 2. If the neighbor is in the HashMap "cloneTbl", which mean the neighbor was cloned. 
+ * 2. If the neighbor is in the HashMap "map", which mean the neighbor was cloned. 
  * 3. Then just add the object of the neighbor into the node's neighbor list
  */
 
@@ -15,37 +15,25 @@ class UndirectedGraphNode {
 };
 
 public class Solution {
-    void helper(UndirectedGraphNode node, UndirectedGraphNode cloneRoot, HashMap<Integer, UndirectedGraphNode> cloneTbl){
-        UndirectedGraphNode cloneNeighbor;
+    public UndirectedGraphNode helper(UndirectedGraphNode node, HashMap<UndirectedGraphNode, UndirectedGraphNode>map){
+        if(map.containsKey(node)){
+            return map.get(node);
+        }
         
+        UndirectedGraphNode cloneNode = new UndirectedGraphNode(node.label);
+        map.put(node, cloneNode);
         for(UndirectedGraphNode neighbor: node.neighbors){
-            if(cloneTbl.containsKey(neighbor.label)){
-                cloneRoot.neighbors.add(cloneTbl.get(neighbor.label)); 
-            }
-            else{
-                cloneNeighbor = new UndirectedGraphNode(neighbor.label);
-                cloneRoot.neighbors.add(cloneNeighbor);
-                cloneTbl.put(cloneNeighbor.label, cloneNeighbor);
-                helper(neighbor, cloneNeighbor, cloneTbl);
-            }
-        }  
+            cloneNode.neighbors.add(helper(neighbor, map)); 
+        }
+        
+        return cloneNode;
     }
     
     public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
-        HashMap<Integer, UndirectedGraphNode> cloneTbl;
-        UndirectedGraphNode cloneRoot;
-        
-        if(node == null){
+        if(node != null)
+            return helper(node, new HashMap<UndirectedGraphNode, UndirectedGraphNode>());
+        else
             return null;
-        }
-        
-        cloneTbl = new HashMap<Integer, UndirectedGraphNode>();
-        cloneRoot = new UndirectedGraphNode(node.label);
-        cloneTbl.put(node.label, cloneRoot);
-        
-        helper(node, cloneRoot, cloneTbl);
-        
-        return cloneRoot;
     }
 
     public static void main(String[] args){
