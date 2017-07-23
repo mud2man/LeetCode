@@ -6,12 +6,11 @@
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeNode 
-{
-	int val;
-	TreeNode left;
-	TreeNode right;
-	TreeNode(int x) { val = x; }
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
 }
 
 public class Solution {
@@ -112,32 +111,32 @@ public class Solution {
     {
         List<List<Integer>> list;
         TreeNode root;
-		Solution sol;
-		int key;
+        Solution sol;
+        int key;
         
-		/* Generate a input tree
-		 *     3
-		 *    / \
-		 *   9   20
-		 *       / \
-		 *      15  7
-		 */
-		root = new TreeNode(3);
-		root.left = new TreeNode(9);
-		root.right = new TreeNode(20);
-		root.right.left = new TreeNode(15);
-		root.right.right = new TreeNode(7);
-		key = 20;
-		sol = new Solution();
+        /* Generate a input tree
+         *     3
+         *    / \
+         *   9   20
+         *       / \
+         *      15  7
+         */
+        root = new TreeNode(3);
+        root.left = new TreeNode(9);
+        root.right = new TreeNode(20);
+        root.right.left = new TreeNode(15);
+        root.right.right = new TreeNode(7);
+        key = 20;
+        sol = new Solution();
         
         System.out.println("before delete " + key);
         sol.inorder(root);
         System.out.println("");
-		
+        
         root = sol.deleteNode(root, key);
         
         System.out.println("after delete " + key);
         sol.inorder(root);
         System.out.println("");
-	}
+    }
 }
