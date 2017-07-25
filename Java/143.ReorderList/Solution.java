@@ -1,7 +1,7 @@
 /* Revese list: O(n)
  * 1. Find the head of the second half list
  * 2. Reverse the second half
- * 3. Insert the reversed second helf into the first half list
+ * 3. Intersect the reversed second helf into the first half list
  * 
  * ex: {1, 2, 3, 4, 5}
  * time[0]: firstHalf = 1->2->3, secondHalf = 4->5
@@ -11,7 +11,6 @@
 
 import java.util.*;
 
-
 //Definition for singly-linked list.
 class ListNode {
     int val;
@@ -20,64 +19,47 @@ class ListNode {
 }
  
 public class Solution{
-    public ListNode reverse(ListNode head){
-        ListNode curr, next, tmp;
-        
-        if(head == null || head.next == null){
-            return head;
-        }
-        
-        curr = head;
-        next = head.next;
-        curr.next = null;
-        do{
-            tmp = next.next;
-            next.next = curr;
-            curr = next;
-            next = tmp;
-        }while(next != null);
-        
-        return curr; 
-    }
-    
     public void reorderList(ListNode head) {
-        ListNode firstHalf, secondHalf, firstHalfCurr, firstHalfNext, secondHalfCurr, secondHalfNext;
+        ListNode next, secondNext, temp0, temp1;
+        int halfLen = 0;
         
-        if(head == null || head.next == null){
+        if(head == null){
             return;
         }
         
-        //find the head of the second half
-        firstHalf = head;
-        secondHalf = head;
-        while(secondHalf != null && secondHalf.next != null){
-            firstHalf = firstHalf.next;
-            
-            if(secondHalf.next != null){
-                secondHalf = secondHalf.next.next;
-            }
-            else{
-                secondHalf = null;
-            }
+        // find the middle node
+        next = head;
+        secondNext = head;
+        while(secondNext.next != null && secondNext.next.next != null){
+            next = next.next;
+            secondNext = secondNext.next.next;
+            halfLen++;
         }
-        secondHalf = firstHalf.next;
-        firstHalf.next = null;
-        firstHalf = head;
+        halfLen = (secondNext.next != null)? halfLen + 1: halfLen;
         
-        //reverse the second half
-        secondHalf = reverse(secondHalf);
-        
-        //insert the reversed second helf to the first half
-        firstHalfCurr = firstHalf;
-        secondHalfCurr = secondHalf;
-        while(secondHalfCurr != null){
-            firstHalfNext = (firstHalfCurr!= null)? firstHalfCurr.next: null;
-            secondHalfNext = (secondHalfCurr != null)? secondHalfCurr.next: null;
-            firstHalfCurr.next = secondHalfCurr;
-            secondHalfCurr.next = firstHalfNext;
-            firstHalfCurr = firstHalfNext;
-            secondHalfCurr = secondHalfNext;
+        // reverse the second half list
+        ListNode curr = next;
+        next = (curr != null)? curr.next: null;
+        secondNext = (next != null)? next.next: null;
+        while(next != null){
+            next.next = curr;
+            curr = next;
+            next = secondNext;
+            secondNext = (secondNext != null)? secondNext.next: null;
         }
+        
+        // intersect
+        ListNode tail = curr;
+        curr = head;
+        for(int i = 0; i < halfLen; ++i){
+            temp0 = curr.next;
+            temp1 = tail.next;
+            curr.next = tail;
+            tail.next = temp0;
+            curr = temp0;
+            tail = temp1;
+        }
+        curr.next = null;
     }
 
     public static void main(String[] args){
