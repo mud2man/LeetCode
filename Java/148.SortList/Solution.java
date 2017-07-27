@@ -14,101 +14,80 @@ class ListNode {
 }
  
 public class Solution{
-    private class Pair{
-        ListNode head;
-        ListNode tail;
-        Pair(ListNode h, ListNode t){head = h; tail = t;};
+    public ListNode getMid(ListNode prev, int window){
+        ListNode mid = prev;
+        for(int i = 0; i <= window; ++i){
+            if(mid != null)
+                mid = mid.next;
+            else
+                return null;
+        }
+        return mid;
     }
     
-    public Pair merge(ListNode l1, ListNode l2, int len) {
-        Pair pair;
-        ListNode nextHead;
-        ListNode l3, node;
-        int l1Len, l2Len, i;
+    //merge and return the tail of the merged list
+    public ListNode merge(ListNode prev, ListNode mid, int window){
+        ListNode head0 = prev.next;
+        ListNode tail = prev;
+        ListNode head1 = mid;
+        int len0 = 0;
+        int len1 = 0;
         
-        pair = new Pair(null, null);
-        l1Len = len;
-        l2Len = len;
-        l3 = new ListNode(0);
-        
-        if(l2 == null){
-            pair.head = l1;
-            return pair;
-        }
-        
-        //find the next head
-        for(i = 0, nextHead = l2; nextHead != null && i < len; i++){
+        ListNode nextHead = head1;
+        for(int i = 0; i < window && nextHead != null; ++i)
             nextHead = nextHead.next;
-        }
         
-        //merge both l1 and l2 until any one of the list reach to the end
-        node = l3;
-        while(l1Len > 0 && l2Len > 0 && l2 != null){
-            if(l1.val < l2.val){
-                node.next = l1;
-                l1 = l1.next;
-                l1Len--; 
+        while(head1 != null && len0 < window && len1 < window){
+            if(head0.val < head1.val){
+                tail.next = head0;
+                head0 = head0.next;
+                len0++;
             }
             else{
-                node.next = l2;
-                l2 = l2.next;
-                l2Len--; 
+                tail.next = head1;
+                head1 = head1.next;
+                len1++;
             }
-            node = node.next;
+            tail = tail.next;
         }
         
-        //concatenate the residure
-        if(l1Len == 0){
-            node.next = l2;
-            for(; node != null && l2Len > 0; l2Len--){
-                node = node.next;
-            }
-        }
-        else{
-            node.next = l1;
-            for(; l1Len > 0; l1Len--){
-                node = node.next;
-            }
+        if(len1 == window || head1 == null){
+            tail.next = head0;
+            for(int i = len0; i < window && tail.next != null; i++)
+                tail = tail.next;
         }
         
-        //connect the merged list to the rest
-        if(node != null){
-            node.next = nextHead;
+        if(len0 == window){
+            tail.next = head1;
+            for(int i = len1; i < window && tail.next != null; i++)
+                tail = tail.next;
         }
         
-        return new Pair(l3.next, node);
+        tail.next = nextHead;
+        return tail;
     }
-    
+
     public ListNode sortList(ListNode head) {
-        ListNode dummy, node, prevTail, mid, tempHead;
-        Pair pair;
-        int len, i, j;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode mid, prev;
         
-        dummy = new ListNode(0);
-        
-        //Count the length
-        node = head;
-        len = 0;
-        while(node != null){
+        //get the lenth of the list
+        ListNode curr = head;
+        int len = 0;
+        while(curr != null){
             len++;
-            node = node.next;
+            curr = curr.next;
         }
         
-        dummy.next = head;
-        for(i = 1; i < len; i = i * 2){
-            prevTail = dummy;
+        int window = 1;
+        while(window < len){
+            prev = dummy;
             do{
-                //find middle
-                for(mid = prevTail.next, j = 0; j < i && mid != null; ++j){
-                    mid = mid.next;
-                }
-                
-                //merge
-                pair = merge(prevTail.next, mid, i);
-                prevTail.next = pair.head;
-                prevTail = pair.tail;
-            }
-            while(mid != null && prevTail != null);
+                mid = getMid(prev, window);
+                prev = merge(prev, mid, window);
+            }while(prev != null && prev.next != null);
+            window = window * 2;
         }
         return dummy.next;
     }
