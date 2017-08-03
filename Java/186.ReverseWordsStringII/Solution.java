@@ -6,61 +6,42 @@
 import java.util.*;
 
 public class Solution{
-    public void reverseWord(char[] s, int headIdx, int tailIdx) {
-        char c;
-        
-        while(headIdx < tailIdx){
-            c = s[headIdx];
-            s[headIdx] = s[tailIdx];
-            s[tailIdx] = c;
-            tailIdx--;
-            headIdx++;
+    public void reverseString(char[] s, int lb, int hb){
+        while(lb < hb){
+            char tempC = s[lb];
+            s[lb++] = s[hb];
+            s[hb--] = tempC;
         }
     }
     
     public void reverseWords(char[] s) {
-        int tailIdx;
-        int headIdx;
-        char c;
-        int tmpIdx;
-        
-        headIdx = 0;
-        tailIdx = s.length - 1;
-        
-        if(s.length == 0){
-            return;
-        }
-        
-        reverseWord(s, headIdx, tailIdx);
-        
-        headIdx = 0;
-        tailIdx = 0;
-        while(headIdx < s.length){
-            while((tailIdx < s.length) && (s[tailIdx] != ' ')){
-                tailIdx++;
+        reverseString(s, 0, s.length - 1);
+    
+        int hb = 0;
+        int lb = 0;
+        while(hb < s.length){
+            while(hb < s.length && s[hb] != ' '){
+                hb++;
             }
-            tmpIdx = tailIdx;
-            --tailIdx;
-            reverseWord(s, headIdx, tailIdx);
-            tailIdx = tmpIdx + 1;
-            headIdx = tailIdx;
+            reverseString(s, lb, hb - 1);
+            lb = ++hb;
         }
     }
     
     public static void main(String[] args){
-		Solution sol;
+        Solution sol;
         String s;
-		char[] cArray;
+        char[] cArray;
 
-       	s = "the sky is blue";
-		sol = new Solution();
+           s = "the sky is blue";
+        sol = new Solution();
 
         System.out.println("before rotate: " + s);
 
-		cArray = s.toCharArray();
-		sol.reverseWords(cArray);
-		s = String.valueOf(cArray);
+        cArray = s.toCharArray();
+        sol.reverseWords(cArray);
+        s = String.valueOf(cArray);
 
         System.out.println("after rotate: " + s);
-	}
+    }
 }
