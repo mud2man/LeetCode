@@ -50,8 +50,7 @@ public class Solution {
         return dfs(root, null, null);
     }
   
-    public static void main(String[] args)
-    {
+    public static void main(String[] args){
         TreeNode root;
         Solution sol;
         
