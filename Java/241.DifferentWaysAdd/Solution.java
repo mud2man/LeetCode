@@ -1,148 +1,90 @@
-/* Use Dynamic Programing 
- * 1. Caculate and store all results with single operant
- * 2. Caculate and store all results with two operants, based on previous results
- * 3. Repeat until the number of input operants times
+/* Dynamic Programing:
+ * 1. dp[y][x] = the combinations between operand#y and operand#x
+ * 2. dp[y][x] = dp[y][y]-operator#2-dp[y - 1][x] | dp[y][y - 1]-operator#2-dp[y - 2][x] | ...
+ * ex: input: 0 + 1 - 2 * 3
+ *     dp[3][0] = (dp[3][3] * dp[2][0]) | (dp[3][2] - dp[1][0]) | (dp[3][1] - dp[0][0])
  */
 
-import java.util.*; // Stack
+import java.util.*;
 
 public class Solution{
-
-	/* The list of operators */
-	private List< Character > operators; 
-
-	/* Results */
-	private List< List< List< Integer > > > results;
-	
-    Solution(){
-		operators = new ArrayList< Character >();
-		results = new ArrayList< List< List< Integer > > >();
-	}
-
-	public void parse(String input){
-		List< Integer > operant;
-		List< List< Integer > > operants;
-		int digit;
-		int total;
-		
-		operants = new ArrayList< List< Integer > >();
-		total = 0;
+    private List<Integer> caculate(List<Integer> operands0, char operator, List<Integer> operands1){
+        List<Integer> results = new ArrayList<Integer>();
+        
+        switch (operator){
+            case '+':
+                for(Integer operand0: operands0){
+                    for(Integer operand1: operands1){
+                        results.add(operand0 + operand1);
+                    }                       
+                }
+                break;
+            case '-':
+                for(Integer operand0: operands0){
+                    for(Integer operand1: operands1){
+                        results.add(operand0 - operand1);
+                    }                       
+                }
+                break;
+            case '*':
+                for(Integer operand0: operands0){
+                    for(Integer operand1: operands1){
+                        results.add(operand0 * operand1);
+                    }                       
+                }
+                break;
+            default:
+                break;
+        }
+        return results;
+    }
     
-		for(char c: input.toCharArray()){
-			digit = Character.getNumericValue(c);
+    public List<Integer> diffWaysToCompute(String input) {
+        List<Character> operators = new ArrayList<Character>();
+        List<Integer> operands = new ArrayList<Integer>();
+        List<Integer> results = new ArrayList<Integer>();
+        
+        StringBuilder operand = new StringBuilder("");
+        for(int i = 0; i < input.length(); ++i){
+            char c = input.charAt(i);
+            if(c == '+' || c == '-' || c == '*'){
+                operators.add(c);
+                operands.add(Integer.parseInt(operand.toString()));
+                operand = new StringBuilder("");
+            }
+            else{
+                operand.append(c);
+            }
+        }
+        operands.add(Integer.parseInt(operand.toString()));
+        
+        int size = operands.size();
+        List[][] dp = new List[size][size];
+        
+        for(int y = 0; y < size; ++y){
+            dp[y][y] = new ArrayList<Integer>();
+            dp[y][y].add(operands.get(y));
+            for(int x = y - 1; x >= 0; --x){
+                dp[y][x] = new ArrayList<Integer>();
+                for(int z = y; z > x; --z){
+                    char operator = operators.get(z - 1);
+                    dp[y][x].addAll(caculate(dp[z - 1][x], operator, dp[y][z]));
+                }
+            }
+        }
+        return dp[size - 1][0];
+    }
+
+    public static void main(String[] args){
+        List<Integer> answer;
+        String s = "21*3-4*5+1";
+        Solution sol;
     
-			/* Accumulate operant */
-			if((digit < 10) && (digit >= 0)){
-				total = total*10 + digit;
-			}
-			/* Parse operator and operant */
-			else{
-				operant = new ArrayList< Integer >();
-				operant.add(total);
-				operants.add(operant);
-				operators.add(c);
-				total = 0;
-			}
-		}
-
-		operant = new ArrayList< Integer >();
-		operant.add(total);
-		operants.add(operant);
-		results.add(operants);
-
-		System.out.println(results);
-		System.out.println(operators);
-	}
-
-	List< Integer > operation(List< Integer > lefts, List< Integer > rights, char optr){
-	
-		List< Integer > results;
-		int result;
-
-		results = new ArrayList< Integer>();
-    
-		switch(optr){
-			case '+':
-				for(int left: lefts){
-					for(int right: rights){
-						result = left + right;
-						results.add(result);
-					}
-				}
-				break;
-			
-			case '-' :
-				for(int left: lefts){
-					for(int right: rights){
-						result = left - right;
-						results.add(result);
-					}
-				}
-				break;
-					
-			case '*' :
-				for(int left: lefts){
-					for(int right: rights){
-						result = left * right;
-						results.add(result);
-					}
-				}
-				break;
-		}
-		return results;
-	}
-
-	public List<Integer> diffWaysToCompute(String input){
-
-		int operatorNum;
-		int operatorsCount;
-		int idx;
-		int offset;
-		List< Integer > result;
-		List< Integer > subresult;
-		List< Integer > left;
-		List< Integer > right;
-		List <List< Integer > > lastrow;
-
-		parse(input);
-
-		operatorsCount = operators.size();
-		
-		for(operatorNum = 1; operatorNum <= operatorsCount; operatorNum++){
-
-			results.add(operatorNum, new ArrayList< List <Integer > >());
-
-			for(idx = 0; idx <= (operatorsCount - operatorNum); idx++){
-				
-				result = new ArrayList< Integer>();
-    
-				for(offset = 0; offset < operatorNum; offset++){
-					left = results.get(offset).get(idx); 
-					right = results.get(operatorNum - offset - 1).get(idx + offset + 1);
-					subresult = operation(left, right, operators.get(idx + offset));
-					
-					/* Merge results */
-					result.addAll(subresult);
-				}
-    
-				results.get(operatorNum).add(result);
-			}
-		}
-
-		return results.get(operatorsCount).get(0);
-	}
-
-	public static void main(String[] args)
-	{
-		List<Integer> answer;
-		String s = "21*3-4*5+1";
-		Solution sol;
-	
-		System.out.println("Input: " +  s);
-		
-		sol = new Solution();
-		answer = sol.diffWaysToCompute(s);
-		
-		System.out.println("Answer: " +  answer);
-	}
+        System.out.println("Input: " +  s);
+        
+        sol = new Solution();
+        answer = sol.diffWaysToCompute(s);
+        
+        System.out.println("Answer: " +  answer);
+    }
 }
