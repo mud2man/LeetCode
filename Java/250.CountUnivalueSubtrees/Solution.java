@@ -7,12 +7,11 @@
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeNode 
-{
-	int val;
-	TreeNode left;
-	TreeNode right;
-	TreeNode(int x) { val = x; }
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
 }
 
 public class Solution {
@@ -80,27 +79,26 @@ public class Solution {
         }
     }
  
-    public static void main(String[] args)
-    {
+    public static void main(String[] args){
         TreeNode root;
-		Solution sol;
+        Solution sol;
         
-		/* Generate a input tree
-		 *     5
-		 *    / \
-		 *   1   5
-		 *  / \   \
-		 * 5   5   5
-		 */
-		root = new TreeNode(5);
-		root.left = new TreeNode(1);
-		root.right = new TreeNode(5);
-		root.left.left = new TreeNode(5);
-		root.left.right = new TreeNode(5);
-		root.right.right = new TreeNode(5);
+        /* Generate a input tree
+         *     5
+         *    / \
+         *   1   5
+         *  / \   \
+         * 5   5   5
+         */
+        root = new TreeNode(5);
+        root.left = new TreeNode(1);
+        root.right = new TreeNode(5);
+        root.left.left = new TreeNode(5);
+        root.left.right = new TreeNode(5);
+        root.right.right = new TreeNode(5);
 
-		sol = new Solution();
+        sol = new Solution();
         
         System.out.println("number of univalue subtrees: " + sol.countUnivalSubtrees(root));
-	}
+    }
 }
