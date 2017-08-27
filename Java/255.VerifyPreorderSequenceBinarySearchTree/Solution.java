@@ -16,32 +16,19 @@ import java.util.*; // Stack
 
 public class Solution {
     public boolean verifyPreorder(int[] preorder) {
-        Stack<Integer> stack = new Stack();
-        int i;
-        int lb;
-        stack = new Stack<Integer>();
-        
-        if(preorder.length == 0){
-            return true;
-        }
-        
-        lb = Integer.MIN_VALUE;
-        stack.push(preorder[0]);
-        for(i = 1; i < preorder.length; ++i){
-            if(preorder[i] < preorder[i - 1]){
-                if(preorder[i] > lb){
-                    stack.push(preorder[i]);
-                }
-                else{
-                    return false;
-                }
+        Stack<Integer> stack = new Stack<Integer>();
+        int popMax = Integer.MIN_VALUE;
+        for(int num: preorder){
+            while(!stack.empty() && stack.peek() < num){
+                popMax = Math.max(popMax, stack.peek());
+                stack.pop();
+            }
+            
+            if(num > popMax){
+                stack.push(num);
             }
             else{
-                while((!stack.empty()) && (stack.peek() < preorder[i])){
-                    lb = Math.max(lb, stack.peek());
-                    stack.pop();
-                }
-                stack.push(preorder[i]);
+                return false;
             }
         }
         return true;
@@ -60,5 +47,5 @@ public class Solution {
         isValid = sol.verifyPreorder(preorder);
         
         System.out.println("isValid: " + isValid);
-	}
+    }
 }
