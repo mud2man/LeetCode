@@ -1,6 +1,7 @@
-/* Stack: O(n), but optimal solution is on leetcode while use only O(1) space
+/* Stack: O(n) complextity, O(1) space
  * 1. If preorder[i + 1] > preorder[i], which is always valid
- * 2. Pop stack untio stack.top > preorder[i], and update the lower bound under the case
+ * 2. Abusing the given array for the stack
+ * 2. Pop stack until stack.top > preorder[i], and update the lower bound under the case
  * 3. If preorder[i] > preorder[i + 1], check if preorder[i] > lower bound
  * ex: preorder = [4, 2, 1, 5, 3]
  * 
@@ -16,16 +17,18 @@ import java.util.*; // Stack
 
 public class Solution {
     public boolean verifyPreorder(int[] preorder) {
-        Stack<Integer> stack = new Stack<Integer>();
+        int stackTopIdx = - 1;
         int popMax = Integer.MIN_VALUE;
+        
         for(int num: preorder){
-            while(!stack.empty() && stack.peek() < num){
-                popMax = Math.max(popMax, stack.peek());
-                stack.pop();
+            // pop stack until stack.top > preorder[i] or reach empty stack
+            while(stackTopIdx >= 0 && preorder[stackTopIdx] < num){
+                popMax = Math.max(popMax, preorder[stackTopIdx--]);
             }
             
-            if(num > popMax){
-                stack.push(num);
+            // because preorder visit the right part later, the current value must be bigger than that of popped value  
+            if(popMax < num){
+                preorder[++stackTopIdx] = num;
             }
             else{
                 return false;
