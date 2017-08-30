@@ -1,6 +1,5 @@
-/* O(n), where n = the number of characters, but optimal solution is on leetcode
- * 1. Use "#" to insert in between every character
- * 2. Use "!##!" to append every string
+/* O(n)
+ * 1. Encode with the format (str0.length() + "." + str0) + (str1.length() + "." + str1) + ....
  */
 
 import java.util.*; // Stack
@@ -10,85 +9,52 @@ import java.util.*; // Stack
 public class Codec {
     // Encodes a list of strings to a single string.
     public String encode(List<String> strs) {
-        StringBuilder encodeStr;
-        int i;
-        
-        encodeStr = new StringBuilder("");
+        String encodedString = "";
         for(String str: strs){
-            encodeStr.append("!##!");
-            for(i = 0; i < (str.length() - 1); ++i) {
-                encodeStr.append(str.charAt(i) + "!");  
-            }
-            //tail handling
-            if(i < str.length()){
-               encodeStr.append(str.charAt(i)); 
-            }
+            encodedString += Integer.toString(str.length()) + "." + str;
         }
-        return encodeStr.toString();
+        return encodedString;
     }
 
-    // Decodes a single string to a list of strings.
+    // Decodes a single string to a list of stringsc List<String> decode(String s) {
     public List<String> decode(String s) {
-        List<String> decodeStrs;
-        String[] strs;
-        String decodeStr;
-        StringBuilder sb;
-        int headIdx;
-        int tailIdx;
-        int i;
+        List<String> strs = new ArrayList<String>();
+        int startIdx = 0;
         
-        decodeStrs = new ArrayList<String>();
-        
-        if((s == null) || (s.length() < 4 )){
-            return decodeStrs;
+        while(startIdx < s.length()){
+            int idx = s.indexOf('.', startIdx);
+            int length = Integer.parseInt(s.substring(startIdx, idx));
+            strs.add(s.substring(idx + 1, idx + 1 + length));
+            startIdx = idx + 1 + length;
         }
         
-        headIdx = 4;
-        tailIdx = 0;
-        while(tailIdx >= 0){
-            tailIdx = s.indexOf("!##!", headIdx);
-            if(tailIdx >= 0){
-                decodeStr = s.substring(headIdx, tailIdx);
-                headIdx = tailIdx + 4;
-            }
-            else{
-                decodeStr = s.substring(headIdx);
-            }
-            
-            sb = new StringBuilder("");
-            for(i = 0; i < decodeStr.length(); i+=2){
-                sb.append(decodeStr.charAt(i)); 
-            }
-            decodeStrs.add(sb.toString());
-        }
-        
-        return decodeStrs;
+        return strs;
     }
  
     public static void main(String[] args)
     {
-		Codec codec;
-		List<String> strs;	
-		String encodeStr;
+        Codec codec;
+        List<String> strs;    
+        String encodeStr;
         
-		strs = new ArrayList<String>();	
-		strs.add("0123");
-		strs.add("01#!");
-		strs.add("!##!");
-		codec = new Codec();
-		
-		System.out.println("before encode: ");
-		for(String str: strs){
-			System.out.println(str);
-		}
+        strs = new ArrayList<String>();    
+        strs.add("0123");
+        strs.add("01#!");
+        strs.add("!##!");
+        codec = new Codec();
+        
+        System.out.println("before encode: ");
+        for(String str: strs){
+            System.out.println(str);
+        }
 
-		encodeStr = codec.encode(strs);	
-		System.out.println("after encode: " + encodeStr);
-		
-		System.out.println("after decode: ");
-		strs = codec.decode(encodeStr);
-		for(String str: strs){
-			System.out.println(str);
-		}
-	}
+        encodeStr = codec.encode(strs);    
+        System.out.println("after encode: " + encodeStr);
+        
+        System.out.println("after decode: ");
+        strs = codec.decode(encodeStr);
+        for(String str: strs){
+            System.out.println(str);
+        }
+    }
 }
