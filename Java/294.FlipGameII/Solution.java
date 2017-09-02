@@ -1,4 +1,4 @@
-/* Devide and counquer with memory: O(n!)
+/* Backtrack with memorization: O(n!)
  * 1. If any case can make sure I win in the next match, the I win 
  * 2. If I win under no matter how opponent move in the next matches, then I win
  */
