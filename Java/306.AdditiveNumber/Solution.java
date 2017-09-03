@@ -7,51 +7,33 @@ import java.util.*;
 import java.math.*;
 
 public class Solution{
-    public boolean fibCheck(BigInteger first, BigInteger second, String remain){
-        BigInteger sum;
-        BigInteger tail;
-        String s;
-        
-        if(remain.length() == 0){
+    private boolean isValid(String operand0, String operand1, String num, int idx){
+        if((idx + operand0.length() + operand1.length()) == num.length()){
             return true;
         }
         
-        sum = first.add(second);
-        
-        if(remain.length() >= sum.toString().length()){
-            tail = new BigInteger(remain.substring(0, sum.toString().length()));
-        }
-        else{
-            tail = null;
+        if((operand0.startsWith("0") && operand0.length() > 1) || (operand1.startsWith("0")  && operand1.length() > 1)){
+            return false;
         }
         
-        if((tail != null ) && (sum.equals(tail))){
-            return fibCheck(second, sum, remain.substring(sum.toString().length()));
+        BigInteger operand0Big = new BigInteger(operand0);
+        BigInteger operand1Big = new BigInteger(operand1);
+        BigInteger sumBig = operand0Big.add(operand1Big);
+        String sum = sumBig.toString();
+        if(num.startsWith(sum, idx + operand0.length() + operand1.length())){
+            return isValid(operand1, sum, num, idx + operand0.length());
         }
         else{
             return false;
         }
     }
-    
+           
     public boolean isAdditiveNumber(String num) {
-        int len;
-        String first;
-        String second;
-        int i, j;
-        
-        len = num.length();
-        
-        for(i = 1; i <= (len / 2); ++i){
-            first = num.substring(0, i);
-            if((first.charAt(0) == '0') && (first.length() > 1)){
-                    continue;
-            }
-            for(j = i + 1; j <= (len - 1); ++j){
-                second = num.substring(i, j);
-                if((second.charAt(0) == '0') && (second.length() > 1)){
-                    continue;
-                }
-                if(fibCheck(new BigInteger(first), new BigInteger(second), num.substring(j)) == true){
+        for(int i = 1; i < num.length() - 1; ++i){
+            for(int j = i + 1; j < num.length(); ++j){
+                String operand0 = num.substring(0, i);
+                String operand1 = num.substring(i, j);
+                if(isValid(operand0, operand1, num, 0)){
                     return true;
                 }
             }
@@ -59,13 +41,13 @@ public class Solution{
         return false;
     }
 
-	public static void main(String[] args){
-		Solution sol;
-		String num  = "199100199";
+    public static void main(String[] args){
+        Solution sol;
+        String num  = "199100199";
 
-		sol = new Solution();
-		
-		System.out.println("num: " + num);
-		System.out.println("is additive ?: " + sol.isAdditiveNumber(num));
-	}
+        sol = new Solution();
+        
+        System.out.println("num: " + num);
+        System.out.println("is additive ?: " + sol.isAdditiveNumber(num));
+    }
 }
