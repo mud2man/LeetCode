@@ -33,8 +33,7 @@ public class Solution{
                     maxLen = size + 1;
                 }
                 else{
-                    increaseList.add(idx, num);
-                    increaseList.remove(idx + 1);
+                    increaseList.set(idx, num);
                 }
             }
         }
