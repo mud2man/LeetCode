@@ -8,10 +8,10 @@ import java.util.*;
 
 class LenComparator implements Comparator<String>{
  
-	@Override
-	public int compare(String o1, String o2) {
-		return o2.length() - o1.length();
-	}
+    @Override
+    public int compare(String o1, String o2) {
+        return o2.length() - o1.length();
+    }
 }
 
 public class Solution{
@@ -52,16 +52,16 @@ public class Solution{
         return maxProduct;
     }
 
-	public static void main(String[] args){
-		Solution sol;
-		String[] words = {"abcw", "baz", "foo", "bar", "xtfn", "abcdef"};
-		int maxProduct;
+    public static void main(String[] args){
+        Solution sol;
+        String[] words = {"abcw", "baz", "foo", "bar", "xtfn", "abcdef"};
+        int maxProduct;
 
-		System.out.println("words[]: " + Arrays.asList(words));
-		
-		sol = new Solution();	
-		maxProduct = sol.maxProduct(words);
+        System.out.println("words[]: " + Arrays.asList(words));
+        
+        sol = new Solution();    
+        maxProduct = sol.maxProduct(words);
 
-		System.out.println("maximum product: " + maxProduct);
-	}
+        System.out.println("maximum product: " + maxProduct);
+    }
 }
