@@ -1,104 +1,92 @@
 /* O(n*p*q)
- * 1. Traverse all the rows in A to check if any non-zero, if yes, nonZeroA[y] = true
- * 2. Traverse all the columns in B to check if any non-zero, if yes, nonZeroB[x] = true
- * 3. Execute multiply if nonZeroA[y]!=0 && nonZeroB[x]!=0
+ * 1. Traverse all element of row y in A to check if all zeros, if yes, cloneA[y] = null
+ * 2. Traverse all elements of column x in B to check if zeros, if yes, tarnsfomB[x] = null
+ * 3. Execute inerMultiply if A[] != null && B[x] != null
  */
 
 import java.util.*;
 
 public class Solution{
-	public int multiplier(int[][] A, int[][] B, int x, int y){
-        int addNum;
-        int i;
-        int sum;
-        
-        addNum = A[0].length;
-        sum = 0;
-        
-        for(i = 0; i < addNum; ++i){
-            sum = sum + A[y][i]*B[i][x];
+    private int inerMultiply(int[] A, int[] B){
+        if(A == null || B == null){
+            return 0;
         }
         
-        return sum;
+        int ans = 0;
+        for(int i = 0; i < A.length; ++i){
+            ans = ans + A[i]*B[i];    
+        }    
+        return ans;
     }
     
     public int[][] multiply(int[][] A, int[][] B) {
-        int rowNum;
-        int colNum;
-        int[][] result;
-        int x;
-        int y;
-        boolean[] nonZeroA;
-        boolean[] nonZeroB;
+        int lengthA = A.length;
+        int widthA = A[0].length;
+        int lengthB = B.length;
+        int widthB = B[0].length;
+        int[][] tarnsfomB = new int[widthB][lengthB];
+        int[][] cloneA = new int[lengthA][widthA];
+        int[][] AB = new int[lengthA][widthB];
         
-        
-        rowNum = A.length;
-        colNum = B[0].length;
-        result = new int[rowNum][colNum];
-        nonZeroA = new boolean[rowNum];
-        nonZeroB = new boolean[colNum];
-        
-        for(y = 0; y < rowNum; ++y){
-            nonZeroA[y] = false;
-            for(x = 0; x < A[0].length; ++x){
-                if(A[y][x] != 0){
-                    nonZeroA[y] = true;
-                    break;
-                }
+        for(int x = 0; x < widthB; ++x){
+            boolean isZero = true;
+            for(int y = 0; y < lengthB; ++y){
+                tarnsfomB[x][y] = B[y][x];
+                isZero = (tarnsfomB[x][y] != 0)? false: isZero;
+            }
+            
+            if(isZero){
+                tarnsfomB[x] = null;
             }
         }
         
-        for(x = 0; x < colNum; ++x){
-            nonZeroB[x] = false;
-            for(y = 0; y < B.length; ++y){
-                if(B[y][x] != 0){
-                    nonZeroB[x] = true;
-                    break;
-                }
+        for(int y = 0; y < lengthA; ++y){
+            boolean isZero = true;
+            for(int x = 0; x < widthA; ++x){
+                cloneA[y][x] = A[y][x];
+                isZero = (A[y][x] != 0)? false: isZero;
+            }
+            
+            if(isZero){
+                cloneA[y] = null;
+            }
+        }
+
+        for(int y = 0; y < A.length; ++y){
+            for(int x = 0; x < tarnsfomB.length; ++x){
+                AB[y][x] = inerMultiply(cloneA[y], tarnsfomB[x]);
             }
         }
         
-        for(y = 0; y < rowNum; ++y){
-            for(x = 0; x < colNum; ++x){
-                if((nonZeroA[y] == false) || (nonZeroB[x] == false)){
-                    result[y][x] = 0;
-                }
-                else{
-                    result[y][x] = multiplier(A, B, x, y);
-                }
-            }
-        }
-        
-        return result;
+        return AB;
     }
+    public static void main(String[] args){
+        Solution sol;
+        int i;
+        int[][] result;
+        int[][] A = {{1, 0, 0},
+                     {-1, 0, 3}};
+        int[][] B = {{7, 0, 0},
+                     {0, 0, 0},
+                     {0, 0, 1}};
 
-	public static void main(String[] args){
-		Solution sol;
-		int i;
-		int[][] result;
-		int[][] A = {{1, 0, 0},
-				     {-1, 0, 3}};
-		int[][] B = {{7, 0, 0},
-				     {0, 0, 0},
-				     {0, 0, 1}};
+        sol = new Solution();
+        
+        System.out.println("A[][]: ");    
+        for(i = 0; i < A.length; ++i){
+            System.out.println(Arrays.toString(A[i]));
+        }
+        
+        System.out.println("B[][]: ");    
+        for(i = 0; i < B.length; ++i){
+            System.out.println(Arrays.toString(B[i]));
+        }
 
-		sol = new Solution();
-		
-		System.out.println("A[][]: ");	
-		for(i = 0; i < A.length; ++i){
-			System.out.println(Arrays.toString(A[i]));
-		}
-		
-		System.out.println("B[][]: ");	
-		for(i = 0; i < B.length; ++i){
-			System.out.println(Arrays.toString(B[i]));
-		}
+        result = sol.multiply(A, B);
 
-		result = sol.multiply(A, B);
-
-		System.out.println("result[][]: ");	
-		for(i = 0; i < result.length; ++i){
-			System.out.println(Arrays.toString(result[i]));
-		}
-	}
+        System.out.println("result[][]: ");    
+        for(i = 0; i < result.length; ++i){
+            System.out.println(Arrays.toString(result[i]));
+        }
+    }
 }
