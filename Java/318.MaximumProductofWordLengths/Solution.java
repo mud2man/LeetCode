@@ -6,52 +6,45 @@
 
 import java.util.*;
 
-class LenComparator implements Comparator<String>{
- 
-    @Override
-    public int compare(String o1, String o2) {
-        return o2.length() - o1.length();
-    }
-}
-
 public class Solution{
+    private class StringLengthComparator implements Comparator<String> {
+        public int compare(String str0, String str1) {
+            return str1.length() - str0.length();
+        }
+    }
+    
     public int maxProduct(String[] words) {
-        int signature;
-        int[] wordSig;
-        int i;
-        int maxProduct;
-        int currProduct;
-        int j;
         
-        wordSig = new int[words.length];
-        maxProduct = 0;
+        Arrays.sort(words, new StringLengthComparator());
         
-        Arrays.sort(words, new LenComparator());
-        
-        signature = 0;
-        for(i = 0; i < words.length; ++i){
-            signature = 0;
-            for(Character c: words[i].toCharArray()){
-                signature = signature | (1 <<(c - 'a'));  
+        // Create masks for every word
+        int[] masks = new int[words.length];
+        for(int i = 0; i < words.length; ++i){
+            String word = words[i];
+            for(int j = 0; j < word.length(); ++j){
+                char c = word.charAt(j);
+                masks[i] = masks[i] | (1 << (c - 'a'));
             }
-            wordSig[i] = signature;
         }
         
-        for(i = 0; i < (words.length - 1); ++i){
-            if(maxProduct >= (words[i].length() * words[i].length())){
-                break;
-            }
-            for(j = i + 1; j < words.length; ++j){
-                if((wordSig[i] & wordSig[j]) == 0){
-                    currProduct = words[i].length() * words[j].length();
-                    maxProduct = Math.max(currProduct, maxProduct);
+        //Compare from the longest string, break if the current length <= maximum length
+        int maxLen = 0;
+        for(int i = 0; i < (words.length - 1); ++i){
+            for(int j = i + 1; j < words.length; ++j){
+                int currLen = words[i].length() * words[j].length();
+                if(currLen <= maxLen){
                     break;
                 }
-            }  
+                else{
+                    if((masks[i] & masks[j]) == 0){
+                        maxLen = Math.max(maxLen, currLen);
+                    }
+                }
+            }
         }
-        return maxProduct;
+        
+        return maxLen;
     }
-
     public static void main(String[] args){
         Solution sol;
         String[] words = {"abcw", "baz", "foo", "bar", "xtfn", "abcdef"};
