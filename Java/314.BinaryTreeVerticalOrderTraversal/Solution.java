@@ -1,7 +1,6 @@
-/* BFS and doubly linked list: O(n)
- * 1. Use BFS traverse all nodes
- * 2. Serialize all the columns in doubly linked list
- * 3. The column of left child = the left node of the list node, and the column of right child = the right node of the list node
+/* BFS: O(n)
+ * 1. Get the left range and right range
+ * 1. Use BFS traverse all nodes with the index of verticalOrders
  * ex: 
  *     3
  *    / \
@@ -9,9 +8,9 @@
  *       / \
  *      15  7
  *
- * 1st: [3]
- * 2nd: [9]<->[3]<->[20]
- * 2nd: [9]<->[3, 15]<->[20]<->[7]
+ * 1st: queue: [1, 3]
+ * 2nd: queue: [0, 9] -> [2, 20]
+ * 3th: queue: [1, 15] -> [3, 17]
  */
 
 import java.util.*; // Stack
@@ -26,107 +25,61 @@ class TreeNode
 }
 
 public class Solution {
-    
-       private class ListNode{
-        List<Integer> col;
-        ListNode left;
-        ListNode right;
-        ListNode(List<Integer> c, ListNode l, ListNode r){
-            col = c;
-            left = l; 
-            right = r;}
+    private class QueueNode{
+        int idx;
+        TreeNode treeNode;
+        QueueNode(int i, TreeNode t){idx = i; treeNode = t;}
     }
     
-    private class WrapNode{
-        ListNode listNode;
-        TreeNode treeNode;
-        WrapNode(ListNode l, TreeNode t){
-            listNode = l;
-            treeNode = t;
-        }
-    }
-    
-    public ListNode bfs(TreeNode root){
-        ListNode head;
-        ListNode listNode;
-        ListNode leftListNode;
-        ListNode rightListNode;
-        TreeNode treeNode;
-        List<Integer> col;
-        WrapNode wrapNode;
-        WrapNode tmp;
-        LinkedList<WrapNode> queue;
-        int size;
-        int i;
-        
+    private void getRange(TreeNode root, int idx, int[] range){
         if(root == null){
-            return null;
+            return;
         }
-        
-        queue = new LinkedList<WrapNode>();
-        head = new ListNode(new ArrayList<Integer>(), null, null);
-        head.col.add(root.val);
-        wrapNode = new WrapNode(head, root);
-        queue.add(wrapNode);
-        
-        while(!queue.isEmpty()){
-            size = queue.size();
-            for(i = 0; i < size; ++i){
-                wrapNode = queue.poll();
-                treeNode = wrapNode.treeNode;
-                listNode = wrapNode.listNode;
-                
-                if(treeNode.left != null){
-                    if(listNode.left == null){
-                        leftListNode = new ListNode(new ArrayList<Integer>(), null, listNode);
-                    }
-                    else{
-                        leftListNode = listNode.left;
-                    }
-                    listNode.left = leftListNode;
-                    leftListNode.col.add(treeNode.left.val);
-                    queue.add(new WrapNode(leftListNode, treeNode.left));
-                }
-                
-                if(treeNode.right != null){
-                    if(listNode.right == null){
-                        rightListNode = new ListNode(new ArrayList<Integer>(), listNode, null);
-                    }
-                    else{
-                        rightListNode = listNode.right;
-                    }
-                    listNode.right = rightListNode;
-                    rightListNode.col.add(treeNode.right.val);
-                    queue.add(new WrapNode(rightListNode, treeNode.right));
-                }
-            }
-        }
-        
-        while(head.left != null){
-            head = head.left;
-        }
-        
-        return head;
+        range[0] = Math.min(range[0] , idx);
+        range[1] = Math.max(range[1] , idx);
+        getRange(root.left, idx - 1, range);
+        getRange(root.right, idx + 1, range);
     }
     
     public List<List<Integer>> verticalOrder(TreeNode root) {
-        List<List<Integer>> list;
-        ListNode head;
-        ListNode listNode;
+        //[left, right]  
+        int[] range = new int[2];   
+        int rootWidth = (root == null)? 0: 1;
+        List<List<Integer>> verticalOrders = new ArrayList<List<Integer>>();
         
-        list = new ArrayList<List<Integer>>();
+        getRange(root, 0, range);
+        range[0] = -range[0];
         
-        head = bfs(root);
-        
-        for(listNode = head; listNode != null; listNode = listNode.right){
-            list.add(listNode.col);
+        for(int i = 0; i < (range[0] + range[1] + rootWidth); ++i){
+            verticalOrders.add(new ArrayList<Integer>());
         }
         
-        return list;
+        LinkedList<QueueNode> queue= new LinkedList<QueueNode>();
+        
+        // BFS
+        if(root != null){
+            queue.add(new QueueNode(range[0], root));
+        }
+        
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i = 0; i < size; ++i){
+                QueueNode queueNode = queue.pollFirst();
+                verticalOrders.get(queueNode.idx).add(queueNode.treeNode.val);
+                if(queueNode.treeNode.left != null){
+                    queue.add(new QueueNode(queueNode.idx - 1, queueNode.treeNode.left));
+                }
+                
+                if(queueNode.treeNode.right != null){
+                    queue.add(new QueueNode(queueNode.idx + 1, queueNode.treeNode.right));
+                }
+            }
+        }
+
+        return verticalOrders;
     }
- 
-    public static void main(String[] args)
-    {
+
+    public static void main(String[] args){
         List<List<Integer>> list;
         TreeNode root;
         Solution sol;
