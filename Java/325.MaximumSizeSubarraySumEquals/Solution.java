@@ -1,49 +1,45 @@
 /* Hash Table: O(n)
- * 1. Use hash table subSums to store all subSums and their largest last index
- * 2. Caculate subSums again, and check if (k + subSum) exist in the hash table
- * 3. Update the max length if the largest last index of subSum "subSums.get(k + subSum)" > i
- * 4. [<-----subSum1---->|<-------k-------->|.............] => k = subSum2 - sunSum1
- *     <-------------subSum1--------------->|
- * ex: nums = [-2, -1, 2, 1], k = 1, hash table = [-2:0, -3:1, -1:2, 0:3]
- * time[0]: subSum = -2, key = -1, maxLen = Math.max(0, 2) = 2
- * time[1]: subSum = -3, key = -2
- * time[2]: subSum = -1, key = 0, maxLen = Math.max(3 - 2, 2) = 2
+ * 1. Use hash table sumMap to store all subSum and their smallest last index
+ * 2. Get the difference "diff" between subSum and k
+ * 3. If there exists subSum = diff in sumMap, update maxLen =  max(maxLen, i - sumMap.get(diff))
+ *
+ * ex: nums = [1, -1, 5, -2, 3], k = 3, hash table = [0:-1, 1:0, 5:2, 3:3, 6:4]
+ * i = 0: subSum = 1, diff = 2, maxLen = 0
+ * i = 1: subSum = 0, diff = 3, maxLen = max(0, 1 - 3) = 0
+ * i = 2: subSum = 5, diff = -2, maxLen = 0
+ * i = 3: subSum = 3, diff = 0, maxLen = max(0, 3 - (-1)) = 4
+ * i = 4: subSum = 6, diff = -3, maxLen = 4
  */
 
 import java.util.*;
 public class Solution{
     public int maxSubArrayLen(int[] nums, int k) {
-        int subSum;
-        int i;
-        int maxLen;
-        HashMap<Integer, Integer>subSums;
+        int subSum = 0;
+        HashMap<Integer, Integer> sumMap = new HashMap<Integer, Integer>();
         
-        subSum = 0;
-        subSums = new HashMap<Integer, Integer>();
-        
-        for(i = 0; i < nums.length; ++i){
+        sumMap.put(0, -1);
+        int maxLen = 0;
+        for(int i = 0; i < nums.length; ++i){
             subSum = subSum + nums[i];
-            subSums.put(subSum, i);
-        }
-        
-        maxLen = (subSums.containsKey(k))? subSums.get(k) + 1: 0;
-        subSum = 0;
-        for(i = 0; i < (nums.length - 1); ++i){
-            subSum = subSum + nums[i];
-            if(subSums.containsKey(k + subSum) && (subSums.get(k + subSum) > i)){
-                maxLen = Math.max(maxLen, subSums.get(k + subSum) - i);   
+            if(!sumMap.containsKey(subSum)){
+                sumMap.put(subSum, i);
+            }
+            
+            int diff = subSum - k;
+            if(sumMap.containsKey(diff)){
+                maxLen = Math.max(maxLen, i - sumMap.get(diff));
             }
         }
-        
+
         return maxLen;
     }
 
     public static void main(String[] args){
         Solution sol;
-        int[] nums = {-2, -1, 2, 1};
+        int[] nums = {1, -1, 5, -2, 3};
         int k;
         
-        k = 1;
+        k = 3;
         sol = new Solution();
 
         System.out.println("nums:" + Arrays.toString(nums) + ", k:" + k);
