@@ -8,90 +8,68 @@
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeNode 
-{
-	int val;
-	TreeNode left;
-	TreeNode right;
-	TreeNode(int x) { val = x; }
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int x) { val = x; }
 }
 
 public class Solution {
-    private int max;
-    
-    private class Ret{
+    private class ReturnValue{
         boolean isBst;
         int nodeNum;
-        int min;
-        int max;
+        int lb;
+        int hb;
+        ReturnValue(boolean i, int n, int l, int h){isBst = i; nodeNum = n; lb = l; hb = h;}
     }
     
-    public Ret helper(TreeNode root){
-        Ret rootRet;
-        Ret leftRet;
-        Ret rightRet;
-        
-        rootRet = new Ret();
-        
+    public ReturnValue dfs(TreeNode root){
         if(root == null){
-            rootRet.isBst = true;
-            rootRet.nodeNum = 0;
-            rootRet.min = Integer.MAX_VALUE;
-            rootRet.max = Integer.MIN_VALUE;
-            return rootRet;
+            return new ReturnValue(true, 0, Integer.MAX_VALUE, Integer.MIN_VALUE);
         }
         
-        leftRet = helper(root.left);
-        rightRet = helper(root.right);
+        ReturnValue leftReturnValue = dfs(root.left);
+        ReturnValue rightReturnValue = dfs(root.right);
         
-        rootRet.isBst = false;
-        rootRet.nodeNum = 0;
-        rootRet.min = Integer.MAX_VALUE;
-        rootRet.max = Integer.MIN_VALUE;
-        
-        if((leftRet.isBst == true) && (rightRet.isBst == true) && (root.val > leftRet.max) && (root.val < rightRet.min)){
-            rootRet.nodeNum = leftRet.nodeNum + rightRet.nodeNum + 1;
-            rootRet.isBst = true;
-            rootRet.min = Math.min(root.val, leftRet.min);
-            rootRet.max = Math.max(root.val, rightRet.max);
+        if((leftReturnValue.isBst == true) && (rightReturnValue.isBst == true) && (root.val > leftReturnValue.hb) && (root.val < rightReturnValue.lb)){
+            int lb = Math.min(root.val, leftReturnValue.lb);
+            int hb = Math.max(root.val, rightReturnValue.hb);
+            return new ReturnValue(true, leftReturnValue.nodeNum + rightReturnValue.nodeNum + 1, lb, hb);
         }
-        
-        this.max = Math.max(this.max, rootRet.nodeNum);
-        
-        return rootRet;
+        else{
+            return new ReturnValue(false, Math.max(leftReturnValue.nodeNum, rightReturnValue.nodeNum), root.val, root.val);
+        }
     }
     
     public int largestBSTSubtree(TreeNode root) {
-        
-        this.max = 0;
-        helper(root);
-        
-        return this.max;
+        ReturnValue returnValue = dfs(root);
+        return returnValue.nodeNum;
     }
 
     public static void main(String[] args){
-		int size;
+        int size;
         TreeNode root;
-		Solution sol;
+        Solution sol;
         
-		/* Generate a input tree
-		 *     10
-		 *    / \
-		 *   5   15
-		 *  / \   \
-		 * 1   8   7
-		 */
-		root = new TreeNode(10);
-		root.left = new TreeNode(5);
-		root.right = new TreeNode(15);
-		root.left.left = new TreeNode(1);
-		root.left.right = new TreeNode(8);
-		root.right.right = new TreeNode(7);
+        /* Generate a input tree
+         *     10
+         *    / \
+         *   5   15
+         *  / \   \
+         * 1   8   7
+         */
+        root = new TreeNode(10);
+        root.left = new TreeNode(5);
+        root.right = new TreeNode(15);
+        root.left.left = new TreeNode(1);
+        root.left.right = new TreeNode(8);
+        root.right.right = new TreeNode(7);
 
-		sol = new Solution();
-		
-		size = sol.largestBSTSubtree(root);
-    	
-		System.out.println("The size of largest BST subtree: " + size);
-	}
+        sol = new Solution();
+        
+        size = sol.largestBSTSubtree(root);
+        
+        System.out.println("The size of largest BST subtree: " + size);
+    }
 }
