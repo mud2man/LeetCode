@@ -1,96 +1,86 @@
-/* Backtracking + Hash Table: O(#subpath)
- * 1. Use a set of prime number primes = {1, 2, 3, 5, 7, 9, 11, 13, 17, 19}, to generate the key of hash table
- * 2. The hash table store constraints, i.e. (constraint of 1 and 3) = 2, (constraint of 1 and 9) = 5,...
- * 3. The hash table = [primes[1]*primes[3]=10: 2, primes[1]*primes[9]=38: 5,...]
- * 4. Use path[] to record if the position visited
- * 5. Use the above data structure to backtrack all possible
- * 6. Since the matrix is symmatric, we can only visit position 1, position 2, and position 5
- * 7. Total count = (count(position 1) + count(position 2)) * 4 + count(position 5)
+/* Backtracking: O(#subpath)
+ * 1. Have class NeighborList for every position, 
+ * 2. neighbor = the direct accessable neighbor, 
+ * 3. crossNeighbor = the indirect neighbor, e.g. one the cross neighbor of 1 is 3, we need to visit 2 first
+ * 4, Have an array visited to record the visited position
+ * 5. Use backtracker to visit the position 1, 2, 5, and store the result to count1, count2, and count5
+ * 6. return (count1 * 4) + (count2 * 4) + count5;
  */
 
 import java.util.*;
 public class Solution{
-    private int[] primes = {1, 2, 3, 5, 7, 9, 11, 13, 17, 19};
-    private int count;
-    private HashMap<Integer, Integer> constraints;
+        private class NeighborList{
+        int[] neighbor;
+        int[][] crossNeighbor;
+    }
     
-    public void helper(int[] path, int m, int n, int currPos){
-        int constraint;
-        int nextPos;
-        int size;
-        int i;
-        
-        size = path[0];
-        
-        if(size >= m){
-            count++;
-        }
-        
-        if(size == n){
+    private void backtracker(int position, int length, boolean[] visited, NeighborList[] neighborLists, int m, int n, int[] count){
+        if((length + 1) > n){
             return;
         }
         
-        for(i = 1; i < 10; ++i){
-            if(path[i] == 1){
-                continue;
-            }
-            
-            nextPos = i;
-            constraint = -1;
-
-            if(constraints.containsKey(primes[currPos] * primes[nextPos])){
-                constraint = constraints.get(primes[currPos] * primes[nextPos]);
-            }
-            
-            if((constraint == -1) || (path[constraint] == 1)){
-                path[nextPos] = 1;
-                path[0]++;
-                helper(path, m, n, nextPos);
-                path[nextPos] = 0;
-                path[0]--;
+        //push
+        visited[position] = true;
+                                                                                                                      
+        length++;                                                                             
+        if(length >= m && length <= n){
+            count[0]++;
+        }
+        
+        int[] neighbor = neighborLists[position].neighbor;
+        for(int nr: neighbor){
+            if(visited[nr] == false){
+                backtracker(nr, length, visited, neighborLists, m, n, count);
             }
         }
+                                                                                                                      
+        int[][] crossNeighbor = neighborLists[position].crossNeighbor;
+        for(int[] cn: crossNeighbor){
+            if(visited[cn[0]] == false && visited[cn[1]] == true){
+                backtracker(cn[0], length, visited, neighborLists, m, n, count);
+            }
+        }
+                                                                                 
+        //pop
+        visited[position] = false;
     }
     
     public int numberOfPatterns(int m, int n) {
-        int[] path;
-        int i;
+        NeighborList[] neighborLists = new NeighborList[10];
         
-        path = new int[10];
-        constraints = new HashMap<Integer, Integer>();
-        
-        //Build the constraint map
-        constraints.put(10, 2);
-        constraints.put(26, 4);
-        constraints.put(38, 5);
-        constraints.put(51, 5);
-        constraints.put(65, 5);
-        constraints.put(95, 6);
-        constraints.put(77, 5);
-        constraints.put(247, 8);
-        
-        for(i = 0 ; i < 10; i++){
-            path[i] = 0;
+        for(int i = 1; i < 10; ++i){
+            neighborLists[i] = new NeighborList();
         }
         
-        count = 0;
-        for(i = 1; i <= 2; ++i){
-            path[i] = 1;
-            path[0]++;
-            helper(path, m, n, i);
-            path[i] = 0;
-            path[0]--;
-        }
+        neighborLists[1].neighbor = new int[]{2, 4, 5, 6, 8};
+        neighborLists[1].crossNeighbor = new int[][]{{3, 2}, {7, 4}, {9, 5}};
+        neighborLists[2].neighbor = new int[]{1, 3, 4, 5, 6, 7, 9};
+        neighborLists[2].crossNeighbor = new int[][]{{8, 5}};
+        neighborLists[3].neighbor = new int[]{2, 4, 5, 6, 8};
+        neighborLists[3].crossNeighbor = new int[][]{{1, 2}, {7, 5}, {9, 6}};
+        neighborLists[4].neighbor = new int[]{1, 2, 3, 5, 7, 8, 9};
+        neighborLists[4].crossNeighbor = new int[][]{{6, 5}};
+        neighborLists[5].neighbor = new int[]{1, 2, 3, 4, 6, 7, 8, 9};
+        neighborLists[5].crossNeighbor = new int[][]{};
+        neighborLists[6].neighbor = new int[]{1, 2, 3, 5, 7, 8, 9};
+        neighborLists[6].crossNeighbor = new int[][]{{4, 5}};
+        neighborLists[7].neighbor = new int[]{2, 4, 5, 6, 8};
+        neighborLists[7].crossNeighbor = new int[][]{{1, 4}, {3, 5}, {9, 8}};
+        neighborLists[8].neighbor = new int[]{1, 3, 4, 5, 6, 7, 9};
+        neighborLists[8].crossNeighbor = new int[][]{{2, 5}};
+        neighborLists[9].neighbor = new int[]{2, 4, 5, 6, 8};
+        neighborLists[9].crossNeighbor = new int[][]{{1, 5}, {3, 6}, {7, 8}};
         
-        count = count*4 ;
+        int[] count1 = new int[1];
+        int[] count2 = new int[1];
+        int[] count5 = new int[1];
+        boolean[] visited = new boolean[10];
         
-        path[5] = 1;
-        path[0]++;
-        helper(path, m, n, 5);
-        path[5] = 0;
-        path[0]--;
+        backtracker(1, 0, visited, neighborLists, m, n, count1);
+        backtracker(2, 0, visited, neighborLists, m, n, count2);
+        backtracker(5, 0, visited, neighborLists, m, n, count5);
         
-        return count;
+        return (count1[0] * 4) + (count2[0] * 4) + count5[0];
     }
 
     public static void main(String[] args){
