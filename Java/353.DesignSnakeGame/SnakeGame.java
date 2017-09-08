@@ -6,12 +6,11 @@
 
 import java.util.*;
 public class SnakeGame {
-    private HashSet<Integer> snakeBody;
-    private LinkedList<Integer> snakeTrack;
-    private LinkedList<Integer> foodTrain;
-    private int width;
-    private int height;
-    private int score;
+    private HashSet<Integer> snakeHash;
+    private LinkedList<Integer> snakePosition;
+    private LinkedList<Integer> foods;
+    int width;
+    int height;
     
     /** Initialize your data structure here.
         @param width - screen width
@@ -19,19 +18,32 @@ public class SnakeGame {
         @param food - A list of food positions
         E.g food = [[1,1], [1,0]] means the first food is positioned at [1,1], the second is at [1,0]. */
     public SnakeGame(int width, int height, int[][] food) {
-        this.snakeBody = new HashSet<Integer>();
-        this.snakeTrack = new LinkedList<Integer>();
-        this.foodTrain = new LinkedList<Integer>();
-        
-        this.snakeBody.add(0);
-        this.snakeTrack.add(0);
         this.width = width;
         this.height = height;
-        this.score = 0;
-        
-        for(int[] f: food){
-            this.foodTrain.add(width*f[0] + f[1]);
+        this.foods = new LinkedList<Integer>();
+        for(int[] position: food){
+            this.foods.add(position[0] * width + position[1]);
         }
+        this.snakeHash = new HashSet<Integer>();
+        this.snakeHash.add(0);
+        this.snakePosition = new LinkedList<Integer>();
+        this.snakePosition.add(0);
+    }
+    
+    private boolean isValid(int headPosition, int tailPosition, int[] offset, HashSet<Integer> snakeHash, int width, int height){
+        int y = headPosition / width + offset[0];
+        int x = headPosition % width + offset[1];
+        
+        if(y < 0 || y >= height || x < 0 || x >= width){
+            return false;
+        }
+        
+        int nextHeadPosition = y * width + x;
+        if(nextHeadPosition != tailPosition && snakeHash.contains(nextHeadPosition)){
+            return false;
+        }
+        
+        return true;
     }
     
     /** Moves the snake.
@@ -39,59 +51,45 @@ public class SnakeGame {
         @return The game's score after the move. Return -1 if game over. 
         Game over when snake crosses the screen boundary or bites its body. */
     public int move(String direction) {
-        int currHead;
-        int nextHead;
-        int food;
+        int headPosition = snakePosition.getLast();
+        int tailPosition = snakePosition.getFirst();
+        int food = (!foods.isEmpty())? foods.getFirst(): -1;
+        int[] offset;
         
-        currHead = snakeTrack.peekFirst();
-        food = (foodTrain.isEmpty())? -1 : foodTrain.peek();
-        
-        //Check if hit boundry
-        if(direction.equals("U")){
-            if(currHead < width){
-                return -1;
-            }
-            nextHead = currHead - width;
-        }
-        else if(direction.equals("L")){
-            if((currHead % width) == 0){
-                return -1;
-            }
-            nextHead = currHead - 1;
-        }
-        else if(direction.equals("R")){
-            if(((currHead + 1) % width) == 0){
-                return -1;
-            }
-            nextHead = currHead + 1;
-        }
-        else{
-           if(currHead >= (width * (height - 1))){
-                return -1;
-            }
-            nextHead = currHead + width; 
+        switch(direction){
+            case "U":
+                offset = new int[]{-1, 0};
+                break;
+            case "L":
+                offset = new int[]{0, -1};
+                break;
+            case "R":
+                offset = new int[]{0, 1};
+                break;
+            case "D":
+                offset = new int[]{1, 0};
+                break;
+            default:
+                offset = new int[]{0, 0};
         }
         
-        //Check if bites itself
-        snakeBody.remove(snakeTrack.peekLast());
-        if(snakeBody.contains(nextHead)){
+        if(!isValid(headPosition, tailPosition, offset, snakeHash, width, height)){
             return -1;
         }
-        snakeBody.add(snakeTrack.peekLast());
         
-        //Check if eat food
-        if(food == nextHead){
-            score++;
-            snakeTrack.addFirst(nextHead);
-            snakeBody.add(nextHead);
-            foodTrain.poll();
+        int nextHeadPosition = headPosition + offset[0] * width + offset[1];
+        if(nextHeadPosition == food){
+            snakePosition.add(nextHeadPosition);
+            snakeHash.add(nextHeadPosition);
+            foods.pollFirst();
         }
         else{
-            snakeTrack.addFirst(nextHead);
-            snakeBody.remove(snakeTrack.pollLast());
-            snakeBody.add(nextHead);
+            snakePosition.pollFirst();
+            snakePosition.add(nextHeadPosition);
+            snakeHash.remove(tailPosition);
+            snakeHash.add(nextHeadPosition);
         }
-        return score;
+        return snakePosition.size() - 1;
     }
 
     public static void main(String[] args){
