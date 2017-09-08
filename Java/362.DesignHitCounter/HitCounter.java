@@ -1,4 +1,4 @@
-/* MinHeap: O(1)
+/* MinHeap: O(s), where s is 300 at worst case here
  * 1. Use minimum heap to store the secondary latest hit event(time stamp and count)
  * 2. Use current count to record the count on the current time
  * 3. Hitcount = the sum of all the hic count in minHeap and the hit count of current count
@@ -12,18 +12,18 @@ class Counter{
     Counter(int t, int n){timeStamp = t; number = n;}
 }
 
-class HitComparator implements Comparator<Counter>{
-    @Override
-    public int compare(Counter o1, Counter o2){
-        return o1.timeStamp - o2.timeStamp;
-    }
-}
-
 public class HitCounter {
     private int count;
     private Counter currCount;
     private PriorityQueue<Counter> minHeap;
     
+    private class HitComparator implements Comparator<Counter>{
+        @Override
+        public int compare(Counter o1, Counter o2){
+            return o1.timeStamp - o2.timeStamp;
+        }
+    }
+
     /** Initialize your data structure here. */
     public HitCounter() {
         minHeap = new PriorityQueue<Counter>(new HitComparator());
