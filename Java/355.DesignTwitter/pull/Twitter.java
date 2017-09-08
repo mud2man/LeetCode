@@ -1,29 +1,30 @@
-/* Use minimum heap, hashMap, hashSet: 
+/* Pull model
+ # 1. Have a time stamp to record the post time for every tweet
+ # 2. Use minHeap the collect the last 10 tweets from folowee's tweet 
  */
 
 import java.util.*;
 import java.math.*;
 
-class Tweet{
-    int timeStamp;
-    int tweetId;
-    Tweet(int time, int id) {timeStamp = time; tweetId = id;}
-}
-
-class TweetComparator implements Comparator<Tweet>{
-    public int compare(Tweet o1, Tweet o2){
-        return o1.timeStamp - o2.timeStamp;
-    }
-}
-
-class TweetComparator2 implements Comparator<Tweet>{
-    public int compare(Tweet o1, Tweet o2){
-        return o2.timeStamp - o1.timeStamp;
-    }
-}
-
-
 public class Twitter{
+    private class Tweet{
+        int timeStamp;
+        int tweetId;
+        Tweet(int time, int id) {timeStamp = time; tweetId = id;}
+    }
+    
+    private class TweetComparator implements Comparator<Tweet>{
+        public int compare(Tweet o1, Tweet o2){
+            return o1.timeStamp - o2.timeStamp;
+        }
+    }
+    
+    private class TweetComparator2 implements Comparator<Tweet>{
+        public int compare(Tweet o1, Tweet o2){
+            return o2.timeStamp - o1.timeStamp;
+        }
+    }
+
     HashMap<Integer, Set<Integer>> followeesMap;
     HashMap<Integer, List<Tweet>> tweetsMap;
     int timeStamp;
@@ -147,35 +148,36 @@ public class Twitter{
             }
         }
     }
-	public static void main(String[] args){
-		int userId0;
- 		int userId1;
- 		int tweetId0;
- 		int tweetId1;
-		Twitter obj = new Twitter();
-        List<Integer> news;
-		
-		userId0 = 0;
-		tweetId0 = 5;
-		obj.postTweet(userId0, tweetId0);
-		System.out.println("user:" + userId0 + " post tweet:" + tweetId0);
-		
-		userId0 = 1;
-		tweetId0 = 2;
-		obj.postTweet(userId0, tweetId0);
-		System.out.println("user:" + userId0 + " post tweet:" + tweetId0);
-		
-		userId0 = 0;
-		userId1 = 1;
-		obj.follow(userId0, userId1);
-		System.out.println("user:" + userId0 + " follow user:" + userId1);
 
-		userId0 = 0;
-		news = obj.getNewsFeed(userId0);
-		System.out.println("user:" + userId0 + " have tweets:" + news);
-		
-		userId0 = 1;
-		news = obj.getNewsFeed(userId0);
-		System.out.println("user:" + userId0 + " have tweets:" + news);
-	}
+    public static void main(String[] args){
+        int userId0;
+        int userId1;
+        int tweetId0;
+        int tweetId1;
+        Twitter obj = new Twitter();
+        List<Integer> news;
+        
+        userId0 = 0;
+        tweetId0 = 5;
+        obj.postTweet(userId0, tweetId0);
+        System.out.println("user:" + userId0 + " post tweet:" + tweetId0);
+        
+        userId0 = 1;
+        tweetId0 = 2;
+        obj.postTweet(userId0, tweetId0);
+        System.out.println("user:" + userId0 + " post tweet:" + tweetId0);
+        
+        userId0 = 0;
+        userId1 = 1;
+        obj.follow(userId0, userId1);
+        System.out.println("user:" + userId0 + " follow user:" + userId1);
+
+        userId0 = 0;
+        news = obj.getNewsFeed(userId0);
+        System.out.println("user:" + userId0 + " have tweets:" + news);
+        
+        userId0 = 1;
+        news = obj.getNewsFeed(userId0);
+        System.out.println("user:" + userId0 + " have tweets:" + news);
+    }
 }

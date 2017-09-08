@@ -1,12 +1,11 @@
-/* Use DFS: O(n)
+/* DFS: O(n)
  * 1. Traverse all nodes using DFS with lower and upper bound
  */
 
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeNode 
-{
+class TreeNode {
     int val;
     TreeNode left;
     TreeNode right;
