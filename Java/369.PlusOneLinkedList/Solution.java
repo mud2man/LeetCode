@@ -1,6 +1,8 @@
 /* List: O(n)
- * 1. Traverse the linked list and store all the element into the array list
- * 2. Add 1 from the last element of the array list, and ripple carry from it
+ * 1. Have a dummy node dummy, where dummy.next = head
+ * 2. Fine the last node lessThanNine which is less than 9
+ * 3. Let lessThanNine.val = (lessThanNine.val + 1) % 10, and traverse to left most node
+ * 4. If dummy.val > 0, return dummy, otherwise return head
  */
 
 import java.util.*;
@@ -14,30 +16,29 @@ class ListNode {
  
 public class Solution{
     public ListNode plusOne(ListNode head) {
-        List<ListNode> numList;
-        ListNode node;
-        int carry;
-        int i;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
         
-        numList = new ArrayList<ListNode>();
-        for(node = head; node != null; node = node.next){
-            numList.add(node);
+        ListNode itr = dummy;
+        ListNode lessThanNine = dummy;
+        while(itr != null){
+            if(itr.val < 9){
+                lessThanNine = itr;
+            }
+            itr = itr.next;
         }
         
-        carry = 1;
-        for(i = numList.size() - 1; (i >= 0) && (carry == 1); --i){
-            numList.get(i).val = numList.get(i).val + carry;
-            carry = numList.get(i).val / 10;
-            numList.get(i).val = numList.get(i).val % 10;
+        while(lessThanNine != null){
+            lessThanNine.val = (lessThanNine.val + 1) % 10;
+            lessThanNine = lessThanNine.next;
         }
-        
-        if(carry == 1){
-           node = new ListNode(1);
-           node.next = head;
-           head = node;
+
+        if(dummy.val > 0){
+            return dummy;
         }
-        
-        return head;
+        else{
+            return head;
+        }
     }
 
     public static void main(String[] args){
