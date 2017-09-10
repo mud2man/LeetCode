@@ -1,4 +1,4 @@
-/* MinHeap: O(klogk)
+/* MinHeap: O(klogn), where n is the length of num1
  * 1. Store all pairs (nums1[i], nums2[0]) in MinHeap;
  * 2. Get and remove the minimum pair p=(nums1[i], nums2[j) from the MinHeap
  * 3. Add the pair p'=(nums1[i], nums2[j+1]) to MinHeap
