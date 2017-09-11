@@ -1,41 +1,26 @@
-/* Dynamic programming: O(n^2) => It brute force, but keep all the sub solution in a 2-D array
- * 1. Let dp[lb][ub] = the minimum guaranteed money to win the game between range lb and ub
- * 2. dp[lb][ub] = min(i + max(dp[lb][i-1], dp[i+1][ub])), where lb <= i <= ub
+/* Dynamic programming: O(n^3)
+ * 1. Let dp[ub][lb] = the minimum guaranteed money to win the game between range ub and lb
+ * 2. dp[ub][lb] = min(i + max(dp[ub][i + 1], dp[i - 1][lb])), where lb <= i <= ub
  * 3. Physically, i means the first position of guessing
- * 4. The solution is dp[1][n]
+ * 4. The solution is dp[n][1]
  */
 
 import java.util.*;
  
 public class Solution{
-    public int helper(int[][] dp, int lb, int ub){
-        int min;
-        int sum;
-        int i;
-        
-        if(lb >= ub){
-            return 0;
-        }
-        else if(dp[lb][ub] != 0){
-            return dp[lb][ub];
-        }
-        else{
-            min = Integer.MAX_VALUE;
-            for(i = lb; i <= ub; ++i){
-                sum = i + Math.max(helper(dp, lb, i - 1), helper(dp, i + 1, ub));
-                min = Math.min(sum, min);
-            }
-            dp[lb][ub] = min;
-            return dp[lb][ub];
-        }
-    }
-    
     public int getMoneyAmount(int n) {
-        int[][] dp;
+        int[][] dp = new int[n + 2][n + 2];
         
-        dp = new int[n + 1][n + 1];
-        
-        return helper(dp, 1, n); 
+        for(int ub = 0; ub <= n; ++ub){
+            dp[ub][ub] = 0;
+            for(int lb = ub - 1; lb > 0; --lb){
+                dp[ub][lb] = Integer.MAX_VALUE;
+                for(int i = ub; i >= lb; --i){
+                    dp[ub][lb] = Math.min(dp[ub][lb], i + Math.max(dp[ub][i + 1], dp[i - 1][lb]));
+                }
+            }
+        }
+        return dp[n][1];
     }
  
     public static void main(String[] args){
