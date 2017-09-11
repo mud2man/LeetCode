@@ -1,80 +1,68 @@
 /* Binary search: O(nlogn)
- * 1. Binary search the integer m between matrix[0][0] to matrix[size - 1][size - 1], s.t. the number of integer which is smaller or equal to m = k
- * 2. Traverse the matrix from left-bottom corner to locate the maximum smaller number "smaller", and minimum bigger number "bigger" w.r.t m
- * 3. If the the number of integer which is smaller or equal to "smaller" >= k, then return "smaller"
- * 4. Otherwise, return "bigger"
- * 5. Note that the number of integer == matrix[0][0] may be bigger than k, so the number of integer which is smaller or equal to "smaller" >= k is possible
+ * 1. Binary search the number m between matrix[0][0] and matrix[depth - 1][width - 1], s.t. (the number of integer which is less than or equal to m) = k
+ * 2. Get maximun from the elements which is smaller or equal to m, and it is Kth element
  */
 
 import java.util.*;
 
 public class Solution{
-    public int lessEqualCount(int[][] matrix, int n){
-        int y;
-        int x;
-        int size;
-        int count;
+    private int getLessEquelCount(int[][] matrix, int target){
+        int y = matrix.length - 1;
+        int count = 0;
         
-        size = matrix.length;
-        count = 0;
-        y = size - 1;
-        
-        for(x = 0; (x < size)  && (y >= 0); ++x){
-            while((y >= 0) && (matrix[y][x] > n)){
+        for(int x = 0; x < matrix[0].length; ++x){
+            while(y >= 0 && matrix[y][x] > target){
                 --y;
             }
-            count = count + y + 1;
+            
+            if(y == -1){
+                break;
+            }
+            count += (y + 1);
         }
         return count;
     }
     
-    public int kthSmallest(int[][] matrix, int k){
-        long lb;
-        long ub;
-        int m;
-        int count;
-        int size;
-        int x;
-        int y;
-        int smaller;
-        int bigger;
+    private int getMaxFromLessEquelNums(int[][] matrix, int target){
+        int y = matrix.length - 1;
+        int max = Integer.MIN_VALUE;
         
-        size = matrix.length;
-        lb = matrix[0][0];
-        ub = matrix[size - 1][size - 1];
-        m = 1;
-        
-        while(lb <= ub){
-            m = (int) ((lb + ub) / 2);
-            count = lessEqualCount(matrix, m);
-            if(count == k){
-                break;
-            }
-            else if(count < k){
-                lb = m + 1;
-            }
-            else{
-                ub = m - 1;
-            }
-        }
-        
-        y = size - 1;
-        smaller = matrix[0][0];
-        bigger = matrix[size - 1][size - 1];
-        for(x = 0; (x < size) && (y >= 0); ++x){
-            while((y >= 0) && (matrix[y][x] > m)){
+        for(int x = 0; x < matrix[0].length; ++x){
+            while(y >= 0 && matrix[y][x] > target){
                 --y;
             }
-         
-            if((y >= 0) && ((m - smaller) > (m - matrix[y][x]))){
-                smaller = matrix[y][x];
-            }
             
-            if((y < (size - 1)) && ((bigger - m) > (matrix[y + 1][x]) - m)){
-                bigger = matrix[y + 1][x];
+            if(y == -1){
+                break;
+            }
+            max = Math.max(max, matrix[y][x]);
+        }
+        return max;
+    }
+    
+    public int kthSmallest(int[][] matrix, int k) {
+        int depth = matrix.length;
+        int width = matrix[0].length;
+        int lb = matrix[0][0];
+        int ub = matrix[depth - 1][width - 1];
+        
+        while(lb <= ub){
+            int mid = (int)(((long)lb + (long)ub) / 2);
+            int count = getLessEquelCount(matrix, mid);
+            if(count == k){
+                lb = mid;
+                break;
+            }
+            else if(count > k){
+                ub = mid - 1;
+            }
+            else{
+                lb = mid + 1;
             }
         }
-        return (lessEqualCount(matrix, smaller) >= k)? smaller: bigger;
+        
+        int Kth = getMaxFromLessEquelNums(matrix, lb);
+        return Kth;
     }
 
     public static void main(String[] args){
