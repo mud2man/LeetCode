@@ -1,10 +1,9 @@
 /* Recursive: O(n)
  * 1. Traverse from left to right
- * 2. If encounter '[', call helper()
- * 3. If encounter ']', return
- * 4, If encounter '-', set isNegative to 1
- * 5, If encounter ',', translate numStr and add it to current "ni" object 
- * 6, Otherwise, update numStr
+ * 2. If encounter '[', new an NestedInteger and push it onto stack
+ * 3. If encounter ']', pop stack
+ * 4, If encounter ',', just increase ptr
+ * 5, Otherwise, parse the integer, and add to the toppest NestedInteger
  */
 
 /**
@@ -36,73 +35,43 @@
  * }
  */
 public class Solution {
-    private class Ret{
-        int nextIdx;
-        NestedInteger ni;
-        Ret(int i, NestedInteger n){nextIdx = i; ni = n;}
-    }
-    
-    public NestedInteger string2Ni(boolean isNegative, StringBuilder numStr){
-        int num;
-        NestedInteger ni;
+    public NestedInteger deserialize(String s) {
+        if(s.charAt(0) != '['){
+            return new NestedInteger(Integer.parseInt(s)); 
+        }
         
-        num = (isNegative)? 0 - Integer.parseInt(numStr.toString()) : Integer.parseInt(numStr.toString());
-        ni = new NestedInteger(num);
-        numStr.setLength(0);
-        return ni;
-    }
-    
-    public Ret helper(String s, int startIdx){
-        NestedInteger niList;
-        NestedInteger preNi;
-        StringBuilder numStr;
-        boolean isNegative;
-        int i;
-        char c;
-        Ret ret;
-
-        isNegative = false;
-        numStr = new StringBuilder("");
-        preNi = null;
-        niList = new NestedInteger();
+        Stack<NestedInteger> stack = new Stack<NestedInteger>();
+        NestedInteger answer = new NestedInteger();
+        stack.push(answer);
         
-        for(i = startIdx; i < s.length(); ++i){
-            c = s.charAt(i);
-            if(c == '['){
-                ret = helper(s, i + 1);
-                i =  ret.nextIdx;
-                preNi = ret.ni;
-            }
-            else if(c == '-'){
-                isNegative = true;
-            }
-            else if(c == ','){
-                if(numStr.length() > 0){
-                    preNi = string2Ni(isNegative, numStr);
-                }
-                niList.add(preNi);
-                isNegative = false;
-            }
-            else if(c == ']'){
-                if(numStr.length() > 0){
-                    preNi = string2Ni(isNegative, numStr);
-                }
-                if(preNi != null){
-                    niList.add(preNi);
-                }
-                return new Ret(i, niList);
-            }
-            else{
-                numStr.append(c);
+        int ptr = 1;
+        while(ptr < s.length()){
+            switch (s.charAt(ptr)){
+                case '[':
+                    NestedInteger top = stack.peek();
+                    NestedInteger newTop = new NestedInteger();
+                    top.add(newTop);
+                    stack.push(newTop);
+                    ptr++;
+                    break;
+                case ']':
+                    stack.pop();
+                    ptr++;
+                    break;
+                case ',':
+                    ptr++;
+                    break;
+                default:
+                    int commaPtr = (s.indexOf(',', ptr) == -1)? Integer.MAX_VALUE: s.indexOf(',', ptr);
+                    int bracePtr = (s.indexOf(']', ptr) == -1)? Integer.MAX_VALUE: s.indexOf(']', ptr);
+                    int nextPtr = Math.min(commaPtr, bracePtr);
+                    int integer = Integer.parseInt(s.substring(ptr, nextPtr));
+                    NestedInteger ni = new NestedInteger(integer);
+                    stack.peek().add(ni);
+                    ptr = nextPtr;
             }
         }
-        return new Ret(i + 1, string2Ni(isNegative, numStr));
-    }
-    
-    public NestedInteger deserialize(String s) {
-        if(s.charAt(0) == '[')
-            return helper(s, 1).ni;
-        else
-            return helper(s, 0).ni;
+        
+        return answer;
     }
 }
