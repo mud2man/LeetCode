@@ -1,51 +1,39 @@
-/* Stack and greedy algo.
- * 1. Chechk every char "c" in the input string
- * 2. Pop the top until its value is samller or equal to "c"
- * 3. Pop the top until the deleted number is equal to k
+/* Greedy: O(n)
+ * 1. Delete sb.charAt(index) if sb.charAt(index + 1) < sb.charAt(index)g
+ * 2. Delete the the remaining digits from the back of sb
+ * 3. Delete the leading zeors, if they exist
  */
 
 import java.util.*; // Stack
 
 public class Solution {
     public String removeKdigits(String num, int k) {
-        Stack<Character> stack;
-        int idx;
-        char c;
-        StringBuilder min;
+        StringBuffer sb = new StringBuffer(num);
         
-        stack = new Stack<Character>();
-        min = new StringBuilder("");
-        
-        for(idx = 0; idx < num.length(); idx++){
-            c = num.charAt(idx);
-            
-            while(!stack.isEmpty() && stack.peek() > c && k > 0){
-                stack.pop();
-                k--;
+        // Delete sb.charAt(index) if sb.charAt(index + 1) < sb.charAt(index)
+        int index = 0;
+        while(k > 0 && index < (sb.length() - 1)){
+            if(sb.charAt(index + 1) < sb.charAt(index)){
+                sb.deleteCharAt(index);
+                --k;
+                index = (index > 0)? index - 1: 0; 
             }
-            stack.push(c);
+            else{
+                ++index;
+            }
         }
         
-        while(k > 0){
-            stack.pop();
-            k--;
+        // Delete the the remaining digits from the back of sb
+        while(k > 0 && sb.length() > 0){
+            sb.deleteCharAt(sb.length() - 1);
+            --k;
         }
         
-        while(!stack.isEmpty()){
-            min.append(stack.pop());
+        // Delete the leading zeors, if they exist
+        while(sb.length() > 0 && sb.charAt(0) == '0'){
+            sb.deleteCharAt(0);
         }
-        min.reverse();
-        
-        while(min.length() > 0 && min.charAt(0) == '0'){
-            min.deleteCharAt(0);
-        }
-        
-        if(min.length() == 0){
-            return "0";
-        }
-        else{
-            return min.toString();
-        }
+        return (sb.length() == 0)? "0": sb.toString();
     }
  
     public static void main(String[] args){
