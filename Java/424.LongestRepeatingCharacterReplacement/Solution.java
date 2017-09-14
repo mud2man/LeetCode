@@ -1,4 +1,4 @@
-/* Sliding Window: O(n)
+/* Sliding Window: O(n), but leetcode has answer can reduce from O(26n) to O(n) 
  * 1. Devide the case into 26 characters
  * 2. In getMaxLength, if charArray[end] != c, k-- if k > 0
  * 3. Otherwise, add start until reach the char != c
