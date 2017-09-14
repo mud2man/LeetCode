@@ -7,97 +7,75 @@
 import java.util.*;
 
 public class Solution{
-    private LinkedList<Integer> queue;
-    private HashSet<Integer> pacList;
-    private HashSet<Integer> atlList;
-    
-    public List<int[]> pacificAtlantic(int[][] matrix) {
-        HashSet<Integer> list;
-        int x, y, i, j, k;
-        List<int[]> topList;
-        int[] xy;
-        int[] nextPoss;
-        int nextPos;
-        int currPos;
-        int size;
-        int yOffset;
-        int xOffset;
-        
-        pacList = new HashSet<Integer>();
-        atlList = new HashSet<Integer>();
-        queue = new LinkedList<Integer>();
-        topList = new ArrayList<int[]>();
-        nextPoss = new int[4];
-        
-        if(matrix.length == 0){
-            return topList;
-        }
-        
-        for(k = 0; k < 2; ++k){
-            /* climb from Pacific */
-            if(k == 0 ){
-                list = pacList;
-                for(x = 0; x < matrix[0].length; ++x){
-                    currPos = x;
-                    queue.add(currPos);
-                    list.add(currPos);
-                }
-                for(y = 1; y < matrix.length; ++y){
-                    currPos = 150 * y;
-                    queue.add(currPos);
-                    list.add(currPos);
-                }
-            }
-            /* climb from Atlantic */
-            else{
-                list = atlList;
-                for(x = 0; x < matrix[0].length; ++x){
-                    currPos = x + 150 * (matrix.length - 1);
-                    queue.add(currPos);
-                    list.add(currPos);
-                }
-                for(y = 0; y < (matrix.length - 1); ++y){
-                    currPos = 150 * y + (matrix[0].length - 1);
-                    queue.add(currPos);
-                    list.add(currPos);
-                }
-            }
-        
-            /* BFS */
-            while(queue.size() > 0){
-                size = queue.size();
-                for(i = 0; i < size; ++i){
-                    currPos = queue.poll();
-                    y = currPos / 150;
-                    x = currPos % 150;
-                    nextPoss[0] = (y > 0)? 150 * (y - 1) + x: -1; //up
-                    nextPoss[1] = (x > 0)? 150 * y  + (x - 1): -1; //left
-                    nextPoss[2] = (y < (matrix.length - 1))? 150 * (y + 1) + x: -1; //down
-                    nextPoss[3] = (x < (matrix[0].length - 1))? 150 * y + (x + 1): -1; //right
-                    for(j = 0; j < 4; ++j){
-                        nextPos = nextPoss[j];
-                        if((nextPos != -1) && (!list.contains(nextPos)) && 
-                           (matrix[currPos / 150][currPos % 150] <= matrix[nextPos / 150][nextPos % 150])){
-                            list.add(nextPos);
-                            queue.add(nextPos);
+    private HashSet<Integer> bfs(int[][] matrix, LinkedList<Integer> queue, HashSet<Integer> visited){
+        int depth = matrix.length;
+        int width = matrix[0].length;
+        int[][] offsets = new int[][]{{0, -1}, {-1, 0}, {0, 1}, {1, 0}}; //left, up, right, down
+                    
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i = 0; i < size; ++i){
+                int position = queue.pollFirst();
+                int x = position % width;
+                int y = position / width;
+                for(int[] offset: offsets){
+                    int nextY = y + offset[0];
+                    int nextX = x + offset[1];
+                    if(nextY < depth && nextY >= 0 && nextX < width && nextX >= 0){
+                        int nextPosition = (nextY * width) + nextX;
+                        if(matrix[nextY][nextX] >= matrix[y][x] && !visited.contains(nextPosition)){
+                            visited.add(nextPosition);
+                            queue.add(nextPosition);
                         }
                     }
-                }//for
-            }//while
-        }//for
-        
-        for(int pos: pacList){
-            if(atlList.contains(pos)){
-                y = pos / 150;
-                x = pos % 150;
-                xy = new int[2];
-                xy[0] = y;
-                xy[1] = x;
-                topList.add(xy);
+                }
             }
         }
-
-        return topList;
+        return visited;
+    }
+    
+    public List<int[]> pacificAtlantic(int[][] matrix) {
+        if(matrix.length == 0){
+            return new LinkedList<int[]>();
+        }
+        
+        int depth = matrix.length;
+        int width = matrix[0].length;
+        LinkedList<Integer> queue;
+        List<int[]> edges = new LinkedList<int[]>();
+        
+        //climb from Atlantic
+        queue = new LinkedList<Integer>();
+        HashSet<Integer> fromAtlantic = new HashSet<Integer>();
+        for(int y = 0; y < depth; ++y){
+            fromAtlantic.add(y * width +  width - 1);
+            queue.add(y * width +  width - 1);
+        }
+        for(int x = 0; x < width; ++x){
+            fromAtlantic.add(width * (depth - 1) +  x);
+            queue.add(width * (depth - 1) +  x);
+        }
+        fromAtlantic = bfs(matrix, queue, fromAtlantic);
+        
+        //climb from Pacific
+        queue = new LinkedList<Integer>();
+        HashSet<Integer> fromPacific = new HashSet<Integer>();
+        for(int y = 0; y < depth; ++y){
+            fromPacific.add(y * width);
+            queue.add(y * width);
+        }
+        for(int x = 0; x < width; ++x){
+            fromPacific.add(x);
+            queue.add(x);
+        }
+        fromPacific = bfs(matrix, queue, fromPacific);
+        
+        for(int atlantic: fromAtlantic){
+            if(fromPacific.contains(atlantic)){
+                edges.add(new int[]{(atlantic / width), (atlantic % width)});
+            }
+        }
+        return edges;
     }
 
     public static void main(String[] args){
