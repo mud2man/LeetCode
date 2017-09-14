@@ -1,31 +1,37 @@
-/* Hashset
- * 1. Record the positions of battle ships in the previous row
- * 2. If there is a new position "x" not contained in the previous, it's a new battleship
+/* O(m*n)t
+ * 1. Only the X has no X on its top and left can be count as a new battleship
+ * 2. Traverse every element, and return count
  */
 
 import java.util.*; // Stack
 
 public class Solution {
-    public int countBattleships(char[][] board) {
-        int x, y, count;
-        HashSet<Integer> preRow, nextRow;
+        public int countBattleships(char[][] board) {
+        int count = 0;
         
-        preRow = new HashSet<Integer>();
-        count = 0;
+        if(board.length == 0 || board[0].length == 0){
+            return 0;
+        } 
         
-        for(y = 0; y < board.length; ++y){
-            nextRow = new HashSet<Integer>();
-            for(x = 0; x < board[0].length; ++x){
+        for(int y = 0; y < board.length; ++y){
+            if(y == 0 && board[0][0] == 'X'){
+                count++;
+            }
+            else if(y > 0 && board[y][0] == 'X' && board[y - 1][0] == '.'){
+                count++;
+            }
+            
+            for(int x = 1; x < board[0].length; ++x){
                 if(board[y][x] == 'X'){
-                    if((x == 0 || board[y][x - 1] == '.') && (!preRow.contains(x)) ){
+                    if(y == 0 && board[0][x - 1] == '.'){
                         count++;
                     }
-                    nextRow.add(x);
+                    else if(y > 0 && board[y][x - 1] == '.' && board[y - 1][x] == '.'){
+                        count++;
+                    }
                 }
             }
-            preRow = nextRow;
         }
-        
         return count;
     }
  
