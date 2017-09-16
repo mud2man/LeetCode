@@ -10,39 +10,41 @@ class ListNode {
 }
 
 public class Solution {
-   public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-        ListNode l1Node, l2Node, l3Node, l3;
-        Stack<ListNode> l1Stack, l2Stack;
-        int l1Val, l2Val, l3Val, carry;
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+            Stack<Integer> stackL1 = new Stack<Integer>();
+        Stack<Integer> stackL2 = new Stack<Integer>();
         
-        l1Stack = new Stack<ListNode>();
-        l2Stack = new Stack<ListNode>();
-        
-        l1Node = l1;
-        while( l1Node != null){
-           l1Stack.push(l1Node);
-           l1Node = l1Node.next;
+        ListNode itr = l1;
+        while(itr != null){
+            stackL1.push(itr.val);
+            itr = itr.next;
+        }
+        itr = l2;
+        while(itr != null){
+            stackL2.push(itr.val);
+            itr = itr.next;
         }
         
-        l2Node = l2;
-        while( l2Node != null){
-           l2Stack.push(l2Node); 
-           l2Node = l2Node.next;
+        int carry = 0;
+        ListNode head = null;
+        while(!stackL1.empty() || !stackL2.empty()){
+            int valueL1 = (stackL1.empty())? 0: stackL1.pop();
+            int valueL2 = (stackL2.empty())? 0: stackL2.pop();
+            int valueL3 = valueL1 + valueL2 + carry;
+            carry = valueL3 / 10;
+            valueL3 = valueL3 % 10;
+            ListNode newHead = new ListNode(valueL3);
+            newHead.next = head;
+            head = newHead;
         }
         
-        l3 = null;
-        carry = 0;
-        do{
-            l1Val = (!l1Stack.isEmpty())? l1Stack.pop().val: 0;
-            l2Val = (!l2Stack.isEmpty())? l2Stack.pop().val: 0;
-            l3Val = (l1Val + l2Val + carry) % 10;
-            carry = (l1Val + l2Val + carry) / 10;
-            l3Node = new ListNode(l3Val);
-            l3Node.next = l3;
-            l3 = l3Node;
-        }while(!l1Stack.isEmpty() || !l2Stack.isEmpty() || carry != 0);
+        if(carry == 1){
+            ListNode newHead = new ListNode(1);
+            newHead.next = head;
+            head = newHead;
+        }
         
-        return l3;
+        return head;
     }
     
     public static void main(String[] args){
