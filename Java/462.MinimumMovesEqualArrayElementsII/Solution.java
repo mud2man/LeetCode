@@ -7,55 +7,41 @@
 import java.util.*; // Stack
 
 public class Solution {
-    public int quickSelect(int[] nums, int headIdx, int tailIdx){
-        int target, smallIdx, idx, tmp;
-        
-        target = nums[tailIdx];
-        smallIdx = headIdx - 1;
-   
-        for(idx = headIdx; idx < tailIdx; ++idx){
-            if(nums[idx] < target){
-                tmp = nums[idx];
-                nums[idx] = nums[++smallIdx];
-                nums[smallIdx] = tmp;
+    private int quickSelect(int[] nums, int startIdx, int endIdx, int targetIdx){
+        int target = nums[endIdx];
+        int smallerTailIdx = startIdx - 1;
+        for(int idx = startIdx; idx < endIdx; ++idx){
+            if(nums[idx] <= target){
+                int tmp = nums[++smallerTailIdx];
+                nums[smallerTailIdx] = nums[idx];
+                nums[idx] = tmp;
             }
         }
-        nums[tailIdx] = nums[++smallIdx];
-        nums[smallIdx] = target;
+        nums[endIdx] = nums[++smallerTailIdx];
+        nums[smallerTailIdx] = target;
         
-        return smallIdx - headIdx;
+        int lessThanCount = smallerTailIdx - startIdx;
+        if((lessThanCount + 1)== targetIdx){
+            return target;
+        }
+        else if((lessThanCount + 1) > targetIdx){
+            return quickSelect(nums, startIdx, smallerTailIdx - 1, targetIdx);
+        }
+        else{
+            return quickSelect(nums, smallerTailIdx + 1, endIdx, targetIdx - lessThanCount - 1);
+        }
     }
     
     public int minMoves2(int[] nums) {
-        int kIdx, headIdx, tailIdx, idx, medium, minMove;
+        int size = nums.length;
+        int mediam = quickSelect(nums, 0, size - 1, (size + 1) / 2);
         
-        headIdx = 0;
-        tailIdx = nums.length - 1;
-        kIdx = nums.length / 2;
-        
-        idx = -1;
-        while(true){
-            idx = quickSelect(nums, headIdx, tailIdx);
-            
-            if(kIdx > idx){
-                headIdx = headIdx + (idx + 1);
-                kIdx = kIdx - (idx + 1);
-            }
-            else if (kIdx < idx){
-                tailIdx = headIdx + (idx - 1);
-            }
-            else{
-                break;
-            }
-        }
-        
-        medium = nums[headIdx + idx];
-        minMove = 0;
+        int moves = 0;
         for(int num: nums){
-            minMove += Math.abs(num - medium);   
+            moves = moves + Math.abs(mediam - num);
         }
         
-        return minMove;
+        return moves;
     }
 
     public static void main(String[] args){
