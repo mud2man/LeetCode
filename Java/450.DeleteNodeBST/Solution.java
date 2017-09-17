@@ -1,6 +1,7 @@
 /* O(hight)
  * 1. Search the node with key value
  * 2. Replace the value of the deleted node with its sucessor
+ * 3. If the deleted has both right son and left son, the successor is the leftest node of the right sub-tree
  */
 
 import java.util.*; // Stack
@@ -14,88 +15,77 @@ class TreeNode {
 }
 
 public class Solution {
-    public TreeNode[] search(TreeNode[] nodes, int key){
-        if(nodes[1] == null || key == nodes[1].val){
-            return nodes;
+    private void find(TreeNode[] fartherAndSon, int key){
+        TreeNode son = fartherAndSon[1];
+        
+        if(son == null){
+            return;
         }
-        else if(key < nodes[1].val){
-            nodes[0] = nodes[1];
-            nodes[1] = nodes[0].left;
-            return search(nodes, key);
+        
+        if(son.val == key){
+            return;
+        }
+        else if(son.val > key){
+            fartherAndSon[0] = son;
+            fartherAndSon[1] = son.left;
+            find(fartherAndSon, key);
         }
         else{
-            nodes[0] = nodes[1];
-            nodes[1] = nodes[0].right;
-            return search(nodes, key);
+            fartherAndSon[0] = son;
+            fartherAndSon[1] = son.right;
+            find(fartherAndSon, key);
         }
     }
     
-    public void swap(TreeNode[] nodes){
-        if(nodes[1].left == null && nodes[1].right == null){
-            if(nodes[0] != null){
-                nodes[0].left = (nodes[0].left == nodes[1])? null: nodes[0].left;
-                nodes[0].right = (nodes[0].right == nodes[1])? null: nodes[0].right;
-                return;
+    private void delete(TreeNode[] fartherAndSon){
+        TreeNode farther = fartherAndSon[0];
+        TreeNode son = fartherAndSon[1];
+
+        if(son.right != null && son.left != null){
+            fartherAndSon[0] = son.right;
+            fartherAndSon[1] = fartherAndSon[0].left;
+            
+            //find the leftest node
+            while(fartherAndSon[1] != null && fartherAndSon[1].left != null){
+                fartherAndSon[0] = fartherAndSon[1];
+                fartherAndSon[1] = fartherAndSon[1].left;
+            }
+            
+            if(fartherAndSon[1] != null){
+                son.val = fartherAndSon[1].val;
+                delete(fartherAndSon);
             }
             else{
-                nodes[1] = null;
-                return;
-            }
-        }
-        else if(nodes[1].right != null){
-            if(nodes[1].right.left != null){
-                nodes[1].val = nodes[1].right.left.val;
-                nodes[0] = nodes[1].right;
-                nodes[1] = nodes[1].right.left;
-                swap(nodes);
-            }
-            else{
-                nodes[1].val = nodes[1].right.val;
-                nodes[0] = nodes[1];
-                nodes[1] = nodes[1].right;
-                swap(nodes);
+                son.val =  fartherAndSon[0].val;
+                fartherAndSon[0] = son;
+                fartherAndSon[1] = son.right;
+                delete(fartherAndSon);
             }
         }
         else{
-            if(nodes[1].left.right != null){
-                nodes[1].val = nodes[1].left.right.val;
-                nodes[0] = nodes[1].left;
-                nodes[1] = nodes[1].left.right;
-                swap(nodes);
+            TreeNode successor = (son.left != null)? son.left: son.right;
+            if(farther.left == son){
+                farther.left = successor;
             }
             else{
-                nodes[1].val = nodes[1].left.val;
-                nodes[0] = nodes[1];
-                nodes[1] = nodes[1].left;
-                swap(nodes);
+                farther.right = successor;
             }
         }
     }
     
     public TreeNode deleteNode(TreeNode root, int key) {
-        TreeNode[] nodes;
+        TreeNode dummy = new TreeNode(0);
+        dummy.left = root;
+        TreeNode[] fartherAndSon = new TreeNode[]{dummy, root};
+        find(fartherAndSon, key);
         
-        nodes = new TreeNode[2];
-        nodes[0] = null;
-        nodes[1] = root;
-        /* search */
-        nodes = search(nodes, key);
-        
-        /* key not found, no need to change */
-        if(nodes[1] == null){
-            return root;
+        if(fartherAndSon[1] != null){
+            delete(fartherAndSon);
         }
         
-        /* swap */
-        swap(nodes);
-        
-        if(nodes[1] == null){
-            return null;
-        }
-        
-        return root; 
+        return dummy.left;
     }
-    
+ 
     public void inorder(TreeNode root){
         if(root == null){
             return;
