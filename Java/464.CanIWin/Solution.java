@@ -1,108 +1,79 @@
 /* Devide and counquer: O(2^n), while O(n!) without memory
  * 1. Record all the taken steps into an array, and caculate the identifier by 2's weight
  * 2. Keep records of loseSet and winSet to save avoid duplicated searching
- * 3. If the step is taken by me, any one of step can make me force a win, then I win
- * 4. If the step is taken by opponent, the condition I win is that I can force a win whatever opponent make his step
+ * 3. Any one of step can make me force a win, then I win
  */
 
 import java.util.*; // Stack
 
 public class Solution {
-    public int idCalc(int[] flags){
-        int id, idx, weight;
-        
-        id = 0;
-        weight = 2;
-        for(idx = 1; idx < flags.length; ++idx){
-            id += flags[idx] * weight;
-            weight = 2 * weight;
+    private int getRemainStepsId(boolean[] remainSteps, int max){
+        int remainStepsId = 0;
+        int weight = 1;
+        for(int i = 1; i <= max; ++i){
+            weight = weight << 1;
+            if(remainSteps[i] == true){
+                remainStepsId |= weight;
+            }
         }
-        return id;
+        return remainStepsId;
     }
     
-    public boolean helper(int[] flags, HashSet<Integer> winsSet, HashSet<Integer> loseSet, int residue, int leftStep){
-        int id, idx, jdx;
-        
-        // I already lost the game
-        if(residue <= 0 || leftStep == 0){
-            loseSet.add(idCalc(flags));
+    private boolean helper(boolean[] remainSteps, Set<Integer> loseSet, Set<Integer> winSet, int desiredTotal, int max){
+        int remainStepsId = getRemainStepsId(remainSteps, max);
+
+        if(loseSet.contains(remainStepsId)){
             return false;
         }
         
-        // check if I can force a win before under the same situation  
-        id = idCalc(flags);
-        if(winsSet.contains(id)){
+        if(winSet.contains(remainStepsId)){
             return true;
         }
         
-        // check if I lost before under the same situation 
-        if(loseSet.contains(id)){
+        if(desiredTotal <= 0){
+            loseSet.add(remainStepsId);
             return false;
         }
         
-        // taken by me
-        // if I can win in any one of taking, then I can force a win
-        for(idx = flags.length - 1; idx > 0; --idx){
-            if(flags[idx] == 1 && idx >= residue){
-                winsSet.add(idCalc(flags));
+        for(int i = 1; i <= max; ++i){
+            if(remainSteps[i] == false){
+                continue;
+            }
+            
+            //pop
+            remainSteps[i] = false;
+            if(!helper(remainSteps, loseSet, winSet, desiredTotal - i, max)){
+                remainSteps[i] = true;
+                winSet.add(remainStepsId);
                 return true;
             }
             
-            if(flags[idx] == 0){
-                continue;
-            }
-            flags[idx] = 0;
-            leftStep--;
-            if(leftStep == 0){
-                flags[idx] = 1;
-                return false;
-            }
-            
-            // taken by opponent
-            // if I can win whatever opponent take, then I can force a win
-            for(jdx = flags.length - 1; jdx > 0; --jdx){
-                if(flags[jdx] == 0){
-                    continue;
-                }
-                flags[jdx] = 0;
-                leftStep--;
-                if(helper(flags, winsSet, loseSet, residue - idx -jdx, leftStep) == false){
-                    flags[jdx] = 1;
-                    leftStep++;
-                    break;
-                }
-                flags[jdx] = 1;
-                leftStep++;
-            }
-            flags[idx] = 1;
-            leftStep++;
-            
-            if(jdx == 0){
-                winsSet.add(idCalc(flags));
-                return true; 
-            }
+            //push
+            remainSteps[i] = true;
         }
-        loseSet.add(idCalc(flags));
+        
+        loseSet.add(remainStepsId);
         return false;
     }
     
     public boolean canIWin(int maxChoosableInteger, int desiredTotal) {
-        int[] flags;
-        HashSet<Integer> winsSet, loseSet;
-        int idx;
-        
-        flags = new int[maxChoosableInteger + 1];
-        winsSet = new HashSet<Integer>();
-        loseSet = new HashSet<Integer>();
-        for(idx = 1; idx < flags.length; ++idx){
-            flags[idx] = 1;
-        }
-        
         if(desiredTotal == 0){
             return true;
         }
         
-        return helper(flags, winsSet, loseSet, desiredTotal, maxChoosableInteger);
+        double lb = (double)maxChoosableInteger;
+        if((((lb + 1) / 2) * lb) < (double)desiredTotal){
+            return false;
+        }
+        
+        boolean[] remainSteps = new boolean[maxChoosableInteger + 1];
+        Set<Integer> loseSet = new HashSet<Integer>();
+        Set<Integer> winSet = new HashSet<Integer>();
+        for(int i = 1; i <= maxChoosableInteger; ++i){
+            remainSteps[i] = true;
+        }
+        
+        return helper(remainSteps, loseSet, winSet, desiredTotal, maxChoosableInteger);
     }
 
     public static void main(String[] args){
