@@ -1,55 +1,50 @@
-/* O(n), This solution has round error flaw. We can use cross product instead
- * 1. Accumulate all the angles
- * 2. If the sum of angles = (n - 2)PI, it is a convex polygon
+/* Math: O(n)
+ * 1. Outer dot value can evaluate the direction
+ * 2. Caculate every outer dot for every angle, and determine if this current direction consistent with the previous directions
  */
 
 import java.util.*; // Stack
 
 public class Solution {
-    public double angle(int[] vectorA, int[] vectorB){
-        double inerProduct, lenA, lenB, angle;
-        
-        inerProduct = (vectorA[0] * vectorB[0]) + (vectorA[1] * vectorB[1]);
-        lenA = Math.sqrt(vectorA[0]*vectorA[0] + vectorA[1]*vectorA[1]);
-        lenB = Math.sqrt(vectorB[0]*vectorB[0] + vectorB[1]*vectorB[1]);
-        angle = Math.acos(inerProduct/(lenA*lenB));
-        
-        return (angle != Math.PI)? (angle / Math.PI) : 0;
-    }
-    
     public boolean isConvex(List<List<Integer>> points) {
-        int size, idx, n;
-        double refPointy, currPointy;
-        List<Integer> currPoint, prevPoint, nextPoint;
-        int[] vectorA, vectorB;
-        double angleSum, angle;
+        int[] vector0 = new int[2];
+        int[] vector1 = new int[2];
+        int prevDirection = 0;
         
-        size = points.size();
-        vectorA = new int[2];
-        vectorB = new int[2];
-        angleSum = 0;
-        n = 0;
-        
-        for(idx = 0; idx < size; idx++){
-            prevPoint = points.get(idx);
-            currPoint = points.get((idx + 1) % size);
-            nextPoint = points.get((idx + 2) % size);
+        for(int index = 2; index < (points.size() + 2); ++index){
+            int currIndex = index % points.size();
+            int prevIndex = (index - 1) % points.size();
+            int secondPrevIndex = (index - 2) % points.size();
             
-            vectorA[0] = currPoint.get(0) - prevPoint.get(0);
-            vectorA[1] = currPoint.get(1) - prevPoint.get(1);
-            vectorB[0] = currPoint.get(0) - nextPoint.get(0);
-            vectorB[1] = currPoint.get(1) - nextPoint.get(1);
-            angle = angle(vectorA, vectorB);
-            angleSum += angle;
-            n = (angle != 0)? ++n: n;
+            vector0[0] = points.get(prevIndex).get(1) - points.get(secondPrevIndex).get(1);
+            vector0[1] = points.get(prevIndex).get(0) - points.get(secondPrevIndex).get(0);
+            vector1[0] = points.get(currIndex).get(1) - points.get(prevIndex).get(1);
+            vector1[1] = points.get(currIndex).get(0) - points.get(prevIndex).get(0);
+            int outerDot = vector0[0] * vector1[1] - vector0[1] * vector1[0];
+            
+            int currentDirection;
+            if(outerDot > 0){
+                currentDirection = 1;
+            }
+            else if(outerDot < 0){
+                currentDirection = -1;
+            }
+            else{
+                currentDirection = 0;
+            }
+            
+            if(prevDirection == 0){
+                prevDirection = currentDirection;
+            }
+            else{
+                if(currentDirection != 0){
+                    if(prevDirection != currentDirection){
+                        return false;
+                    }
+                }
+            }
         }
-        
-        if(Math.abs(n - 2 - angleSum) < 0.000001){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return true;    
     }
 
     public static void main(String[] args){
