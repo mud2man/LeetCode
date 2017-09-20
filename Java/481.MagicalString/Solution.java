@@ -1,67 +1,36 @@
 /* O(n)
- * 1. Create two pointers. ptr0 is pointed to the last index of creater
- * 2. The other one ptr1 is pointed to the last index of createe
- * 3. Loop until ptr1 is larger than n
+ * 1. Create two pointers. i is pointed to the last index of creater
+ * 2. The other one tailIdx is pointed to the last index of createe
+ * 3. Loop until tailIdx is larger than n
  *
  * EX: n = 4 
- * time[0]: ptr0 = 0, ptr1 = 0, magicStr = [1, 2] 
- * time[1]: ptr0 = 1, ptr1 = 2, magicStr = [1, 2, 2] 
- * time[2]: ptr0 = 2, ptr1 = 4, magicStr = [1, 2, 2, 1, 1] 
+ * time[0]: i = 0, tailIdx = 0, magic = [1, 2] 
+ * time[1]: i = 1, tailIdx = 2, magic = [1, 2, 2] 
+ * time[2]: i = 2, tailIdx = 4, magic = [1, 2, 2, 1, 1] 
  */
 
 import java.util.*; // Stack
 
 public class Solution {
     public int magicalString(int n) {
-        int[] magicStr;
-        int count;
-        int i;
-        int repeatNum;
-        /* 1: current element is 1; -1: current element is 2 */
-        int flag;
-        /* the last index of creater */
-        int ptr0;
-        /* the last index of createe */
-        int ptr1;
+        int[] magic = new int[n + 3];
+        magic[0] = 1;
+        magic[1] = 2;
+        magic[2] = 2;
         
-        if(n == 0){
-            return 0;
-        }
-        
-        magicStr = new int[n + 2];
-        magicStr[0] = 1;
-        magicStr[1] = 2;
-        
-        ptr0 = 0;
-        ptr1 = 0;
-        flag = -1;
-        count = 1;
-        repeatNum = 0;
-        
-        while(ptr1 < (n - 1)){
-            ptr0++;
-            repeatNum = magicStr[ptr0];
-            if(repeatNum == 1){
-                if(flag == 1){
-                    count++;
+        int tailIdx = 3;
+        int oneCount = 1;
+        for(int i = 2; i < n && tailIdx < n; ++i){
+            int val = (i % 2) + 1;
+            int count = magic[i];
+            for(int j = 0; j < count; ++j){
+                magic[tailIdx++] = val;
+                if(tailIdx <= n && val == 1){
+                    oneCount++;
                 }
             }
-            else{
-                if(flag == 1){
-                    count = count + 2;
-                }
-            }
-            for(i = 1; i <= repeatNum; ++i){
-                magicStr[i + ptr1] = (flag == 1)? 1 : 2;
-            }
-            ptr1 += repeatNum;
-            flag = -flag;
         }
-
-        if(repeatNum == 2 && flag == -1 && ptr1 > (n - 1)){
-                count--;
-        }
-        return count;
+        return (n > 0)? oneCount: 0;
     }
  
     public static void main(String[] args){
