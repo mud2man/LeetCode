@@ -10,28 +10,31 @@
 import java.util.*; // Stack
 
 public class Solution {
-    public int totalHammingDistance(int[] nums) {
-        int i, j, dis, size;
-        int[] bit1Count, mask;
-        
-        size = nums.length;
-        bit1Count = new int[32];
-        mask = new int[32];
-        dis = 0;
-        
-        for(i = 0; i< 32; ++i){
-            mask[i] = 1 << i;
-        }
-        
-        for(i = 0; i < 32; ++i){
-            for(j = 0; j < size; ++j){
-                if((nums[j] & mask[i]) != 0){
-                    bit1Count[i]++;
-                }
+    private void helper(int[] bitsCount, int num){
+        int i = 0;
+        while(num > 0){
+            if((num & 1) > 0){
+                bitsCount[i] += 1;
             }
-            dis = dis + (size - bit1Count[i])*(bit1Count[i]);
+            num = num >> 1;
+            ++i;
         }
-        return dis;
+    }
+    
+    public int totalHammingDistance(int[] nums) {
+        int[] bitsCount = new int[32];
+        
+        for(int num: nums){
+            helper(bitsCount, num);
+        }
+        
+        int size = nums.length;
+        int totalDistance = 0;
+        for(int i = 0; i < 32; ++i){
+            totalDistance += (size - bitsCount[i]) * bitsCount[i];
+        }
+        
+        return totalDistance;
     }
 
     public static void main(String[] args){
