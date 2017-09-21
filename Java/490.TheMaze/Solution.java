@@ -14,66 +14,44 @@ public class Solution {
     }
     
     public boolean hasPath(int[][] maze, int[] start, int[] destination) {
-        Queue<Possition> queue;
-        Possition currPos, stopPos;
-        int size, idx, depth, width;
+        Set<Integer> walls = new HashSet<Integer>();
+        Set<Integer> visited = new HashSet<Integer>();
+        int depth = maze.length;
+        int width = (depth > 0)? maze[0].length: 0;
+        int startPos = start[0] * width + start[1];
+        int destinationPos = destination[0] * width + destination[1];
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+        queue.add(startPos);
+        visited.add(startPos);
         
-        queue = new LinkedList<Possition>();
-        currPos = new Possition(start[0], start[1]);
-        stopPos = new Possition(start[0], start[1]);
-        queue.offer(currPos);
-        depth = maze.length;
-        width = maze[0].length;
-        
-        // BFS
-        int level = 0;
+        //up, down, left, right
+        int[][] offsets = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
         while(!queue.isEmpty()){
-            size = queue.size();
-            for(idx = 0; idx < size; idx++){
-                stopPos = queue.poll();
-                
-                if(stopPos.yPos == destination[0] && stopPos.xPos == destination[1]){
+            int size = queue.size();
+            for(int i = 0; i < size; ++i){
+                int currPos = queue.pollFirst();
+                if(currPos == destinationPos){
                     return true;
                 }
-                
-                // roll up
-                currPos = new Possition(stopPos.yPos, stopPos.xPos);
-                while(currPos.yPos > 0  && maze[currPos.yPos - 1][currPos.xPos] != 1){
-                    currPos.yPos = currPos.yPos - 1;
-                }
-                if(stopPos.yPos != currPos.yPos && maze[currPos.yPos][currPos.xPos] != -1){
-                    queue.offer(new Possition(currPos.yPos, currPos.xPos));
-                    maze[currPos.yPos][currPos.xPos] = -1;
-                }
-                
-                // roll down
-                currPos = new Possition(stopPos.yPos, stopPos.xPos);
-                while(currPos.yPos < depth - 1 && maze[currPos.yPos + 1][currPos.xPos] != 1){
-                    currPos.yPos = currPos.yPos + 1;
-                }
-                if(stopPos.yPos != currPos.yPos && maze[currPos.yPos][currPos.xPos] != -1){
-                    queue.offer(new Possition(currPos.yPos, currPos.xPos));
-                    maze[currPos.yPos][currPos.xPos] = -1;
-                }
-                
-                // roll left
-                currPos = new Possition(stopPos.yPos, stopPos.xPos);
-                while(currPos.xPos > 0 && maze[currPos.yPos][currPos.xPos - 1] != 1){
-                    currPos.xPos = currPos.xPos - 1;
-                }
-                if(stopPos.xPos != currPos.xPos && maze[currPos.yPos][currPos.xPos] != -1){
-                    queue.offer(new Possition(currPos.yPos, currPos.xPos));
-                    maze[currPos.yPos][currPos.xPos] = -1;
-                }
-                
-                // roll right
-                currPos = new Possition(stopPos.yPos, stopPos.xPos);
-                while(currPos.xPos < width - 1 && maze[currPos.yPos][currPos.xPos + 1] != 1){
-                    currPos.xPos = currPos.xPos + 1;
-                }
-                if(stopPos.xPos != currPos.xPos && maze[currPos.yPos][currPos.xPos] != -1){
-                    queue.offer(new Possition(currPos.yPos, currPos.xPos));
-                    maze[currPos.yPos][currPos.xPos] = -1;
+                else{
+                    for(int[] offset: offsets){
+                        int nextY = currPos / width;
+                        int nextX = currPos % width;
+                        while(nextX < width && nextX >= 0 &&
+                              nextY < depth && nextY >= 0 &&
+                              maze[nextY][nextX] == 0){
+                            nextY = nextY + offset[0];
+                            nextX = nextX + offset[1];
+                        };
+                        
+                        nextY = nextY - offset[0];
+                        nextX = nextX - offset[1];
+                        int nexPos = nextY * width + nextX;
+                        if(!visited.contains(nexPos)){
+                            visited.add(nexPos);
+                            queue.add(nexPos);
+                        }
+                    }
                 }
             }
         }
