@@ -1,15 +1,15 @@
-/* Backtracking
+/* Backtracking: O(2^n)
  */
 
 import java.util.*;
 
 public class Solution{
     public List<List<Integer>> findSubsequences(int[] nums) {
-         Set<List<Integer>> res= new HashSet<List<Integer>>();
-         List<Integer> holder = new ArrayList<Integer>();
-         findSequence(res, holder, 0, nums);
-         List result = new ArrayList(res);
-         return result;
+        Set<List<Integer>> res= new HashSet<List<Integer>>();
+        List<Integer> holder = new ArrayList<Integer>();
+        findSequence(res, holder, 0, nums);
+        List result = new ArrayList(res);
+        return result;
      }
 
     public void findSequence(Set<List<Integer>> res, List<Integer> holder, int index, int[] nums) {

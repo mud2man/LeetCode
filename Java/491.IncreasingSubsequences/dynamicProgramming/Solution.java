@@ -1,4 +1,4 @@
-/* Dynamic programming: O(sequence#), but backtrack is better
+/* Dynamic programming: O(2^n), but backtrack is better
  * statistics[i] = all sub sequences ended with i-th smallest number
  * First, have a sorted set comming from nums
  * Second, tarverse nums and all the sequences in statistics[i] with append current num, where 0<=i<=endIdx to statics[endIdx]
@@ -13,16 +13,7 @@ public class Solution{
         List<List<Integer>> increasingLists;
         Statistics(int b){biggest = b; increasingLists = new ArrayList<List<Integer>>();}
     }
-    
-    private String getId(List<Integer> list){
-        String str = "";
-        for(int num: list){
-            str = str + Integer.toString(num);
-            str = str + ",";
-        }
-        return str;
-    }
-    
+
     public List<List<Integer>> findSubsequences(int[] nums) {
         SortedSet<Integer> set = new TreeSet<Integer>();
         for(int num: nums){
@@ -59,13 +50,12 @@ public class Solution{
         }
         
         List<List<Integer>> answer = new ArrayList<List<Integer>>();
-        Set<String> used = new HashSet<String>();
+        Set<List<Integer>> used = new HashSet<List<Integer>>();
         for(Statistics statistic: statistics){
             List<List<Integer>> currLists = statistic.increasingLists;
             for(List<Integer> currList: currLists){
-                String listId = getId(currList);
-                if(!used.contains(listId) && currList.size() > 1){
-                    used.add(listId);
+                if(!used.contains(currList) && currList.size() > 1){
+                    used.add(currList);
                     answer.add(currList);
                 }
             }
