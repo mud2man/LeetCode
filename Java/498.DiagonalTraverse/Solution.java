@@ -1,189 +1,70 @@
 /* O(m*n)
- * 1. Classsify the edge cases, and walk accordingly
- * 
- *     0  1 
- *   -----------
- *   | 1  2  3 | 2
- * 7 | 4  5  6 | 3
- * 6 | 7  8  9 | 
- *   -----------
- *        5  4
+ * 1. Have a boolean variable directionUp to determine going up or going down
+ * 2. Do traverse as long as (y + x) <= (depth + width - 2)
+ * 3. In the end of going up, turn left if not reaching the top-right corner, otherwise turn down
+ * 4. In the end of going down, turn down if not reaching the bottom-left corner, otherwise turn right
  */          
 
 import java.util.*; // Stack
 
 public class Solution {
-        public int onWhichEdge(int[][] matrix, int y, int x){
-        int xSize, ySize;
+    private boolean isValid(int y, int x, int depth, int width){
+        if(y < 0 || y >= depth){
+            return false;
+        }
         
-        xSize = matrix[0].length;
-        ySize = matrix.length;
+        if(x < 0 || x >= width){
+            return false;
+        }
         
-        if(x == 0 && y == 0){
-            return 0;
-        }
-        else if (x < xSize - 1 && y == 0){
-            return 1;
-        }
-        else if (x == xSize - 1 && y == 0){
-            return 2;
-        }
-        else if(x == xSize - 1 && y == ySize - 1){
-            return 4;
-        }
-        else if(x == xSize - 1 && y > 0 ){
-            return 3;
-        }
-        else if(x == 0 && y == ySize - 1){
-            return 6;
-        }
-        else if(x > 0 && y == ySize - 1){
-            return 5;
-        }
-        else if(x == 0 && y < ySize - 1){
-            return 7;
-        }
-        else{
-            return -1;
-        }
-    }
-
-    public void digonalFill(boolean isIncrease,int[][] matrix, int y, int x, int len, int idx, int[] digonal){
-        if(isIncrease == true){
-            for(int count = 0; count < len; count++){
-                digonal[idx + count] = matrix[y][x];
-                y++;
-                x--;
-            }
-        }
-        else{
-            for(int count = 0; count < len; count++){
-                digonal[idx + count] = matrix[y][x];
-                x++;
-                y--;
-            }
-        }
+        return true;
     }
     
     public int[] findDiagonalOrder(int[][] matrix) {
-        int[] digonal;
-        int width, depth, x, y, idx, edgeId, len;
+        int depth = matrix.length;
+        int width = (depth > 0)? matrix[0].length: 0;
+        int[] sequence = new int[depth * width];
+        int y = 0;
+        int x = 0;
         
-        if(matrix.length == 0){
-            return new int[0];
-        }
-        
-        width = matrix[0].length;
-        depth = matrix.length;
-        digonal = new int[width*depth];
-        digonal[0] = matrix[0][0];
-        x = 1;
-        y = 0;
-        idx = 1;
-        
-        if(matrix.length == 1){
-            for(;idx < width; idx++){
-                digonal[idx] =  matrix[0][idx];
+        boolean directionUp = true;
+        int idx = 0;
+        while((y + x) <= (depth + width - 2)){
+            if(directionUp == true){
+                while(isValid(y, x, depth, width)){
+                    sequence[idx++] = matrix[y][x];
+                    y--;
+                    x++;
+                }
+                ++y;
+                --x;
+                if(y == 0 && x < (width - 1)){
+                    ++x;
+                }
+                else{
+                    ++y;
+                }
             }
-            return digonal;
-        }
-        
-        if(matrix[0].length == 1){
-            for(;idx < depth; idx++){
-                digonal[idx] =  matrix[idx][0];
+            else{
+                while(isValid(y, x, depth, width)){
+                    sequence[idx++] = matrix[y][x];
+                    y++;
+                    x--;
+                }
+                --y;
+                ++x;
+                if(x == 0 && y < (depth - 1)){
+                    ++y;
+                }
+                else{
+                    ++x;
+                }
             }
-            return digonal;
+            directionUp = !directionUp;
         }
-        
-        while((edgeId = onWhichEdge(matrix, y, x)) != 4){
-            
-            switch (edgeId){
-                case 1:
-                    len = Math.min(x + 1, depth);
-                    digonalFill(true, matrix, y, x, len, idx, digonal);
-                    y = y + len - 1;
-                    x = x - len + 1;
-                    if(y < depth - 1){
-                        y++;
-                    }
-                    else{
-                        x++;
-                    }
-                    break;
-                case 2:
-                    len = Math.min(depth, width);
-                    digonalFill(true, matrix, y, x, len, idx, digonal);
-                    y = y + len - 1;
-                    x = x - len + 1;
-                    if(y < depth - 1){
-                        y++;
-                    }
-                    else{
-                        x++;
-                    }
-                    break;
-                case 3:
-                    len = Math.min(depth - y, width);
-                    digonalFill(true, matrix, y, x, len, idx, digonal);
-                    y = y + len - 1;
-                    x = x - len + 1;
-                    if(y < depth - 1){
-                        y++;
-                    }
-                    else{
-                        x++;
-                    }
-                    break;
-                case 5:
-                    len = Math.min(width - x, depth);
-                    digonalFill(false, matrix, y, x, len, idx, digonal);
-                    y = y - len + 1;
-                    x = x + len - 1;
-                    if(x < width - 1){
-                        x++;
-                    }
-                    else{
-                        y++;
-                    }
-                    break;
-                case 6:
-                    len = Math.min(depth, width);
-                    digonalFill(false, matrix, y, x, len, idx, digonal);
-                    y = y - len + 1;
-                    x = x + len - 1;
-                    if(x < width - 1){
-                        x++;
-                    }
-                    else{
-                        y++;
-                    }
-                    break;
-                case 7:
-                    len = Math.min(y + 1, width);
-                    digonalFill(false, matrix, y, x, len, idx, digonal);
-                    y = y - len + 1;
-                    x = x + len - 1;
-                    if(x < width - 1){
-                        x++;
-                    }
-                    else{
-                        y++;
-                    }
-                    break;
-                default:
-                    len = 0;
-                    break;
-            }
-            idx = idx + len;
-        }
-        
-        if(x < width && y < depth){
-            digonal[idx] = matrix[depth - 1][width - 1];
-        }
-        
-        return digonal;
+        return sequence;
     }
-    
+ 
     public static void main(String[] args){
         Solution sol;
         int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
