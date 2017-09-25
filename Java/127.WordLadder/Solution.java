@@ -25,31 +25,30 @@ public class Solution{
     }
     
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        int steps = 1;
-        List<String> currBeginWords = new ArrayList<>();
-        List<String> nextBeginWords;
-        currBeginWords.add(beginWord);
+        LinkedList<String> queue = new LinkedList<String>();
+        queue.add(beginWord);
         
-        while(!currBeginWords.isEmpty()){
-            steps++;
-            Iterator<String> itr = wordList.iterator();
-            nextBeginWords = new ArrayList<>();
-            while(itr.hasNext()){
-                String cadidate = itr.next();
-                for(String currBeginWord: currBeginWords){
-                    if(isClosed(currBeginWord, cadidate)){
-                        if(cadidate.equals(endWord)){
-                            return steps;
-                        }
-                        else{
-                            nextBeginWords.add(cadidate);
+        int length = 0;
+        while(!queue.isEmpty()){
+            System.out.println(queue);
+            int size = queue.size();
+            length++;
+            for(int i = 0; i < size; ++i){
+                String source = queue.pollFirst();
+                if(source.equals(endWord)){
+                    return length;
+                }
+                else{
+                    Iterator<String> itr = wordList.iterator();
+                    while( itr.hasNext() ){
+                        String target = itr.next();
+                        if(isClosed(source, target)){
+                            queue.add(target);
                             itr.remove();
-                            break;
                         }
                     }
                 }
             }
-            currBeginWords = nextBeginWords;
         }
         return 0;
     }
