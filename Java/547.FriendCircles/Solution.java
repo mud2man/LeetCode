@@ -1,4 +1,4 @@
-/* Union and Find: O(n^2*logn)
+/* Union and Find: O(n^2*logn) But LeetCode has O(n^2) solution
  */
 
 import java.util.*;
