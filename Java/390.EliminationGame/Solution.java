@@ -10,39 +10,25 @@ import java.util.*;
 
 public class Solution {
     public int lastRemaining(int n) {
-        int first = 1;
+        boolean toRight = true;
         int interval = 1;
-        int loopCount = 0;
-        int listLength = n;
+        int start = 1;
         
-        while(first <= n){
-            int cutLength = (listLength + 1) / 2;
-            if(loopCount % 2 == 0){
-                if((first + interval) <= n){
-                    first += interval;
-                }
-                else{
-                    break;
-                }
+        while(n > 1){
+            if(toRight){
+                start = start + interval;
             }
             else{
-                if(listLength == (cutLength * 2)){
-                    first = first;
-                }
-                else{
-                    if((first + interval) <= n){
-                        first += interval;
-                    }
-                    else{
-                        break;
-                    }
+                if(n % 2 == 1){
+                    start = start + interval;
                 }
             }
-            loopCount++;
             interval = interval * 2;
-            listLength -= cutLength;
+            n = n / 2;
+            toRight = !toRight;
         }
-        return first;
+        
+        return start;
     }
 
     public static void main(String[] args){
