@@ -1,8 +1,7 @@
-/* Use preorder: O(n), However Leetcode seems has beter solution, since this solution only beats 3%
- * 1. Replace the value in the original tree with the continuous integer as Id starting from 0, and have a map storing id-value 
- * 2. Serization has three components preOrder, inOrder, idValueMap
- * 3. Have a value-position map for inOrder array
- * 4. Deserialize the tree with inorder, preorder
+/* Preorder + stack: O(n)
+ * 1. Serialize with preorder traversal, and denote Null pointer with string "null"
+ * 2. Retrieve tree node by visiting "data" from the 0-th position, and use stack to record the path
+ * 3. Append node by if top.left is null, and if the current visited node is null
  */
 
 import java.util.*; // Stack
@@ -18,6 +17,8 @@ class TreeNode {
 public class Codec {
     private void preOrder(TreeNode root, StringBuilder preOrderStr){
         if(root == null){
+            preOrderStr.append("null");
+            preOrderStr.append(',');
             return;
         }
         preOrderStr.append(Integer.toString(root.val));
@@ -26,108 +27,61 @@ public class Codec {
         preOrder(root.right, preOrderStr);
     }
     
-    private void inOrder(TreeNode root, StringBuilder inOrderStr){
-        if(root == null){
-            return;
-        }
-        inOrder(root.left, inOrderStr);
-        inOrderStr.append(Integer.toString(root.val));
-        inOrderStr.append(',');
-        inOrder(root.right, inOrderStr);
-    }
-    
-    private void buildMap(TreeNode root, HashMap<Integer, Integer> map, int[] count){
-        if(root == null){
-            return;
-        }
-        buildMap(root.left, map, count);
-        int val = root.val;
-        int id = count[0];
-        map.put(id, val);
-        count[0]++;
-        root.val = id;
-        buildMap(root.right, map, count);
-    }
-    
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-        int count[] = new int[1];
-        buildMap(root, map, count);
-        
         StringBuilder preOrderStr = new StringBuilder("");
-        StringBuilder inOrderStr = new StringBuilder("");
         preOrder(root, preOrderStr);
-        inOrder(root, inOrderStr);
-        
-        String mapStr = "";
-        for(int i = 0; i < count[0]; ++i){
-            int val = map.get(i);
-            mapStr = mapStr + Integer.toString(val) + ",";
-        }
-        
-        String data = preOrderStr.toString() + "#" + inOrderStr.toString() + "#" + mapStr;
-        return data;
-    }
-    
-    private int[] getIntegers(String[] strings){
-        int[] integers = (strings[0].length() == 0)? new int[0]: new int[strings.length];
-        for(int i = 0; i < integers.length; ++i){
-            integers[i] = Integer.parseInt(strings[i]);
-        }
-        return integers;
-    }
-    
-    private TreeNode treeBuilder(int[] preOrder, int preOrderStart, int preOrderEnd,
-                                 int[] inOrder, int inOrderStart, int inOrderEnd, 
-                                 int[] idValueMap, int[] positionMap){
-        if(preOrderStart > preOrderEnd){
-            return null;
-        }
-    
-        int rootId = preOrder[preOrderStart];
-        int rootVal = idValueMap[rootId];
-        TreeNode root = new TreeNode(rootVal);
-        
-        // caculate the number of left sub-tree nodes
-        int leftTreeNodeCount = positionMap[rootId] - inOrderStart;
-        
-        //build left sub-tree
-        int lPreOrderStart = preOrderStart + 1;
-        int lPreOrderEnd = lPreOrderStart + leftTreeNodeCount - 1;
-        int lInOrderStart = inOrderStart;
-        int lInOrderEnd = lInOrderStart + leftTreeNodeCount - 1;
-        root.left = treeBuilder(preOrder, lPreOrderStart, lPreOrderEnd, inOrder, lInOrderStart, lInOrderEnd, idValueMap, positionMap);
-        
-        //build right sub-tree
-        int rPreOrderStart = lPreOrderEnd + 1;
-        int rPreOrderEnd = preOrderEnd;
-        int rInOrderStart = lInOrderEnd + 2;
-        int rInOrderEnd = inOrderEnd;
-        root.right = treeBuilder(preOrder, rPreOrderStart, rPreOrderEnd, inOrder, rInOrderStart, rInOrderEnd, idValueMap, positionMap);
-        
-        return root;
+        return preOrderStr.toString();
     }
     
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        int seperatorIndex0 = data.indexOf('#');
-        int seperatorIndex1 = data.indexOf('#', seperatorIndex0 + 1);
-        String preOrderStr = data.substring(0, seperatorIndex0);
-        String inOrderStr = data.substring(seperatorIndex0 + 1, seperatorIndex1);
-        String mapStr = data.substring(seperatorIndex1 + 1, data.length());
-        
-        int[] preOrderIntegers = getIntegers(preOrderStr.split(","));
-        int[] inOrderIntegers = getIntegers(inOrderStr.split(","));
-        int[] idValueMap = getIntegers(mapStr.split(","));
-        int size = preOrderIntegers.length;
-        int[] positionMap = new int[size];
-        for(int i = 0; i < size; ++i){
-            positionMap[inOrderIntegers[i]] = i;
+        String[] preOrderValues = data.split(",");
+
+        if(preOrderValues[0].equals("null")){
+            return null;
         }
         
-        TreeNode root = treeBuilder(preOrderIntegers, 0, size - 1, inOrderIntegers, 0 , size - 1, idValueMap, positionMap);
-        return root;
+        TreeNode dummy = new TreeNode(0);
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        stack.push(dummy);
+        int index = 0;
+        while(index < preOrderValues.length){
+            String nodeString = preOrderValues[index++];
+            if(!nodeString.equals("null")){
+                TreeNode top = stack.peek();
+                //if top.left == null, append its top's left. Otherwise append its right
+                if(top.left == null){
+                    top.left = new TreeNode(Integer.parseInt(nodeString));
+                    stack.push(top.left);
+                }
+                else{
+                    top.right = new TreeNode(Integer.parseInt(nodeString));
+                    stack.pop();
+                    stack.push(top.right);
+                }
+            }
+            else{
+                //if top's left != null, which means the current visiting "null" is its right. So skip this step
+                if(stack.peek().left != null){
+                    stack.pop();
+                    continue;
+                }
+                
+                //check if the top's right is null by visit the next element
+                nodeString = preOrderValues[index++];
+                if(!nodeString.equals("null")){
+                    TreeNode top = stack.pop();
+                    top.right = new TreeNode(Integer.parseInt(nodeString));
+                    stack.push(top.right);
+                }
+                else{
+                    stack.pop();
+                }
+            }
+        }
+        
+        return dummy.left;
     }
 
     public static void main(String[] args){
