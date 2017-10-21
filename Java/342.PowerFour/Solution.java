@@ -1,4 +1,4 @@
-/* Math: O(1), but leetcode has bit-manipulation solution
+/* Bit manupulation: O(1)
  * 1. Check if log4(n) is an integer or not
  */
 
@@ -6,20 +6,19 @@ import java.util.*;
 
 public class Solution{
     public boolean isPowerOfFour(int num) {
-        if(num < 0){
+        int mask = 0xAAAAAAAA;
+        if(num <= 0 || (num & mask) != 0 || (num & (num - 1)) != 0){
             return false;
         }
-        
-        double dk = Math.log(num) / Math.log(4);
-        int ik = (int)dk;
-        return (dk == (double)ik);
+        return true;
     }
 
     public static void main(String[] args){
-        Solution sol;
-        int n = 32;
-        sol = new Solution();
-        System.out.println("n: " + n);
-        System.out.println("isPowerOfFour: " + sol.isPowerOfFour(n));
+        int[] nums = {0, 1, 5, 16, 48, 64, 196};
+        Solution sol = new Solution();
+        
+        for(int num: nums){
+            System.out.println(num + " is Power4? " + sol.isPowerOfFour(num));
+        }
     }
 }
