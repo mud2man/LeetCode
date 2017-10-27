@@ -1,153 +1,50 @@
-/* Stack + Backtrack: Time: O(Valid Parentheses#), Space: O(Valid Parentheses#)
- * 1. Traverse the string with stack to record all invalid parentheses. And it can catch the minimum number of invalid paranthess
- * 2. Use backtracker to find all valid right part of string, and left part as well
- * 3. Combine right part and left part to get the whole answers
+/* Stack + DFS: Time: O(Valid Parentheses#), Space: O(Valid Parentheses#)
+ * 1. Traverse the string with stack to record if the current substring is valid
+ * 2. If not, delete the first pair[0] among the consecutive pair[0]s from the lastDeleteIndex to i
+ *  2.1, It guarantees that the string have different lastDeleteIndex are not overlap, and they can contain all combinations
+ * 3. If yes, reverse the string and call helper again
  */
 
 import java.util.*;
 
 public class Solution{
-    private class Parentheses{
-        boolean left;
-        int index;
-        Parentheses(boolean l, int i){left = l; index = i;}
-    }
+    private char[] pair = {')', '('};
+    private char[] reversePair = {'(', ')'};
     
-    private void getLeftStrings(String s, int index, StringBuilder tracker, List<String> strings, 
-                                LinkedList<Integer> dummyRightParenthesesIndexs){
-
-        if(dummyRightParenthesesIndexs.isEmpty() || index == s.length()){
-            if(dummyRightParenthesesIndexs.isEmpty()){
-                strings.add(tracker.toString() + s.substring(index));
-            }
-            return;
-        }
-        
-        int boundry = dummyRightParenthesesIndexs.pollFirst();
-        while(index <= boundry){
-            char c = s.charAt(index);
-            if(c != ')'){
-                tracker.append(c);
-                ++index;
-            }
-            else{
-                String oldTracker = tracker.toString();
-                getLeftStrings(s, index + 1, tracker, strings, dummyRightParenthesesIndexs);
-                //recover
-                tracker = new StringBuilder(oldTracker);
-                while(index <= boundry && s.charAt(index) == ')'){
-                    tracker.append(s.charAt(index));
-                    ++index;
+    private void helper(String s, int lastDeleteIndex, int startIndex, char[] pair, List<String> validParentheses){
+        int stack = 0;
+        for(int i = startIndex; i < s.length(); ++i){
+            char c = s.charAt(i);
+            if(c == pair[0]) {stack--;}
+            else if(c == pair[1]) {stack++;}
+            else{continue;}
+            
+            if(stack < 0){
+                for(int j = lastDeleteIndex; j <= i; ++j){
+                    if(s.charAt(j) == pair[0]){
+                        if(j == 0 || s.charAt(j - 1) != pair[0]){
+                            String deleteS = s.substring(0, j) + s.substring(j + 1);
+                            helper(deleteS, j, i, pair, validParentheses);
+                        }
+                    }
                 }
+                return;
             }
         }
-        dummyRightParenthesesIndexs.addFirst(boundry);
-    }
- 
-    private void getRightStrings(String s, int index, StringBuilder tracker, List<String> strings, 
-                                LinkedList<Integer> dummyLeftParenthesesIndexs){
-
-        if(dummyLeftParenthesesIndexs.isEmpty() || index < 0){
-            if(dummyLeftParenthesesIndexs.isEmpty()){
-                strings.add(s.substring(0, index + 1) + tracker.toString());
-            }
-            return;
+        StringBuilder sb = new StringBuilder(s);
+        String reverS = sb.reverse().toString();
+        if(pair[0] == ')'){
+            helper(reverS, 0, 0, reversePair, validParentheses);
         }
-        
-        int boundry = dummyLeftParenthesesIndexs.pollLast();
-        while(index >= boundry){
-            char c = s.charAt(index);
-            if(c != '('){
-                tracker.insert(0, c);
-                --index;
-            }
-            else{
-                String oldTracker = tracker.toString();
-                getRightStrings(s, index - 1, tracker, strings, dummyLeftParenthesesIndexs);
-                //recover
-                tracker = new StringBuilder(oldTracker);
-                while(index >= boundry && s.charAt(index) == '('){
-                    tracker.insert(0, s.charAt(index));
-                    --index;
-                }
-            }
+        else{
+            validParentheses.add(reverS);
         }
-        dummyLeftParenthesesIndexs.add(boundry);
     }
     
     public List<String> removeInvalidParentheses(String s) {
-        LinkedList<Parentheses> stack = new LinkedList<Parentheses>();
-        for(int i = 0; i < s.length(); ++i){
-            char c = s.charAt(i);
-            if(c == '('){
-                stack.add(new Parentheses(true, i));
-            }
-            else if(c == ')'){
-                if(!stack.isEmpty() && stack.peekLast().left == true){
-                    stack.pollLast();
-                }
-                else{
-                    stack.add(new Parentheses(false, i));
-                }
-            }
-        }
-        
-        LinkedList<Integer> dummyLeftParenthesesIndexs = new LinkedList<Integer>();
-        LinkedList<Integer> dummyRightParenthesesIndexs = new LinkedList<Integer>();
-        for(Parentheses p: stack){
-            if(p.left){
-                dummyLeftParenthesesIndexs.add(p.index);
-            }
-            else{
-                dummyRightParenthesesIndexs.add(p.index);
-            }
-        }
-        
-        String leftString = "";
-        String midString = "";
-        String rightString = "";
-        if(!dummyLeftParenthesesIndexs.isEmpty() && !dummyRightParenthesesIndexs.isEmpty()){
-            leftString = s.substring(0, dummyRightParenthesesIndexs.peekLast() + 1);
-            midString = s.substring(dummyRightParenthesesIndexs.peekLast() + 1, dummyLeftParenthesesIndexs.peekFirst());
-            rightString = s.substring(dummyLeftParenthesesIndexs.peekFirst(), s.length());
-        }
-        else if(!dummyLeftParenthesesIndexs.isEmpty() && dummyRightParenthesesIndexs.isEmpty()){
-            midString = s.substring(0, dummyLeftParenthesesIndexs.peekFirst());
-            rightString = s.substring(dummyLeftParenthesesIndexs.peekFirst(), s.length());
-        }   
-        else if(dummyLeftParenthesesIndexs.isEmpty() && !dummyRightParenthesesIndexs.isEmpty()){
-            leftString = s.substring(0, dummyRightParenthesesIndexs.peekLast() + 1);
-            midString = s.substring(dummyRightParenthesesIndexs.peekLast() + 1, s.length());
-        }
-        else{
-            List<String> answers = new ArrayList<String>();
-            answers.add(s);
-            return answers;
-        }
-
-        int offset = leftString.length() + midString.length();
-        for(int i = 0; i < dummyLeftParenthesesIndexs.size(); ++i){
-            dummyLeftParenthesesIndexs.set(i, dummyLeftParenthesesIndexs.get(i) - offset);
-        }
-        
-        List<String> leftStrings = new ArrayList<String>();
-        getLeftStrings(leftString, 0, new StringBuilder(""), leftStrings, dummyRightParenthesesIndexs);
-        List<String> rightStrings = new ArrayList<String>();
-        getRightStrings(rightString, rightString.length() - 1, new StringBuilder(""), rightStrings, dummyLeftParenthesesIndexs);
-        
-        List<String> answers = new ArrayList<String>();
-        for(String left: leftStrings){
-            for(String right: rightStrings){
-                String answer = left + midString + right;
-                answers.add(answer);
-            }
-        }
-        
-        if(answers.isEmpty()){
-            answers.add("");
-        }
-        
-        return answers;
+        List<String> validParentheses = new ArrayList<String>();
+        helper(s, 0, 0, pair, validParentheses);
+        return validParentheses;
     }
 
     public static void main(String[] args){
