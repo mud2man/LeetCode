@@ -1,60 +1,34 @@
-/* DFS: Time:O(path#) Space:O(ticket#)
- * 1. Have an adjacency list adjList for every airport
- * 2. Sort the sucessors in the ajjList
- * 3. Use DFS to traverse
- * 4. If path found, just return the path, because the sucesors are sorted. The found path is the least lexical order
+/* Eulerian Path + DFS: Time:O(nlogn) Space:O(n)
+ * 1. Have an adjacency list adjList for every airport, and store its successors into a minHeap
+ * 2. Always take the smallest sucessor first
+ * 3. If the path stucks, put it into the tail
+ * 4. Otherwise, it success
  */
 
 import java.util.*;
 
 public class Solution{
-    private boolean dfs(String start, HashMap<String, LinkedList<String>> adjList, LinkedList<String> path, int remain){
-        if(remain == 0){
-            return true;
+    private void dfs(String start, HashMap<String, PriorityQueue<String>> adjList, LinkedList<String> path){
+        while(adjList.containsKey(start) && !adjList.get(start).isEmpty()){
+            dfs(adjList.get(start).poll(), adjList, path);
         }
-
-        if(!adjList.containsKey(start)){
-            return false;
-        }
-        
-        LinkedList<String> neighbors = adjList.get(start);
-        for(int i = 0; i < neighbors.size(); ++i){
-            //push
-            String next = neighbors.pollFirst();
-            path.add(next);
-            
-            if(dfs(next, adjList, path, remain - 1)){
-                return true;
-            }
-            
-            //pop
-            neighbors.add(next);
-            path.pollLast();
-        }
-        return false;
+        path.addFirst(start);
     }
-    
+
     public List<String> findItinerary(String[][] tickets) {
-        HashMap<String, LinkedList<String>> adjList = new HashMap<String, LinkedList<String>>();
-        int ticketNum = tickets.length;
+        HashMap<String, PriorityQueue<String>> adjList = new HashMap<String, PriorityQueue<String>>();
         LinkedList<String> path = new LinkedList<String>();
-        path.add("JFK");
         
         for(String[] ticket: tickets){
             String from = ticket[0];
             String to = ticket[1];
             if(!adjList.containsKey(from)){
-                adjList.put(from, new LinkedList<String>());
+                adjList.put(from, new PriorityQueue<String>());
             }
             adjList.get(from).add(to);
         }
-        
-        for(Map.Entry<String, LinkedList<String>> entry: adjList.entrySet()){
-            LinkedList<String> neighbors = entry.getValue();
-            Collections.sort(neighbors);
-        }
-        
-        dfs("JFK", adjList, path, ticketNum);
+
+        dfs("JFK", adjList, path);
         return path;
     }
 
