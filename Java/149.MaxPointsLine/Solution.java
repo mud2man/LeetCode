@@ -1,4 +1,4 @@
-/* Hash: Time:O(n^2 * logn) Space:O(n^2)
+/* Hash: Time:O(n^2 * logn) Space:O(n^2), LeetCode has a better solution
  * 1. A line can be form by two points (x1, y1), (x2, y2) => y = (y2 - y1)/(x2 - x1)*x + (x2*y1 - x1*y2)/(x2 - x1)
  * 2. So a line can be identified by identified by tuple = {(y2 - y1), (x2 - x1), (x2*y1 - x1*y2), x1, y1} 
  * 3. Have a map countMap to store line-count pair, and elemet is Pair{sum, indexs}
