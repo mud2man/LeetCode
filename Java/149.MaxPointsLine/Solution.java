@@ -1,10 +1,9 @@
-/* Hash: Time:O(n^2 * logn) Space:O(n^2), LeetCode has a better solution
- * 1. A line can be form by two points (x1, y1), (x2, y2) => y = (y2 - y1)/(x2 - x1)*x + (x2*y1 - x1*y2)/(x2 - x1)
- * 2. So a line can be identified by identified by tuple = {(y2 - y1), (x2 - x1), (x2*y1 - x1*y2), x1, y1} 
- * 3. Have a map countMap to store line-count pair, and elemet is Pair{sum, indexs}
- * 4. indexex is a hashSet to prevent accumulate the duplicated points
- * 5. Traverse from i = 0 to i = (length - 2), and j = i +_1 to (length - 1)
- * 5. Update maxCount in every iteration, and return maxCount in the end
+/* Hash: Time:O(n^2) Space:O(n^2)
+ * 1. Fix the first point by selecting from points[0] to points[length - 1]
+ * 2. Since one point is fixed, we can determine the line by slope
+ * 3. Slope can be determined by (right.x - left.x) and (right.y - left.y)
+ * 4. In every loop, we have a 2-layer hashmap countMap, which store (right.x - left.x) on 1st layer, (right.y - left.y) on 2nd layer
+ * 5. The slope need be devide by gcd((right.x - left.x), (right.y - left.y))
  */
 
 import java.util.*;
@@ -17,115 +16,62 @@ class Point {
 }
 
 public class Solution{
-    private Long[] getLineIdentity(Point startPoint, Point endPoint){
-        long x1 = (long)startPoint.x;
-        long y1 = (long)startPoint.y;
-        long x2 = (long)endPoint.x;
-        long y2 = (long)endPoint.y;
-        Long[] identity = new Long[5];
-        identity[0] = (y2 - y1);
-        identity[1] = (x2 - x1);
-        identity[2] = (x2*y1 - x1*y2);
-        identity[3] = x1;
-        identity[4] = y1;
-        return identity;
-    }
-    
-    private class Pair{
-        int sum;
-        HashSet<Integer> indexs;
-        Pair(){sum = 0; indexs = new HashSet<Integer>();}
-    }
-    
-    private class PointComparator implements Comparator<Point>{
-        @Override
-        public int compare(Point x, Point y){
-            if(x.x != y.x){
-                return x.x - y.x;
-            }
-            else{
-                return x.y - y.y;
-            }
+    private int gcd(int x, int y){
+        int small = Math.min(x, y);
+        int big = Math.max(x, y);
+        if((big % small) == 0){
+            return small;
         }
-    }
-    
-    private class SlopComparator implements Comparator<Long[]>{
-        @Override
-        public int compare(Long[] x, Long[] y){
-            Long a = x[0]*y[1];
-            Long b = x[1]*y[0];
-            return a.compareTo(b);
-        }
-    }
-    
-    private class ShiftComparator implements Comparator<Long[]>{
-        @Override
-        public int compare(Long[] x, Long[] y){
-            if(x[1] == 0 && y[1] == 0){
-                Long c = x[3];
-                Long d = y[3];
-                return c.compareTo(d);
-            }
-            Long a = x[1]*y[2];
-            Long b = x[2]*y[1];
-            return a.compareTo(b);
+        else{
+            return gcd(small, big % small);
         }
     }
     
     public int maxPoints(Point[] points) {
-        Arrays.sort(points, new PointComparator());
-        Map<Integer, Integer> weightMap = new HashMap<Integer, Integer>();
-        List<Point> pointList = new ArrayList<Point>();
+        int globalMaxCount = 0;
         for(int i = 0; i < points.length; ++i){
-            int listIndex = pointList.size() - 1;
-            if(pointList.isEmpty()){
-                pointList.add(points[i]);
-                weightMap.put(0, 1);
-            }
-            else if(pointList.get(listIndex).x == points[i].x && pointList.get(listIndex).y == points[i].y){
-                weightMap.put(listIndex, weightMap.get(listIndex) + 1);
-            }
-            else{
-                pointList.add(points[i]);
-                weightMap.put(listIndex + 1, 1);
-            }
-        }
-        
-        if(pointList.size() < 3){
-            int count = 0;
-            for(Map.Entry<Integer, Integer> entry: weightMap.entrySet()){
-                count += entry.getValue();
-            }
-            return count;
-        }
-        
-        int maxCount = 0;
-        Map<Long[], Map<Long[], Pair>> countMap = new TreeMap<Long[], Map<Long[], Pair>>(new SlopComparator());
-        for(int i = 0; i < (pointList.size() - 1); ++i){
-            for(int j = i + 1; j < pointList.size(); ++j){
-                Long[] identity = getLineIdentity(pointList.get(i), pointList.get(j));
-                if(!countMap.containsKey(identity)){
-                    countMap.put(identity, new TreeMap<Long[], Pair>(new ShiftComparator()));
+            HashMap<Integer, HashMap<Integer,Integer>> countMap = new HashMap<Integer, HashMap<Integer,Integer>>();
+            Point source = points[i];
+            int duplicateCount = 0;
+            int localMaxCount = 1;
+            for(int j = i + 1; j < points.length; ++j){
+                Point target = points[j];
+                if(target.x == source.x && target.y == source.y){
+                    duplicateCount++;
+                    localMaxCount++;
+                    continue;
                 }
                 
-                Map<Long[], Pair> innerMap = countMap.get(identity);
-                if(!innerMap.containsKey(identity)){
-                    innerMap.put(identity, new Pair());
+                Point right = (target.x > source.x)? target: source;
+                Point left = (target.x > source.x)? source: target;
+                int denominator = right.x - left.x;
+                int numerator = right.y - left.y;
+                if(denominator == 0){
+                    numerator = 1;
+                }
+                else if(numerator == 0){
+                    denominator = 1;
+                }
+                else{
+                    int maxfactor = gcd(Math.abs(denominator), Math.abs(numerator));
+                    denominator = denominator / maxfactor;
+                    numerator = numerator / maxfactor;
                 }
                 
-                Pair pair = innerMap.get(identity);
-                if(!pair.indexs.contains(i)){
-                    pair.sum += weightMap.get(i);
-                    pair.indexs.add(i);
+                if(!countMap.containsKey(denominator)){
+                    countMap.put(denominator, new HashMap<Integer,Integer>());
                 }
-                if(!pair.indexs.contains(j)){
-                    pair.sum += weightMap.get(j);
-                    pair.indexs.add(j);
+                HashMap<Integer,Integer> innerMap = countMap.get(denominator);
+                
+                if(!innerMap.containsKey(numerator)){
+                    innerMap.put(numerator, 0);
                 }
-                maxCount = Math.max(maxCount, pair.sum);
+                innerMap.put(numerator, innerMap.get(numerator) + 1);
+                localMaxCount = Math.max(localMaxCount, duplicateCount + innerMap.get(numerator) + 1);
             }
+            globalMaxCount = Math.max(globalMaxCount, localMaxCount);
         }
-        return maxCount;
+        return globalMaxCount;
     }
 
     public static void main(String[] args){
