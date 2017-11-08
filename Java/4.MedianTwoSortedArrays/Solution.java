@@ -1,4 +1,4 @@
-/* Hash: Time:O(log(m + n)) Space:O(1)
+/* Hash: Time:O(logn*logm) Space:O(1)
  * 1. Assume we have findKth API
  * 2. If (length1 + length2) is odd, then k = ((length1 + length2 - 1) / 2), retrun findKth(nums1, nums2, k)
  * 3. Otherwise, return (findKth(nums1, nums2, k) + findKth(nums1, nums2, k + 1)) / 2
