@@ -13,42 +13,24 @@ class TreeNode {
 }
 
 public class Solution {
-    public boolean dfs(TreeNode root, TreeNode lb, TreeNode hb){
+    private boolean preOrder(TreeNode root, TreeNode lb, TreeNode hb){
         if(root == null){
             return true;
         }
         
-        boolean isValid = true;
-        TreeNode left = root.left;
-        TreeNode right = root.right;
-          
-        if(left != null && left.val >= root.val){
+        if((lb != null && root.val <= lb.val) || (hb != null && root.val >= hb.val)){
             return false;
         }
         
-        if(left != null && lb != null && left.val <= lb.val){
-            return false;
-        }
-        
-        if(dfs(left, lb, root) == false){
-            return false;
-        }
-        
-        if(right != null && right.val <= root.val){
-            return false;
-        }
+        TreeNode newHb = (hb!= null && Math.min(hb.val, root.val) == hb.val)? hb: root;
+        TreeNode newLb = (lb!= null && Math.max(lb.val, root.val) == lb.val)? lb: root;   
+        return preOrder(root.left, lb, newHb) & preOrder(root.right, newLb, hb);
+    }
 
-        if(right != null && hb != null && right.val >= hb.val){
-            return false;
-        }
-        
-        return dfs(right, root, hb);  
-    }
-    
     public boolean isValidBST(TreeNode root) {
-        return dfs(root, null, null);
+        return preOrder(root, null, null);
     }
-  
+
     public static void main(String[] args){
         TreeNode root;
         Solution sol;
