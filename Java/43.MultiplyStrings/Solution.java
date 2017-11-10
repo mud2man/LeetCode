@@ -1,109 +1,56 @@
-/* Use HashMap: O(n*m)
- * 1. Strore multiplee * n, where 0 < n < 10, into HashMap
- * 2. Use the data in HashMap to add
- * ex: 123 * 454 => HashMap=[4:492, 5:651]
- *     product = HashMap.get(4) + 10*HashMap.get(5) + 100*HashMap.get(4)
+/* Time:O(n*m), Space:O(n + m)
+ * 1. Caculate subAnswer = integerNum1[i] * integerNum2[j]
+ * 2. integerNum3[index] = integerNum3[index] + (subAnswer % 10), where index = i + j
+ * 3. integerNum3[index + 1] = integerNum3[index + 1] + (subAnswer / 10);
+ * 4. Rferer the gpaph, https://www.pinterest.com/pin/653655333388608611/ 
  */
 
 import java.util.*;
 import java.math.*;
 
 public class Solution{
-    public int[] simpleMultiply(int digit, int[] multiplee){
-        int[] product;
-        int carry;
-        int a;
-        int i;
-        
-        product = new int[multiplee.length + 1];
-        
-        carry = 0;
-        for(i = 0 ; i < multiplee.length; ++i){
-            a = multiplee[i] * digit + carry;
-            product[i] = a % 10;
-            carry = a / 10;
-        }
-        
-        if(carry > 0){
-            product[i] = carry;     
-        }
-        return product;
-    }
-    
-    public void add(int shift, int[] adder, int[] sum){
-        int carry;
-        int i;
-        int a;
-        
-        carry = 0;
-        for(i = 0; i < adder.length; ++i){
-            a = adder[i] + sum[shift + i] + carry;
-            sum[shift + i] = a % 10;
-            carry = a / 10;
-        }
-        
-        if(carry > 0){
-            sum[i + shift] = carry + sum[i + shift];     
-        }
-    }
-    
     public String multiply(String num1, String num2) {
-        int[] multiplee;
-        int[] product; 
-        int i;
-        int digit;
-        HashMap<Integer, int[]> subProducts;
-        String productStr;
-        int msbIdx;
-        String multipleeStr;
-        String multiplerStr;
+        int size = num1.length() + num2.length();
+        int[] integerNum3 = new int[size];
         
-        if(num1.equals("0") || num2.equals("0")){
-            return "0";
+        int[] integerNum1 = new int[num1.length()];
+        for(int i = num1.length() - 1; i >= 0; --i){
+            integerNum1[num1.length() - i - 1] = num1.charAt(i) - '0';
         }
         
-        productStr = new String("");
-        subProducts = new HashMap<Integer, int[]>();
-        product = new int[num1.length() + num2.length()];
-        
-        //multipler = num2, multiplee = num1
-        if(num1.length() > num2.length()){
-            multipleeStr = num1;
-            multiplerStr = num2;
-        }
-        else{
-            multipleeStr = num2;
-            multiplerStr = num1;
+        int[] integerNum2 = new int[num2.length()];
+        for(int i = num2.length() - 1; i >= 0; --i){
+            integerNum2[num2.length() - i - 1] = num2.charAt(i) - '0';
         }
         
-        multiplee = new int[multipleeStr.length()];
-        for(i = 0; i < multipleeStr.length(); ++i){
-            multiplee[i] = multipleeStr.charAt(multipleeStr.length() - i - 1) - '0';
-        }
-            
-        for(i = 0; i < multiplerStr.length(); ++i){
-            digit = multiplerStr.charAt(multiplerStr.length() - i - 1) - '0';
-            if(digit == 0){
-                continue;
+        for(int i = 0; i < integerNum1.length; ++i){
+            for(int j = 0; j < integerNum2.length; ++j){
+                int index = i + j;
+                int subAnswer = integerNum1[i] * integerNum2[j];
+                integerNum3[index] = integerNum3[index] + (subAnswer % 10);
+                integerNum3[index + 1] = integerNum3[index + 1] + (subAnswer / 10);
             }
-            if(!subProducts.containsKey(digit)){
-                subProducts.put(digit, simpleMultiply(digit, multiplee));
-            }
-            add(i, subProducts.get(digit), product);
         }
         
-        msbIdx = product.length - 1;
-        while(product[msbIdx] == 0){
-            --msbIdx;
+        int carry = 0;
+        for(int i = 0; i < integerNum3.length; ++i){
+            int digit = integerNum3[i] + carry;
+            integerNum3[i] = digit % 10;
+            carry = digit / 10;
         }
         
-        for(i = msbIdx; i >=0; --i){
-            productStr = productStr.concat(Integer.toString(product[i]));
+        StringBuilder answer = new StringBuilder("");
+        for(int i = 0; i < integerNum3.length; ++i){
+            answer.insert(0, integerNum3[i]);
         }
         
-        return productStr;
+        while(answer.length() > 1 && answer.charAt(0) == '0'){
+            answer.deleteCharAt(0);
+        }
+        
+        return answer.toString();
     }
-
+ 
 	public static void main(String[] args){
 		Solution sol;
 		String num1  = "123";
