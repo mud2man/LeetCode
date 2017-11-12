@@ -9,40 +9,34 @@
 import java.util.*;
 
 public class Solution{
-	public List<List<Integer>> subsets(int[] nums) {
-        List<List<Integer>> dp;
-        List<Integer> subset;
-        int size;
-        int i;
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> answer = new ArrayList<List<Integer>>();
+        answer.add(new ArrayList<Integer>());
         
-        dp = new ArrayList<List<Integer>>();
-        dp.add(new ArrayList<Integer>());
-        
-        for(int num : nums){
-            size = dp.size();
-            for(i = 0; i < size; ++i){
-                subset = new ArrayList<Integer>();
-                subset.addAll(dp.get(i));
-                subset.add(num);
-                dp.add(subset);
+        for(int num: nums){
+            int size = answer.size();
+            for(int i = 0; i < size; ++i){
+                List<Integer> newSet = new ArrayList<Integer>(answer.get(i));
+                newSet.add(num);
+                answer.add(newSet);
             }
         }
-        return dp;
+        return answer;
     }
  
     public static void main(String[] args){
-		Solution sol;
-		List<List<Integer>> subsets;
-		int[] nums = {1,2,3};
-		
-		sol = new Solution();
-		
+        Solution sol;
+        List<List<Integer>> subsets;
+        int[] nums = {1,2,3};
+        
+        sol = new Solution();
+        
         System.out.println("nums[]: " + Arrays.toString(nums));
-		subsets = sol.subsets(nums);
-		
-		System.out.println("subsets[][]: ");
-		for(List<Integer> subset: subsets){
-			System.out.println(subset);
-		}
-	}
+        subsets = sol.subsets(nums);
+        
+        System.out.println("subsets[][]: ");
+        for(List<Integer> subset: subsets){
+            System.out.println(subset);
+        }
+    }
 }
