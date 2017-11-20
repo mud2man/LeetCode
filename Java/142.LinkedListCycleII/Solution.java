@@ -5,8 +5,9 @@
  *   *---s---*-m-*--*
  *
  * 1. Assume fast pointer catch up slow pointer on s + m
- * 2. Therefore, s + m + nr = 2s + 2m => nr - m = s
- * 3. Hence, the pointer starting from head take s or (s + 1) steps to meet the one starting from (s + m) which takes s steps
+ * 2. When fastPtr.next.next == slowPt, s + m + nr = 2s + 2m => nr - m = s
+ * 3. Or when fastPtr.next == slowPtr, s + m - 1 + nr = 2s + 2m - 1 => nr - m = s
+ * 3. Hence, the pointer starting from head take s  steps to meet the one starting from (s + m) which takes s steps
  * 4. And the meeting point is the starting pointer of the cycle
  */
 
@@ -22,26 +23,33 @@ class ListNode {
  
 public class Solution{
     public ListNode detectCycle(ListNode head) {
-        ListNode slow, fast;
+        ListNode slowPtr = (head != null)? head.next: null;
+        ListNode fastPtr = (head != null && head.next != null)? head.next.next: null;
+        ListNode intersectPtr = null;
         
-        slow = head;
-        fast = head;
-        do{
-            slow = (slow != null)? slow.next: null;
-            fast = (fast != null && fast.next != null)? fast.next.next: null;
-        }while(fast != slow && fast != null);
+        while(fastPtr != null){
+            slowPtr = slowPtr.next;
+            if(fastPtr != null && fastPtr.next != null){
+                if(fastPtr.next == slowPtr || fastPtr.next.next == slowPtr){
+                    intersectPtr = slowPtr;
+                    break;
+                }
+            }
+            fastPtr = (fastPtr != null && fastPtr.next != null)? fastPtr.next.next: null;
+        }
         
-        if(fast == null){
+        if(intersectPtr == null){
             return null;
         }
-        
-        slow = head;
-        while(slow != fast && slow.next != fast){
-            slow = slow.next;
-            fast = fast.next;
+        else{
+            ListNode ptr1 = head;
+            ListNode ptr2 = intersectPtr;
+            while(ptr1 != ptr2){
+                ptr1 = ptr1.next;
+                ptr2 = ptr2.next;
+            }
+            return ptr1;
         }
-        
-        return fast;
     }
 
     public static void main(String[] args){
