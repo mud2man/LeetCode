@@ -12,88 +12,86 @@ import java.util.*;
 
 public class LRUCache {
     private class Priority{
-        int prev;
-        int next;
+        int nextIndex;
+        int prevIndex;
+        int value;
         int key;
-        Priority(int p, int n, int k){prev = p; next = n; key = k;}
+        Priority(int k, int v){nextIndex = 0; prevIndex = 0; key = k; value = v;}
     }
     
-    Priority[] circularPriorityQueue;
-    HashMap<Integer, Integer> keyValueMap;
-    HashMap<Integer, Integer> keyIndexMap;
+    Priority[] priorities;
     int headIndex;
-    int size;
     int availableIndex;
-    
+    HashMap<Integer, Integer> keyToIndex;
+
     public LRUCache(int capacity) {
-        size = capacity;
-        headIndex = 0;
+        priorities = new Priority[capacity];
+        headIndex = -1;
         availableIndex = 0;
-        keyValueMap = new HashMap<Integer, Integer>();
-        keyIndexMap = new HashMap<Integer, Integer>();
-        circularPriorityQueue = new Priority[size];
+        keyToIndex = new HashMap<Integer, Integer>();
     }
     
     public int get(int key) {
-        if(size == 0 || !keyValueMap.containsKey(key)){
+        if(!keyToIndex.containsKey(key)){
             return -1;
         }
-        
-        int newHeadIndex = keyIndexMap.get(key);
-        if(newHeadIndex == headIndex){
-            return keyValueMap.get(key);
-        }
-        
-        //Take the new head, and connect its neighbors
-        Priority newHead = circularPriorityQueue[newHeadIndex];
-        int prevIndex = newHead.prev;
-        int nextIndex = newHead.next;
-        circularPriorityQueue[prevIndex].next = nextIndex;
-        circularPriorityQueue[nextIndex].prev = prevIndex;
+        else{
+            int currIndex = keyToIndex.get(key);
+            if(currIndex == headIndex){
+               return priorities[currIndex].value; 
+            }
             
-        //Insert the new head, update the headIndex
-        int tailIndex = circularPriorityQueue[headIndex].prev;
-        circularPriorityQueue[newHeadIndex].next = headIndex;
-        circularPriorityQueue[newHeadIndex].prev = tailIndex;
-        circularPriorityQueue[headIndex].prev = newHeadIndex;
-        circularPriorityQueue[tailIndex].next = newHeadIndex;
-        headIndex = newHeadIndex;
-        
-        return keyValueMap.get(key);
+            int prevIndex = priorities[currIndex].prevIndex;
+            int nextIndex = priorities[currIndex].nextIndex;
+            
+            //reconnect the previous and next node
+            priorities[prevIndex].nextIndex = nextIndex;
+            priorities[nextIndex].prevIndex = prevIndex;
+            
+            //update head
+            int tailIndex = priorities[headIndex].nextIndex;
+            priorities[headIndex].nextIndex = currIndex;
+            priorities[currIndex].prevIndex = headIndex;
+            priorities[currIndex].nextIndex = tailIndex;
+            priorities[tailIndex].prevIndex = currIndex;
+            headIndex = currIndex;
+
+            return priorities[currIndex].value;
+        }
     }
     
     public void put(int key, int value) {
-        if(size == 0){
-            return;
-        }
-        
-        if(keyValueMap.containsKey(key)){
-            //update the pririty and key-value pair
+        if(keyToIndex.containsKey(key)){
+            int currIndex = keyToIndex.get(key);
+            priorities[currIndex].value = value;
             get(key);
-            keyValueMap.put(key, value);
         }
         else{
-            if(availableIndex < size){
-                //put the current head to second head, and append the new node with headIndex 
-                int oldHeadIndex = headIndex;
-                int oldTaiIdx = (availableIndex == 0)? 0: circularPriorityQueue[oldHeadIndex].prev;
-                int newHeadIndex = availableIndex++;
-                circularPriorityQueue[newHeadIndex] = new Priority(oldTaiIdx, oldHeadIndex, key);
-                circularPriorityQueue[oldHeadIndex].prev = newHeadIndex;
-                circularPriorityQueue[oldTaiIdx].next = newHeadIndex;
-                headIndex = newHeadIndex;
-                keyValueMap.put(key, value);
-                keyIndexMap.put(key, newHeadIndex);
+            //priorities full, need to delete the least recent used node
+            if(availableIndex == priorities.length){
+                int tailIndex = priorities[headIndex].nextIndex;
+                int tailKey = priorities[tailIndex].key;
+                keyToIndex.remove(tailKey);
+                keyToIndex.put(key, tailIndex);
+                priorities[tailIndex].key = key;
+                priorities[tailIndex].value = value;
+                headIndex = tailIndex;
             }
             else{
-                //shift the headIndex to the tailIndex, because we delete tail and ues it as the last-used node
-                headIndex = circularPriorityQueue[headIndex].prev;
-                int oldKey = circularPriorityQueue[headIndex].key;
-                circularPriorityQueue[headIndex].key = key;
-                keyValueMap.remove(oldKey);
-                keyValueMap.put(key, value);
-                keyIndexMap.remove(oldKey);
-                keyIndexMap.put(key, headIndex);
+                if(headIndex == -1){
+                    priorities[availableIndex] = new Priority(key, value);
+                    headIndex = availableIndex++;
+                }
+                else{
+                    int tailIndex = priorities[headIndex].nextIndex;
+                    priorities[availableIndex] = new Priority(key, value);
+                    priorities[headIndex].nextIndex = availableIndex;
+                    priorities[availableIndex].prevIndex = headIndex;
+                    priorities[availableIndex].nextIndex = tailIndex;
+                    priorities[tailIndex].prevIndex = availableIndex;
+                    headIndex = availableIndex++;
+                }
+                keyToIndex.put(key, headIndex);
             }
         }
     }
