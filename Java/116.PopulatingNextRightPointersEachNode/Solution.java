@@ -15,26 +15,20 @@ class TreeLinkNode
 
 public class Solution {
     public void connect(TreeLinkNode root) {
-        TreeLinkNode curr;
-        
         if(root == null){
             return;
-        }
+        }   
         
-        curr = root;
-        while(true){
-            if(curr.left != null){
-                curr.left.next = curr.right;
+        for(TreeLinkNode itr = root; itr != null; itr = itr.next){
+            TreeLinkNode predecesor = null; 
+            if(itr.left != null && itr.right != null){
+                itr.left.next = itr.right;
+                predecesor = itr.right;
             }
             
-            if(curr.next != null){
-                if(curr.right != null){
-                    curr.right.next = curr.next.left;
-                }
-                curr = curr.next;
-            }
-            else{
-                break;
+            TreeLinkNode succesor = (itr.next != null && itr.next.left != null)? itr.next.left: null;
+            if(predecesor != null){
+                predecesor.next = succesor;
             }
         }
         
