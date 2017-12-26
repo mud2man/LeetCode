@@ -1,4 +1,4 @@
-/* Interval tree: Time:O(logn), Space:O(n)
+/* Interval tree: Time:O(logn), Space:O(n), We can use TreeMap instead. It's simpler
  * 1. Construct the interval tree, and return true if insert successfully
  */
 
