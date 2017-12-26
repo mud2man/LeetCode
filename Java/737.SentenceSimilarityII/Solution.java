@@ -40,12 +40,7 @@ public class Solution{
             String root1 = find(pair[1], roots);
             
             //union
-            if(root0.compareTo(root1) <= 0){
-                roots.put(root1, root0);
-            }
-            else{
-                roots.put(root0, root1);
-            }
+            roots.put(root0, root1);
         }
         
         for(int i = 0; i < words1.length; ++i){
