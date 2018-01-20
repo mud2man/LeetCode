@@ -5,58 +5,44 @@
 
 import java.util.*;
 
-class FreqComparator implements Comparator<Map.Entry<Integer, Integer>>{
-    
-    @Override
-    public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2 ){
-        return o1.getValue() - o2.getValue();
-    }
-}
-
 public class Solution {
+    private class FreqComparator implements Comparator <Map.Entry<Integer, Integer>>{
+        public int compare(Map.Entry<Integer, Integer> x, Map.Entry<Integer, Integer> y){
+            return x.getValue() - y.getValue();
+        }    
+    }
+    
     public List<Integer> topKFrequent(int[] nums, int k) {
-        HashMap<Integer, Integer> countMap;
-        PriorityQueue<Map.Entry<Integer, Integer>> minHeap;
-        List<Integer> topK;
-        
-        countMap = new HashMap<Integer, Integer>();
-        minHeap = new PriorityQueue<Map.Entry<Integer, Integer>>(new FreqComparator());
-        topK = new ArrayList<Integer>();
+        HashMap<Integer, Integer> frequencyMap = new HashMap<Integer, Integer>();
+        PriorityQueue<Map.Entry<Integer, Integer>> minHeap = new PriorityQueue(new FreqComparator());
+        HashSet<Integer> heap = new HashSet<Integer>();
         
         for(int num: nums){
-            if(countMap.containsKey(num)){
-               countMap.put(num, countMap.get(num) + 1); 
-            }
-            else{
-               countMap.put(num, 1);  
-            }
+            frequencyMap.putIfAbsent(num, 0);
+            frequencyMap.put(num, frequencyMap.get(num) + 1);
         }
         
-        for(Map.Entry<Integer, Integer> entry: countMap.entrySet()){
+        for(Map.Entry<Integer, Integer> entry: frequencyMap.entrySet()){
             if(minHeap.size() < k){
-                minHeap.add(entry); 
+                minHeap.add(entry);
             }
             else{
                 if(minHeap.peek().getValue() < entry.getValue()){
                     minHeap.poll();
                     minHeap.add(entry);
-                }
+                } 
             }
         }
         
-        if(minHeap.size() < k){
-            return null;
-        }
-        
-        while(!minHeap.isEmpty()){
-            topK.add(minHeap.poll().getKey());
+        List<Integer> topK = new ArrayList<Integer>();
+        for(Map.Entry<Integer, Integer> entry: minHeap){
+            topK.add(entry.getKey());
         }
         
         return topK;
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args){
         Solution sol;
         List<Integer> topK;
         int[] nums = {1, 1, 2, 2, 3};
@@ -64,11 +50,8 @@ public class Solution {
 
         k = 2;
         sol = new Solution();
-
         System.out.println("nums: " + Arrays.toString(nums));
-
         topK = sol.topKFrequent(nums , k);
-        
         System.out.println("top" + k + ": " + topK);
-	}
+    }
 }
