@@ -1,6 +1,7 @@
-/* DFS: O(n)
- * 1. Search p first, and store its ancestors into a stack
- * 2. Traverse ancestor of p from the last, and dfsSearch q given root as the ancestor of p
+/* Recursive: Time:O(n), Space:O(h), where h is the hight of the tree
+ * 1. Search p or q, return non-null p/q if p or q hiited
+ * 2. If left and right is non-null, means the current node is LCA, return the current root
+ * 3. Else, return either p or q, which is non-null
  */
 
 import java.util.*;
@@ -14,47 +15,27 @@ class TreeNode {
 }
 
 public class Solution {
-    private boolean dfsSearch(TreeNode root, TreeNode p, LinkedList<TreeNode> stack){
-        if(root == null){
-            return false;
-        }
-    
-        if(root == p){
-            return true;
-        }
-        
-        if(stack != null){
-            stack.add(root);
-        }
-        
-        if(dfsSearch(root.left, p, stack)){
-            return true;
-        }
-        
-        if(dfsSearch(root.right, p, stack)){
-            return true;
-        }
-        
-        if(stack != null){
-            stack.pollLast();
-        }
-        
-        return false;
-    }
-    
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        LinkedList<TreeNode> stackP = new LinkedList<TreeNode>();
-        dfsSearch(root, p, stackP);
-        stackP.add(p);
-            
-        for(int i = (stackP.size() - 1); i >= 0 ; --i){
-            TreeNode ancestorP = stackP.get(i);
-            if(dfsSearch(ancestorP, q, null)){
-                return ancestorP;
-            }
+        if(root == null){
+            return null;
         }
         
-        return null;
+        if(root == p){
+            return p;
+        }
+        else if(root == q){
+            return q;
+        }
+        else{
+            TreeNode left = lowestCommonAncestor(root.left, p, q);
+            TreeNode right = lowestCommonAncestor(root.right, p, q);
+            
+            if(left != null && right != null){
+                return root;
+            }
+            
+            return (left != null)? left: right;
+        }
     }
  
     public static void main(String[] args) {
