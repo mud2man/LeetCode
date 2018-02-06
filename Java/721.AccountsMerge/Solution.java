@@ -1,72 +1,62 @@
 /* Union and Find: Time:O(nlogn), Space:O(n), where n is the number of mail
- * 1. Have "mailToId" to be a map between union id and mail
- * 2. In the loop, create a new union id, and update the root id of all mails. s.t. have a parent to connect the previous union
- * 3. Have a indexMap to map union id to the index of mergeAccount, and append the mail
+ * 1. Have "mailToUnion" to be a map between union and mail
+ * 2. Have "mailToName" to map mail into name
+ * 3. Let the first mail to be the representative, and have "roots" to store the parent
+ * 2. In second loop, get the parent from the 1st mail, update roots of rest mails. s.t. have a parent to connect the previous union
+ * 3. In the third loop, construct "mailToUnion" by "find" and "roots"
  * 4. Sort mergeAccount and append account name 
  */         
 
 import java.util.*;
 
 public class Solution {
-    private int find(int[] roots, int id){
-        if(roots[id] == id){
-            return id;
-        }    
-        else{
-            //compression
-            roots[id] = roots[roots[id]];
-            return find(roots, roots[roots[id]]);
-        }
+    private String find(HashMap<String, String> roots, String id){
+        return (roots.get(id).equals(id))? id: find(roots, roots.get(id));
     }
     
     public List<List<String>> accountsMerge(List<List<String>> accounts) {
         HashMap<String, String> mailToName = new HashMap<String, String>();
-        HashMap<String, Integer> mailToId = new HashMap<String, Integer>();
-        int[] roots = new int[10000];
+        HashMap<String, List<String>> mailToUnion = new HashMap<String, List<String>>();
+        HashMap<String, String> roots = new HashMap<String, String>();
         
-        for(int i = 0; i < roots.length; ++i){
-            roots[i] = i;
-        }
-        
-        int id = -1;
         for(List<String> account: accounts){
-            id++;
             Iterator<String> itr = account.iterator();
             String name = itr.next();
             while(itr.hasNext()){
                 String mail = itr.next();
-                mailToId.putIfAbsent(mail, id);
-                //find and union
-                roots[find(roots, mailToId.get(mail))] = id;
+                roots.put(mail, mail);
                 mailToName.put(mail, name);
             }
         }
-        
-        int index = 0;
-        HashMap<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
-        ArrayList<List<String>> mergeAccount = new ArrayList<List<String>>();
-        for(Map.Entry<String, Integer> entry: mailToId.entrySet()){
-            String mail = entry.getKey();
-            id = entry.getValue();
-            int root = find(roots, id);
-            
-            if(indexMap.containsKey(root)){
-                mergeAccount.get(indexMap.get(root)).add(mail);
-            }
-            else{
-                indexMap.put(root, index++);
-                mergeAccount.add(new ArrayList<String>());
-                mergeAccount.get(index - 1).add(mail);
+
+        for(List<String> account: accounts){
+            Iterator<String> itr = account.iterator();
+            itr.next();
+            String parent = find(roots, itr.next());
+            while(itr.hasNext()){
+                //find and union
+                roots.put(find(roots, itr.next()), parent);
             }
         }
         
-        for(List<String> account: mergeAccount){
-            Collections.sort(account);
-            account.add(0, mailToName.get(account.get(0)));
+        for(Map.Entry<String, String> entry: roots.entrySet()){
+            String root = find(roots, entry.getValue());
+            String mail = entry.getKey();
+            mailToUnion.putIfAbsent(root, new ArrayList<String>());
+            mailToUnion.get(root).add(mail);
+        }
+        
+        ArrayList<List<String>> mergeAccount = new ArrayList<List<String>>();
+        for(Map.Entry<String, List<String>> entry: mailToUnion.entrySet()){
+            String mail = entry.getKey();
+            List<String> list = entry.getValue();
+            Collections.sort(list);
+            list.add(0, mailToName.get(mail));
+            mergeAccount.add(list);
         }
         
         return mergeAccount;
-    }
+    } 
 
     public static void main(String[] args){
         Solution sol;
