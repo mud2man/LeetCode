@@ -1,4 +1,4 @@
-/* Dynamic programming: O(n)
+/* Dynamic programming: Time:O(n), Space:O(n)
  * 1. Add '9' at the beginning of string s which doen't impact the answer, and set dp[0] = 1
  * 2. Define dp[i] being the number of decode way from 0-th character to i-th character
  * 3. dp[i] = dp[i - 1] * getOneDigitCount() + dp[i - 2] * getTwoDigitCount()
