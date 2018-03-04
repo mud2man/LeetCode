@@ -1,4 +1,4 @@
-/* BFS: Time:O(n), Space:O(n)
+/* BFS + topological sort: Time:O(n), Space:O(n)
  * 1. Let tree T' be the tree after all the leaves were cutted off from the original tree T, then MHT height = MHT' height - 1
  * 2. Otherwise, the root of MHT cannot be true
  * 3. Use BFS to shrink the graph with the initial queue contains all leaves
