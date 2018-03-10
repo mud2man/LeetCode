@@ -1,4 +1,4 @@
-/* Math: Time:O(n^2), Space:O(1), LeetCode has O(1) solution
+/* Math: Time:O(n^2), Space:O(n), LeetCode has O(n) solution
  * 1. There are 6 cases which need to operate replacement
  * 2. case1: startArray[i] = 'X', endArray[i] = 'L' => find the first index of 'L' in start with ignoring 'X', and swap
  * 2. case2: startArray[i] = 'R', endArray[i] = 'L' => nothing can be done
