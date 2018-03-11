@@ -11,9 +11,6 @@ public class Solution{
         if(index == 0){
             return (flip)? 1: 0;
         }
-        else if(index == 1){
-            return (flip)? 0: 1;
-        }
         else{
             if(index % 2 == 1){
                 return helper(index / 2, !flip);
