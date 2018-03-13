@@ -1,5 +1,9 @@
 /* Use binary search 
- * 1. if comes with mid - 1, must check mid > 0
+ * 1. There must one local maximum in the array
+ * 2. Keep searching if lb < hb
+ * 3. Shift hb to mid if midValue > rightValue
+ * 4. Otherwise, shift lb to mid + 1
+ * 5. Return lb, which is the answer
  */
 import java.util.*;
 
@@ -9,22 +13,17 @@ public class Solution {
         int hb = nums.length - 1;
         while(lb < hb){
             int mid = (lb + hb) / 2;
-            if(mid == 0 && nums[mid] > nums[mid + 1]){
-                return mid;
-            }
-            else if(mid > 0 && nums[mid] > nums[mid - 1] && nums[mid] > nums[mid + 1]){
-                return mid;
+            int midValue = nums[mid];
+            int rightValue = ((mid + 1) < nums.length)? nums[mid + 1]: Integer.MIN_VALUE;
+            
+            if(midValue > rightValue){
+                hb = mid;
             }
             else{
-                if((nums[mid] <= nums[lb] && mid != lb) || ( mid > 0 && nums[mid - 1] > nums[mid])){
-                    hb = mid - 1;
-                }
-                else{
-                    lb = mid + 1;
-                }
+                lb = mid + 1;
             }
         }
-        return hb; 
+        return lb;
     }
     
     public static void main(String[] args){
