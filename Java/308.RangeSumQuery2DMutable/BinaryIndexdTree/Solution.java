@@ -1,4 +1,4 @@
-/* Time:O(logn*logm), Space:O(n*m).
+/* Binary Indexd Tree: Time:O(logn*logm), Space:O(n*m).
  * 1. When update, call getNext in x direction and y direction to update tree[][]
  * 2. When sum, call getParent in x direction and y direction to accumulate the answer
  * 3. In region sum, answer = sum(row2, col2) - sum(row2, col1 - 1) - sum(row1 - 1, col2) + sum(row1 - 1, col1 - 1)
