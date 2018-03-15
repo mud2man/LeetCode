@@ -1,4 +1,5 @@
-/* Maximum heap + Greedy: Time:O(nlogn), Space:O(n) 
+/* Maximum heap + Greedy: Time:O(nlogn), Space:O(n). 
+ * LeetCode has O(mlogn) binary search solution, where m = stations[n - 1] - stations[0]
  * 1. If there is a new station we can add, we must select the region which has the maximum distance.
  * 2. Because if we don't, we can decrease the maximum distance
  * 3. First, we assign the stations with the propotion (nodes[i].range * K / totalRange))
