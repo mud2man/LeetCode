@@ -1,15 +1,27 @@
 /* Bit manupulation: O(1)
- * 1. Check if log4(n) is an integer or not
+ * 1. Check if num <= 0
+ * 2. Check if num is power of 2
+ * 3. Check if any 1 in odd position
  */
 
 import java.util.*;
 
 public class Solution{
     public boolean isPowerOfFour(int num) {
-        int mask = 0xAAAAAAAA;
-        if(num <= 0 || (num & mask) != 0 || (num & (num - 1)) != 0){
+        if(num <= 0){
             return false;
         }
+        
+        //check if power of 2
+        if((num & (num - 1)) != 0){
+            return false;
+        }
+        
+        //chechk if any 1 in odd position
+        if((num & 0xAAAAAAAA) != 0){
+            return false;
+        } 
+        
         return true;
     }
 
