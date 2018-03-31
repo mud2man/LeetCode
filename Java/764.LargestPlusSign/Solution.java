@@ -1,86 +1,47 @@
-/* Dynamaic programming: Time:O(n^2), Space:O(n^2)
- * 1. Create grid[][], grid[y][x] = true if it's a minus
- * 2. Compute orders[y][x][0] from left, where orders[y][x][0] is the longest order to left
- * 3. Compute orders[y][x][1] from left, where orders[y][x][1] is the longest order to right
- * 4. Compute orders[y][x][2] from left, where orders[y][x][2] is the longest order to top
- * 5. Compute orders[y][x][3] from left, where orders[y][x][3] is the longest order to bottom
- * 6. Traverse orders[y][x][i], and get the order with center grid[y][x], and update maxOrder at the same time 
- *
+/* DFS: Time:O(n*m), Space:O(n*m)
+ * 1. We use a string to identify the island, and the string is generate by DFS
+ * 2. Because the order of DFS's next step is fixed (right, down, left, up), string will be the same if the island's shape is same
+ * 3. Reset grid[y][x] to 0 if we visited
  */
 
 import java.util.*;
 
 public class Solution{
-    public int orderOfLargestPlusSign(int N, int[][] mines) {
-        boolean[][] grid = new boolean[N][N];
-        
-        for(int[] minus: mines){
-            grid[minus[0]][minus[1]] = true;
+        private void dfs(int[][] grid, int y, int x, StringBuilder island, int base){
+        if(y == grid.length || x < 0 || x == grid[0].length || y < 0 || grid[y][x] == 0){
+            return;
         }
-        
-        int[][][] orders = new int[N][N][4]; //left, right, up, down
-        
-        //from left
-        for(int y = 0; y < N; ++y){
-            int closestX = -1;
-            for(int x = 0; x < N; ++x){
-                closestX = (grid[y][x] == true)? x: closestX;
-                orders[y][x][0] = (grid[y][x] == true)? 0: (x - closestX);
-            }
-        }
-        
-        //from right
-        for(int y = 0; y < N; ++y){
-            int closestX = N;
-            for(int x = N - 1; x >= 0; --x){
-                closestX = (grid[y][x] == true)? x: closestX;
-                orders[y][x][1] = (grid[y][x] == true)? 0: (closestX - x);
-            }
-        }
-        
-        //from top
-        for(int x = 0; x < N; ++x){
-            int closestY = -1;
-            for(int y = 0; y < N; ++y){
-                closestY = (grid[y][x] == true)? y: closestY;
-                orders[y][x][2] = (grid[y][x] == true)? 0: (y - closestY);
-            }
-        }
-        
-        //from bottom
-        for(int x = 0; x < N; ++x){
-            int closestY = N;
-            for(int y = N - 1; y >= 0; --y){
-                closestY = (grid[y][x] == true)? y: closestY;
-                orders[y][x][3] = (grid[y][x] == true)? 0: (closestY - y);
-            }
-        }
-        
-        int maxOrder = 0;
-        for(int y = 0; y < N; ++y){
-            for(int x = 0; x < N; ++x){
-                int minOrder = N;
-                for(int i = 0; i < 4; ++i){
-                    minOrder = Math.min(minOrder, orders[y][x][i]);
+        grid[y][x] = 0;
+        island.append(Integer.toString(base) + ",");
+        dfs(grid, y, x + 1, island, base + 1);
+        dfs(grid, y + 1, x, island, base + grid[0].length);
+        dfs(grid, y, x - 1, island, base - 1);
+        dfs(grid, y - 1, x, island, base - grid[0].length);
+    }
+    
+    public int numDistinctIslands(int[][] grid) {
+        HashSet<String> islands = new HashSet<String>();
+        for(int y = 0; y < grid.length; ++y){
+            for(int x = 0; x < grid[0].length; ++x){
+                if(grid[y][x] == 1){
+                    StringBuilder island = new StringBuilder("");
+                    dfs(grid, y, x, island, 0);
+                    islands.add(island.toString());
                 }
-                maxOrder = Math.max(maxOrder, minOrder);
             }
         }
-        
-        return maxOrder;
+        return islands.size();
     }
 
     public static void main(String[] args){
         Solution sol;
-        int[][] mines = {{4, 2}};
-        int N = 5;
+        int[][] grid = {{1, 1, 0, 0, 0},{1, 1, 0, 0, 0},{0, 0, 0, 1, 1},{0, 0, 0, 1, 1}};
         
         sol = new Solution();
-        System.out.println("mines: ");
-        for(int[] minus: mines){
-            System.out.println(Arrays.toString(minus));
+        System.out.println("grid: ");
+        for(int[] row: grid){
+            System.out.println(Arrays.toString(row));
         }
-        System.out.println("N: " + N);
-        System.out.println("maximum order: " + sol.orderOfLargestPlusSign(N, mines));
+        System.out.println("distinct island number: " + sol.numDistinctIslands(grid));
     }
 }
