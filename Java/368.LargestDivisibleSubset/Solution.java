@@ -1,11 +1,11 @@
 /* Dynamic programming: Time:O(2^n), Space:O(n)
  * 1. Sort nums, 
- * 2. dp[i][0] = the index of the  dividend if current number, 
- * 3. dp[i][1] = the number of divisible subset including thee current number
+ * 2. dp[i][1] = the index of the  dividend if current number, 
+ * 3. dp[i][0] = the number of divisible subset including thee current number
  * 4. Retrieve the subset according dp
  * 
  * ex: nums = {1, 2, 3}
- * dp = {{1, 1}, {0, 2}, {0, 2}}
+ * dp = {{1, 1}, {2, 0}, {2, 0}}
  */
 
 import java.util.*;
@@ -18,35 +18,31 @@ public class Solution{
         
         Arrays.sort(nums);
         int[][] dp = new int[nums.length][2];
-        int[] tracker = new int[2];
-        tracker[0] = 0;
-        tracker[1] = 1;
-        
-        dp[0][0] = 0;
-        dp[0][1] = 1;
-        for(int i = 1; i < nums.length; ++i){
-            dp[i][0] = i;
-            dp[i][1] = 1;
+        int[] max = {0, 0};
+        for(int i = 0; i < nums.length; ++i){
+            dp[i][0] = 1;
+            dp[i][1] = i;
             for(int j = i - 1; j >= 0; --j){
-                if(nums[i] % nums[j] == 0 && dp[i][1] < (dp[j][1] + 1)){
-                    dp[i][0] = j;
-                    dp[i][1] = dp[j][1] + 1;
+                if(nums[i] % nums[j] == 0){
+                    if(dp[i][0] < (dp[j][0] + 1)){
+                        dp[i][0] = dp[j][0] + 1;
+                        dp[i][1] = j;
+                    }
                 }
             }
             
-            if(tracker[1] < dp[i][1]){
-                tracker[0] = i;
-                tracker[1] = dp[i][1];
+            if(max[0] < dp[i][0]){
+                max[0] = dp[i][0];
+                max[1] = i;
             }
         }
         
         List<Integer> subset = new LinkedList<Integer>();
-        int index = tracker[0];
-        int previousNum = nums[index] - 1;
-        while(previousNum != nums[index]){
-            subset.add(0, nums[index]);
-            previousNum = nums[index];
-            index = dp[index][0];
+        int lastIndex = max[1];
+        subset.add(0, nums[lastIndex]);
+        while(lastIndex != dp[lastIndex][1]){
+            lastIndex = dp[lastIndex][1];
+            subset.add(0 ,nums[lastIndex]);
         }
         
         return subset;
