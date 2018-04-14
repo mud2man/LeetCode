@@ -1,4 +1,4 @@
-/* Dynamic programming: Time:O(2^n), Space:O(n)
+/* Dynamic programming: Time:O(n^2), Space:O(n)
  * 1. Sort nums, 
  * 2. dp[i][1] = the index of the  dividend if current number, 
  * 3. dp[i][0] = the number of divisible subset including thee current number
