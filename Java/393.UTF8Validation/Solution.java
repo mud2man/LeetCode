@@ -5,7 +5,6 @@ import java.util.*;
 
 public class Solution {
     private boolean validate(int[] data, int start, int type){
-        int[] mask = {0x7F, 0x1F, 0x0F, 0x07};
         start++;
         for(int i = 0; i < type; ++i){
             if(start == data.length || (data[start++] & 0xC0) != 0x80){
