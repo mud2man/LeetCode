@@ -5,7 +5,7 @@
 import java.util.*;
 
 public class Solution {
-    private int getDepth(String fileAndFolder){
+       private int getDepth(String fileAndFolder){
         int depth = 0;
         int ptr = 0;
         while(fileAndFolder.charAt(ptr) == '\t'){
@@ -19,7 +19,7 @@ public class Solution {
         int dotPtr =  fileAndFolder.indexOf('.');
         return (dotPtr == -1);
     }
-              
+ 
     public int lengthLongestPath(String input) {
         String[] filesAndFolders = input.split("\n");
         int currentlength = 0;
@@ -35,19 +35,14 @@ public class Solution {
             
             int fileLength = fileAndFolder.length() - depth;
             currentlength = currentlength + fileLength;
-            if(isFolder(fileAndFolder)){
-                currentlength++;
-                stack.add(fileLength + 1);
-            }
-            else{
-                maxLength = Math.max(maxLength, currentlength);
-                stack.add(fileLength);
-            }
+            maxLength = isFolder(fileAndFolder)? maxLength: Math.max(maxLength, currentlength);
+            currentlength++;
+            stack.add(fileLength + 1);
         }
             
         return maxLength;
     }
-
+ 
     public static void main(String[] args){
         Solution sol;
         String input = "dir\n\tsubdir1\n\t\tfile1.ext\n\t\tsubsubdir1\n\tsubdir2\n\t\tsubsubdir2\n\t\t\tfile2.ext" ;
