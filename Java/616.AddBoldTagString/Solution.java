@@ -1,67 +1,47 @@
 /* Hash: Time:O(n*m*k), Space:O(n), where n = s length, m = word length, k = word number. Can use boolean array for a shorter answer
- * 1. Find all intervals and have a treemap to store the intervals
- * 2. Merge overlapped intervals and generate the final interval list "intervalsList"
- * 3. Generate the final bold tage string withe the "intervalsList"
+ * 1. Use boolean array to store if bold for every character
+ * 2. Reconstruct the string by the boolean array
  */
 
 import java.util.*;
 
 public class Solution{
     public String addBoldTag(String s, String[] dict) {
-        TreeMap<Integer, Integer> intervalsMap = new TreeMap<Integer, Integer>();
+        boolean[] boldArray = new boolean[s.length()];
         
-        //find all intervals
-        for(String word: dict){
-            int fromIndex = 0;
-            int startIndex = s.indexOf(word, fromIndex);
-            while(startIndex != -1){
-                int endIndex = -1;
-                if(intervalsMap.containsKey(startIndex)){
-                    endIndex = intervalsMap.get(startIndex);
-                }
-                intervalsMap.put(startIndex, Math.max(endIndex, startIndex + word.length() - 1));
-                fromIndex = startIndex + 1;
-                startIndex = s.indexOf(word, fromIndex);
+        for(int i = 0; i < s.length(); ++i){
+            int maxLength = 0;
+            for(String word: dict){
+                maxLength = s.startsWith(word, i)? Math.max(maxLength, word.length()): maxLength;
+            }
+            for(int j = 0; j < maxLength; ++j){
+                boldArray[i + j] = true;
             }
         }
         
-        Map.Entry<Integer, Integer> firstEntry = intervalsMap.firstEntry();
-        if(firstEntry == null){
-            return s;
+        System.out.println("boldArray:" + Arrays.toString(boldArray));
+        StringBuilder taggedString = new StringBuilder("");
+        if(boldArray[0] == true){
+            taggedString.append("<b>");
         }
+        taggedString.append(s.charAt(0));
         
-        //merge overlapped intervals
-        List<int[]> intervalsList = new ArrayList<int[]>();
-        int[] interval = new int[]{firstEntry.getKey(), firstEntry.getValue()};
-        for(Map.Entry<Integer, Integer> entry: intervalsMap.entrySet()){
-            int start = entry.getKey();
-            int end = entry.getValue();
-            if(interval[1] >= (start - 1)){
-                interval[1] = Math.max(interval[1], end);
+        for(int i = 1; i < boldArray.length; ++i){
+            char c = s.charAt(i);
+            if(boldArray[i - 1] == false && boldArray[i] == true){
+                taggedString.append("<b>");
             }
-            else{
-                intervalsList.add(interval);
-                interval = new int[]{start, end};
+            else if(boldArray[i - 1] == true && boldArray[i] == false){
+               taggedString.append("</b>"); 
             }
-        }
-        intervalsList.add(interval);
-        
-        //generare the final solution
-        String boldTag = "";
-        int start = 0;
-        for(int[] i: intervalsList){
-            boldTag += s.substring(start, i[0]);
-            boldTag += "<b>";
-            boldTag += s.substring(i[0], i[1] + 1);
-            boldTag += "</b>";
-            start = i[1] + 1;
+            taggedString.append(c);
         }
         
-        if(start < s.length()){
-            boldTag += s.substring(start, s.length());
+        if(boldArray[boldArray.length - 1] == true){
+            taggedString.append("</b>");
         }
         
-        return boldTag;
+        return taggedString.toString();
     }
 
     public static void main(String[] args){
