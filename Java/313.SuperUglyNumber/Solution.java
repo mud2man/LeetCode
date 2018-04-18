@@ -1,4 +1,4 @@
-/* Dynamic Programing: O(n*m)
+/* Dynamic Programing: O(n*m). Can be reduced to O(n*logm) by using minHeap
  * 1. Declare the pointer in the ugly number list, every pointer refer to the associated prime
  * 2. dp(i) = min(dp(ptr0)*p0, dp(ptr1)*p1, ...)
  */
