@@ -1,68 +1,60 @@
-/* Backtrack: Time:O(n), Space:O(1). Where n is the number of possible permutations
- * 1. In backtrack, check if both x and y have leading zero. Return if yes
- * 2. If index reach to the end, check if both x and y is valid number, Add it to coordinates if yes
- * 3. Shift index and call backtrack recursively
+/* Time:O(n), Space:O(1). Where n is the number of possible permutations
+ * 1. Split S to x and y, and find their correesponding combinations
+ * 2. Multiply two combinations, and return the result
  */         
 
 import java.util.*;
 
 public class Solution {
-    private boolean noLeadingZero(String x, boolean hasPoint){
-        if(hasPoint){
-            if(x.length() >= 3 && x.charAt(0) == '0' && x.charAt(1) == '0'){
-                return false;
-            }
+    private List<String> geCombinations(String x){
+        List<String> combinations = new ArrayList<String>();
+        if(x.charAt(0) == '0' && x.length() > 1 && x.charAt(x.length() - 1) != '0'){
+            combinations.add(x.substring(0, 1) + "." + x.substring(1));
         }
         else{
-            if(x.length() > 1 && x.charAt(0) == '0'){
-                return false;
+            if(x.charAt(0) != '0' || x.length() == 1){
+                combinations.add(x);
+            }
+            for(int i = 1; i < x.length() && x.charAt(x.length() - 1) != '0'; ++i){
+                combinations.add(x.substring(0, i) + "." + x.substring(i));
             }
         }
-        return true;
+        return combinations;
     }
     
-    private boolean isNumber(String x, boolean hasPoint){
-        if(hasPoint){
-            if(x.charAt(x.length() - 1) == '0' || x.charAt(x.length() - 1) == '.'){
-                return false;
+    private List<String> getCombinations(String x, String y){
+        List<String> xCombinations = geCombinations(x);
+        List<String> yCombinations = geCombinations(y);    
+        List<String> xyCombinations = new ArrayList<String>();
+        for(String xCombination: xCombinations){
+            for(String yCombination: yCombinations){
+                xyCombinations.add("(" + xCombination + ", " + yCombination + ")");
             }
         }
-        else{
-            if(x.length() == 0){
-                return false;
-            }
-        }
-        return true;
+        return xyCombinations;
     }
     
-    private void backtrack(String S, int index, String x, boolean xPoint, String y, boolean yPoint, List<String> coordinates){
-        if(!noLeadingZero(x, xPoint) || !noLeadingZero(y, yPoint)){
-            return;
-        }
-        
-        if(index == (S.length() - 1)){
-            if(isNumber(x, xPoint) && isNumber(y, yPoint)){
-                coordinates.add("(" + x + ", " + y + ")");
+    private boolean isValid(String s){
+        int zeroCount = 0;
+        for(int i = 0; i < s.length(); ++i){
+            if(s.charAt(i) != '0'){
+                return true;
             }
-            return;
+            zeroCount++;
         }
-        
-        char c = S.charAt(index);
-        if(y.length() == 0){
-            backtrack(S, index + 1, x + c, xPoint, y, yPoint, coordinates);
-            if(xPoint == false && x.length() > 0){
-               backtrack(S, index + 1, x + "." + c, true, y, yPoint, coordinates); 
-            }
-        }
-        backtrack(S, index + 1, x, xPoint, y + c, yPoint, coordinates);
-        if(yPoint == false && y.length() > 0){
-            backtrack(S, index + 1, x, xPoint, y + "." + c, true, coordinates);
-        }
+        return zeroCount < 2;
     }
     
     public List<String> ambiguousCoordinates(String S) {
+        S = S.substring(1, S.length() - 1);
         List<String> coordinates = new ArrayList<String>();
-        backtrack(S, 1, "", false, "", false, coordinates);
+        for(int i = 0; i < (S.length() - 1); ++i){
+            String x = S.substring(0, i + 1);
+            String y = S.substring(i + 1);
+            if(isValid(x) && isValid(y)){
+                coordinates.addAll(getCombinations(x, y));
+            }
+        }
         return coordinates;
     }
 
