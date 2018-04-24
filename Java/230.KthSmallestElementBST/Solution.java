@@ -15,21 +15,28 @@ class TreeNode
 }
 
 public class Solution {
-    private void inorderTraverse(List<Integer> sequence, TreeNode root){
+    private int inorderTraverse(TreeNode root, int[] count, int k){
         if(root == null){
-            return;
+            return 0;
         }
-        inorderTraverse(sequence, root.left);
-        sequence.add(root.val);
-        inorderTraverse(sequence, root.right);
+        
+        int left = inorderTraverse(root.left, count, k);
+        if(count[0] == k){
+            return left;
+        }
+        
+        if(k == ++count[0]){
+            return root.val;
+        }
+        
+        return inorderTraverse(root.right, count, k);
     }
     
     public int kthSmallest(TreeNode root, int k) {
-        List<Integer> sequence = new ArrayList<Integer>();
-        inorderTraverse(sequence, root);
-        return sequence.get(k - 1);   
+        int[] count = {0};
+        return inorderTraverse(root, count, k); 
     }
- 
+
     public static void main(String[] args){
         TreeNode root;
         Solution sol;
