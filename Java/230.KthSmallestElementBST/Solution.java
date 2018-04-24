@@ -1,6 +1,6 @@
 /* Inorder traverse: O(n)
- * 1. Traverse all nodes with inorder, and store them into a list "sequence"
- * 2. Return sequence.get(k - 1)
+ * 1. Traverse all nodes with inorder, and keep a global count
+ * 2. If count reach k, return
  */
 
 import java.util.*; // Stack
