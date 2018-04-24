@@ -49,11 +49,7 @@ public class Solution{
         while(lb <= ub){
             int mid = (int)(((long)lb + (long)ub) / 2);
             int count = getLessEquelCount(matrix, mid);
-            if(count == k){
-                lb = mid;
-                break;
-            }
-            else if(count > k){
+            if(count >= k){
                 ub = mid - 1;
             }
             else{
