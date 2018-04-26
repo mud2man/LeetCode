@@ -1,68 +1,57 @@
 /* O(m*n)
- * 1. Have a boolean variable directionUp to determine going up or going down
- * 2. Do traverse as long as (y + x) <= (depth + width - 2)
- * 3. In the end of going up, turn left if not reaching the top-right corner, otherwise turn down
- * 4. In the end of going down, turn down if not reaching the bottom-left corner, otherwise turn right
+ * 1. Traverse until index reach to the end 
+ * 2. Travserse direction depends on the direction
  */          
 
 import java.util.*; // Stack
 
 public class Solution {
-    private boolean isValid(int y, int x, int depth, int width){
-        if(y < 0 || y >= depth){
-            return false;
+    private void traverse(int[][] matrix, int[] offset, int[] ptr, int[] order, int[] index){
+        while(ptr[0] >= 0 && ptr[0] < matrix.length && ptr[1] >= 0 && ptr[1] < matrix[0].length){
+            order[index[0]++] = matrix[ptr[0]][ptr[1]];
+            ptr[0] = ptr[0] + offset[0];
+            ptr[1] = ptr[1] + offset[1];
         }
         
-        if(x < 0 || x >= width){
-            return false;
+        if(ptr[0] == -1 && ptr[1] == matrix[0].length){
+            ptr[0] = 1;
+            ptr[1] = matrix[0].length - 1;
         }
-        
-        return true;
+        else if(ptr[0] == matrix.length && ptr[1] == -1){
+            ptr[0] = matrix.length - 1;
+            ptr[1] = 1;
+        }
+        else if(ptr[0] < 0){
+            ptr[0]++;
+        }
+        else if(ptr[0] == matrix.length){
+            ptr[0]--;
+            ptr[1] += 2;
+        }
+        else if(ptr[1] < 0){
+            ptr[1]++;
+        }
+        else{
+            ptr[1]--;
+            ptr[0] += 2;
+        }
     }
     
     public int[] findDiagonalOrder(int[][] matrix) {
         int depth = matrix.length;
-        int width = (depth > 0)? matrix[0].length: 0;
-        int[] sequence = new int[depth * width];
-        int y = 0;
-        int x = 0;
+        int width = (depth > 0) ? matrix[0].length: 0;
+        int[][] offsets = {{-1, 1}, {1, -1}};
+        int direction = 0;
+        int[] ptr ={0, 0};
+        int[] order = new int[depth * width];
+        int[] index = {0};
         
-        boolean directionUp = true;
-        int idx = 0;
-        while((y + x) <= (depth + width - 2)){
-            if(directionUp == true){
-                while(isValid(y, x, depth, width)){
-                    sequence[idx++] = matrix[y][x];
-                    y--;
-                    x++;
-                }
-                ++y;
-                --x;
-                if(y == 0 && x < (width - 1)){
-                    ++x;
-                }
-                else{
-                    ++y;
-                }
-            }
-            else{
-                while(isValid(y, x, depth, width)){
-                    sequence[idx++] = matrix[y][x];
-                    y++;
-                    x--;
-                }
-                --y;
-                ++x;
-                if(x == 0 && y < (depth - 1)){
-                    ++y;
-                }
-                else{
-                    ++x;
-                }
-            }
-            directionUp = !directionUp;
+        while(index[0] < depth * width){
+            traverse(matrix, offsets[direction % 2], ptr, order, index);
+            direction++;
         }
-        return sequence;
+        
+        return order;
     }
  
     public static void main(String[] args){
