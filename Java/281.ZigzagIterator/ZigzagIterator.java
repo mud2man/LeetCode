@@ -6,45 +6,51 @@
 import java.util.*; // Stack
 
 public class ZigzagIterator {
-    private class ListIterator{
-        List<Integer> list;
-        int length;
-        int currIdx;
-        ListIterator(List<Integer> l, int len, int c){list = l; length = len; currIdx = c;}
-    }
-    private List<ListIterator> listIterators;
-    private Iterator<ListIterator> listIterator;
+    private List<Iterator<Integer>> iterators;
+    private Iterator<Iterator<Integer>> globalIterator;
+    private Iterator<Integer> localIterator;
     
     public ZigzagIterator(List<Integer> v1, List<Integer> v2) {
-        listIterators = new ArrayList<ListIterator>();
-        if(!v1.isEmpty()){
-            listIterators.add(new ListIterator(v1, v1.size(), 0));
-        }
-        
-        if(!v2.isEmpty()){
-            listIterators.add(new ListIterator(v2, v2.size(), 0));
-        }
-        
-        listIterator = listIterators.iterator();
+        iterators = new ArrayList<Iterator<Integer>>();
+        localIterator = null;
+        iterators.add(v1.iterator());
+        iterators.add(v2.iterator());
+        globalIterator = iterators.iterator();
     }
 
     public int next() {
-        if(!listIterator.hasNext()){
-            listIterator = listIterators.iterator();
-        }
-        
-        ListIterator itr = listIterator.next();
-        int nextVal = itr.list.get(itr.currIdx++);
-        if(itr.currIdx == itr.length){
-            listIterator.remove();
-        }
-        return nextVal;
+        return localIterator.next();
     }
 
     public boolean hasNext() {
-        return !(listIterators.isEmpty());
+        while(globalIterator.hasNext()){
+            Iterator<Integer> iterator = globalIterator.next();
+            if(iterator.hasNext()){
+                localIterator = iterator;
+                return true;
+            }
+            else{
+                globalIterator.remove();
+            }
+        }
+        
+        //roll back
+        globalIterator = iterators.iterator();
+        
+        while(globalIterator.hasNext()){
+            Iterator<Integer> iterator = globalIterator.next();
+            if(iterator.hasNext()){
+                localIterator = iterator;
+                return true;
+            }
+            else{
+                globalIterator.remove();
+            }
+        }
+        
+        return false;
     }
-
+ 
     public static void main(String[] args){
         ZigzagIterator sol;
         List<Integer> v1;
