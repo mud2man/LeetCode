@@ -1,8 +1,8 @@
 /* Greedy: O(n)
  * 1. Keep a curr value
- * 2. If the current char is 'I', put curr into answer array and accumulate curr
- * 3. If the current char is 'D', count how many consecutive 'D' and store it into 'count'
- * 4. Put decending number ending as 'curr' into answer array with the size 'count', and curr = curr + count
+ * 2. Shift iterator until hit 'I', and put [curr + count, curr + count - 1, ...], where count is number of consecutive 'D's
+ * 3. Because we can use the smallest set of first count elements to make 'DDDD..I', and it guarantee the next element must larger 
+ *    than last element of smallest set. Therefore, there is no smaller combination regarding the first count combination
  *
  * EX: s = 'IIDDDI'
  * time[0]: curr = 1, index = 0, min = [1, 0, 0, 0, 0, 0, 0] 
@@ -16,7 +16,7 @@ import java.util.*; // Stack
 
 public class Solution {
     public int[] findPermutation(String s) {
-        int idx, jdx, curr, count;
+        int idx, curr, count;
         int[] min;
         
         min = new int[s.length() + 1];
@@ -24,23 +24,18 @@ public class Solution {
         idx = 0;
         
         while(idx < s.length()){
-            if(s.charAt(idx) == 'I'){
-                min[idx++] = curr++;
-            }
-            else{
-                /* count how many consecutive 'D' */
-                for(count = 0; (count + idx) < s.length(); count++){
-                    if(s.charAt(idx + count) == 'I'){
-                        break;
-                    }
+            /* count how many consecutive 'D' */
+            for(count = 0; (count + idx) < s.length(); count++){
+                if(s.charAt(idx + count) == 'I'){
+                    break;
                 }
-                curr = curr + count;
-                for(jdx = 0; jdx <= count; jdx++){
-                   min[idx + jdx] = curr - jdx; 
-                }
-                curr++;
-                idx = idx + count + 1;
             }
+            curr = curr + count;
+            for(int jdx = 0; jdx <= count; jdx++){
+                min[idx + jdx] = curr - jdx; 
+            }
+            curr++;
+            idx = idx + count + 1;
         }
         
         if(idx == s.length()){
@@ -48,7 +43,7 @@ public class Solution {
         }
         return min;
     }
- 
+
     public static void main(String[] args){
         Solution sol;
         String s = "IIDDDI"; 
