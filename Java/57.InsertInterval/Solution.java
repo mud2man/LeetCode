@@ -13,9 +13,7 @@ public class Solution{
     }
 
     private boolean overlap(Interval interval1, Interval interval2){
-        Interval left = (interval1.start < interval2.start)? interval1: interval2;
-        Interval right = (interval1.start < interval2.start)? interval2: interval1;
-        return !(left.end < right.start);
+        return !((interval1.end < interval2.start) || (interval2.end < interval1.start));
     }
     
     public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
