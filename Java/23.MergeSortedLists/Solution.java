@@ -1,4 +1,4 @@
-/* Minimun head: O(n*logk), where n = node#, k = list#
+/* Minimun heap: O(n*logk), where n = node#, k = list#
  * 1. Create a minimun heap, and put every head of list into the heap
  * 2. Retrieve the node with minimun value from the minHeap, and put the next node into minHeap
  * 3. Repeat step#2 until the heap empty
