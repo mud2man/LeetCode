@@ -1,4 +1,4 @@
-/* Trie, DFS and Bacltrack
+/* Trie, DFS and Backtrack
  * 1. Construct a trie to store the "words"
  * 2. Use DFS to visit the "board" element, and tarck the path by the current TriexNode
  * 3. If there is no children of the current TriexNode, which means the current path contains no word. So return
@@ -86,7 +86,7 @@ public class Solution{
         }
         
         char c = word.charAt(idx);
-        if(node.word.equals("") && node.size == 0){
+        if(node.size == 0){
             node.farther.children[c - 'a'] = null;
             node.farther.size--;
             deleteWord(node.farther, word, idx - 1);
