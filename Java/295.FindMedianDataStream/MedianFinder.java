@@ -31,14 +31,14 @@ public class MedianFinder{
         
         if(num <= maxHeapTop){
             maxHeap.add(num);
-            if(maxHeap.size() > 1 && (maxHeap.size() - 2) >= minHeap.size()){
+            if((maxHeap.size() - 2) >= minHeap.size()){
                 maxHeapTop = maxHeap.poll();
                 minHeap.add(maxHeapTop);
             }
         }
         else{
             minHeap.add(num);
-            if(minHeap.size() > 1 && (minHeap.size() - 2) >= maxHeap.size()){
+            if((minHeap.size() - 2) >= maxHeap.size()){
                 minHeapTop = minHeap.poll();
                 maxHeap.add(minHeapTop);
             }
