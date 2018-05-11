@@ -17,25 +17,23 @@ class TreeNode {
 
 public class Solution {
     private TreeNode nextBigger(TreeNode root, TreeNode node){
-        LinkedList<TreeNode> stack = new LinkedList<TreeNode> ();
+        TreeNode biggerChild = null;
+        if(node.right != null){
+            biggerChild = node.right;
+            while(biggerChild.left != null){
+                biggerChild = biggerChild.left;
+            }
+            return biggerChild;
+        }
         
+        LinkedList<TreeNode> stack = new LinkedList<TreeNode> ();
         TreeNode ptr = root;
         while(ptr != node){
             stack.add(ptr);
             ptr = (ptr.val > node.val)? ptr.left: ptr.right;
         }
         stack.add(ptr);
-        
-        TreeNode biggerChild = null;
-        TreeNode biggerParent = null;
-        
-        if(node.right != null){
-            biggerChild = node.right;
-            while(biggerChild.left != null){
-                biggerChild = biggerChild.left;
-            }
-        }
-        
+        TreeNode biggerParent = null;        
         for(int idx = stack.size() - 2; idx >= 0; idx--){
             if(stack.get(idx).left == stack.get(idx + 1)){
                 biggerParent = stack.get(idx);
@@ -43,59 +41,34 @@ public class Solution {
             }
         }
         
-        if(biggerChild != null && biggerParent != null){
-            return (biggerChild.val < biggerParent.val)? biggerChild: biggerParent;
-        }
-        else if(biggerChild == null && biggerParent != null){
-            return biggerParent;
-        }
-        else if(biggerChild != null && biggerParent == null){
-            return biggerChild;
-        }
-        else{
-            return null;
-        }
+        return biggerParent;
     }
     
     private TreeNode nextSmaller(TreeNode root, TreeNode node){
-        LinkedList<TreeNode> stack = new LinkedList<TreeNode> ();
+        TreeNode smallerChild = null;
+        if(node.left != null){
+            smallerChild = node.left;
+            while(smallerChild.right != null){
+                smallerChild = smallerChild.right;
+            }
+            return smallerChild;
+        }
         
+        LinkedList<TreeNode> stack = new LinkedList<TreeNode> (); 
         TreeNode ptr = root;
         while(ptr != node){
             stack.add(ptr);
             ptr = (ptr.val > node.val)? ptr.left: ptr.right;
         }
         stack.add(ptr);
-        
-        TreeNode smallerChild = null;
         TreeNode smallerParent = null;
-        
-        if(node.left != null){
-            smallerChild = node.left;
-            while(smallerChild.right != null){
-                smallerChild = smallerChild.right;
-            }
-        }
-        
         for(int idx = stack.size() - 2; idx >= 0; idx--){
             if(stack.get(idx).right == stack.get(idx + 1)){
                 smallerParent = stack.get(idx);
                 break;
             }
         }
-        
-        if(smallerChild != null && smallerParent != null){
-            return (smallerChild.val > smallerParent.val)? smallerChild: smallerParent;
-        }
-        else if(smallerChild == null && smallerParent != null){
-            return smallerParent;
-        }
-        else if(smallerChild != null && smallerParent == null){
-            return smallerChild;
-        }
-        else{
-            return null;
-        }
+        return smallerParent;
     }
     
     private TreeNode closestNode(TreeNode root, double target){
