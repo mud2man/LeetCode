@@ -1,4 +1,4 @@
-/* : stack: O(n)
+/* Monotonous stack: Time:O(n), Space:O(n)
  * 1. If the next height is lower than previous one, push it into stack
  * 2. If the next height is higher than previous one, accumulate volume and pop stack
  * 3. In the latter case, if stack.size > 1 do accumulating, oterwise replace the current top 
@@ -12,7 +12,6 @@
  * idx = 6, vol = 2, stack = {(2, 3), (1, 6)}
  * idx = 6, vol = 5, stack = {(2, 3)}
  * idx = 6, vol = 5, stack = {(3, 6)}
- *
  */
 
 import java.util.*;
