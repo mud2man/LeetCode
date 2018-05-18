@@ -1,7 +1,8 @@
 /* Preorder + stack: O(n)
  * 1. Serialize with preorder traversal, and denote Null pointer with string "null"
  * 2. Retrieve tree node by visiting "data" from the 0-th position, and use stack to record the path
- * 3. Append node by if top.left is null, and if the current visited node is null
+ * 3. Have a variable" temp" to store the latest poped node
+ * 4. If temp != null, append the "newNode" to its right. Otherwise, append it to stack.peek().left, then reset temp
  */
 
 import java.util.*; // Stack
@@ -46,38 +47,22 @@ public class Codec {
         Stack<TreeNode> stack = new Stack<TreeNode>();
         stack.push(dummy);
         int index = 0;
+        TreeNode temp = null;
         while(index < preOrderValues.length){
             String nodeString = preOrderValues[index++];
-            if(!nodeString.equals("null")){
-                TreeNode top = stack.peek();
-                //if top.left == null, append its top's left. Otherwise append its right
-                if(top.left == null){
-                    top.left = new TreeNode(Integer.parseInt(nodeString));
-                    stack.push(top.left);
-                }
-                else{
-                    top.right = new TreeNode(Integer.parseInt(nodeString));
-                    stack.pop();
-                    stack.push(top.right);
-                }
+            if(nodeString.equals("null")){
+                temp = stack.pop();
             }
             else{
-                //if top's left != null, which means the current visiting "null" is its right. So skip this step
-                if(stack.peek().left != null){
-                    stack.pop();
-                    continue;
-                }
-                
-                //check if the top's right is null by visit the next element
-                nodeString = preOrderValues[index++];
-                if(!nodeString.equals("null")){
-                    TreeNode top = stack.pop();
-                    top.right = new TreeNode(Integer.parseInt(nodeString));
-                    stack.push(top.right);
+                TreeNode newNode = new TreeNode(Integer.parseInt(nodeString));
+                if(temp != null){
+                    temp.right = newNode;
                 }
                 else{
-                    stack.pop();
+                    stack.peek().left = newNode;
                 }
+                temp = null;
+                stack.push(newNode);
             }
         }
         
