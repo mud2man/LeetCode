@@ -110,26 +110,14 @@ public class AllOne {
     
     /** Returns one of the keys with maximal value. */
     public String getMaxKey() {
-        if(head != null){
-            Set<String> keys = value2Keys.get(head.prev.value);
-            for(String key: keys){
-                return key;
-            }
-        }
-        return "";
+        return (head != null)? value2Keys.get(head.prev.value).iterator().next(): "";
     }
     
     /** Returns one of the keys with Minimal value. */
     public String getMinKey() {
-        if(head != null){
-            Set<String> keys = value2Keys.get(head.value);
-            for(String key: keys){
-                return key;
-            }
-        }
-        return "";
+        return (head != null)? value2Keys.get(head.value).iterator().next(): "";
     }
- 
+  
     public static void main(String[] args){
         AllOne obj = new AllOne();;
         String key;
