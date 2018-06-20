@@ -1,5 +1,8 @@
 /* Hash: Time:O(n*m), Space:O(n*m). LeetCode has a simpler solution
- * 1. 
+ * 1. Have abbreviation count map "abbr2Count" to store all the abbreviation count for a single word untilunique abbreviation found
+ * 2. For every word, find the shortest abbreviation until abbr2Count.get(s) < 2
+ * 3. If abbr2Count.get(s) == 0, use the current abbreviation and update all maps
+ * 4. Otherwise, shift index until word.charAt(i) != sibling.charAt(i), and update maps associated with word and sibling
  */
 
 import java.util.*;
