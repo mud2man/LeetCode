@@ -1,4 +1,4 @@
-/* Union and find: Time:O(klog(m*n)), Space:O(k). LeetCode also apply union by rank, you should learn it
+/* Union and find: Time:O(k), Space:O(k)
  * 1. Have a map child2Parent to store the child-parent mapping, and child2rank to store rank
  * 2. Traverse "positions" and apply union and find (path compression and union by rank) to update islands count
  */
