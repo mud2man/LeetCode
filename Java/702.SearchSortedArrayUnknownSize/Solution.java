@@ -4,6 +4,11 @@
 
 import java.util.*;
 
+// This is the ArrayReader's control interface.
+interface ArrayReader {
+    public int get(int index);
+}
+
 public class Solution{
     public int search(ArrayReader reader, int target) {
         int lb = 0;
