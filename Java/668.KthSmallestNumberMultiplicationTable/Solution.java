@@ -1,6 +1,6 @@
-/* Binary search: Time:O((m+n)log(m*n)), Space:O(1)
+/* Binary search: Time:O((m+n)log(m*n)), Space:O(1). LeetCode has a mlog(m*n) solution
  * 1. Binary search the number x s.t. the count of numbers(<= x) is the least number larger than k
- * 2. Find the closest of x, whcich is less than or equal to x
+ * 2. Find the number closest x, whcich is less than or equal to x
  */
 
 import java.util.*;
