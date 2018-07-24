@@ -1,129 +1,62 @@
-/* Backtrack: Time:O(1), Space:O(1). Need LeetCode's shorter answer
- * 1. Use backtrack to find all the combinations, and get the result
+/* Backtrack: Time:O(1), Space:O(1)
+ * 1. Have class "Operand" to express number as Fraction
+ * 2. Have utility method "operate" to calculate two "Operand, given an operator
+ * 3. '( )' pair can be defined by 'operate' order, and every operate is to select two numbers
+ * 4. In the backtrack, find all the combinations of two operands, do operate, and pass the reduced numbers to the next backtrack
+ * 5. When nums's size is 1, compare the last number with 24
  */
 
 import java.util.*;
 
 public class Solution{
-    String[] oprs = {"+", "-", "*", "/"};
-    
-    private class Cell{
-        String expr;
+    private class Operand{
         int numerator;
         int denominator;
-        String opr;
-        Cell(String s){expr = s;}
+        Operand(int n, int d){numerator = n; denominator = d;}
     }
     
-    private void operate(Cell cell){
-        String expr = cell.expr;
-        Stack<int[]> stack = new Stack<>();
-        char prevOpr = '+';
-        for(int i = 0; i < expr.length(); ++i){
-            char c = expr.charAt(i);
-            if(Character.isDigit(c)){
-                int n = c - '0';
-                switch (prevOpr){
-                    case '+':
-                        stack.push(new int[]{n, 1});
-                        break;
-                    case '-':
-                        stack.push(new int[]{-n, 1});
-                        break;
-                    case '*':
-                        stack.peek()[0] =  stack.peek()[0] * n;
-                        break;
-                    case '/':
-                        stack.peek()[1] =  stack.peek()[1] * n;
-                        break;
-                }
-            }
-            else{
-                prevOpr = c;
-            }
+    private Operand operate(Operand x, Character operator, Operand y){
+        Operand z = new Operand(0, 0);
+        switch (operator){
+            case '+':
+                z.numerator = x.numerator * y.denominator + y.numerator * x.denominator;
+                z.denominator = y.denominator *  x.denominator;
+                break;
+            case '-':
+                z.numerator = x.numerator * y.denominator - y.numerator * x.denominator;
+                z.denominator = y.denominator *  x.denominator;
+                break;
+            case '*':
+                z.numerator = x.numerator * y.numerator;
+                z.denominator = y.denominator *  x.denominator;
+                break;
+            case '/':
+                z.numerator = x.numerator * y.denominator;
+                z.denominator = y.numerator *  x.denominator;
+                break;
         }
-        
-        cell.denominator = 1;
-        cell.numerator = 0;
-        while(!stack.isEmpty()){
-            int[] top = stack.pop();
-            cell.numerator = cell.numerator * top[1] + top[0] * cell.denominator;
-            cell.denominator =  top[1] * cell.denominator;
-        }
+        return z;
     }
     
-    private int calculate(LinkedList<Cell> stack){
-        Cell prevTop = null;
-        while(!stack.isEmpty()){
-            Cell top = stack.pollLast();
-            operate(top);
-            if(prevTop != null){
-                String opr = top.opr;
-                if(opr.equals("+")){
-                    top.numerator = top.numerator * prevTop.denominator + prevTop.numerator * top.denominator;
-                    top.denominator = top.denominator * prevTop.denominator;
-                }
-                else if(opr.equals("-")){
-                    top.numerator = top.numerator * prevTop.denominator - prevTop.numerator * top.denominator;
-                    top.denominator =  top.denominator * prevTop.denominator;
-                }
-                else if(opr.equals("*")){
-                    top.denominator =  top.denominator * prevTop.denominator;
-                    top.numerator = top.numerator * prevTop.numerator;
-                }
-                else{
-                    top.denominator =  top.denominator * prevTop.numerator;
-                    top.numerator = top.numerator * prevTop.denominator;
-                }
-            }
-            prevTop = top;
-        }
-        if(prevTop.denominator == 0 || (24 * prevTop.denominator) != prevTop.numerator){
-            return 0;
-        }
-        else{
-            return 24;
-        }
-    }
-
-    private boolean backtrack(int[] nums, int idx, LinkedList<Cell> stack){
-        if(idx == nums.length){
-            int ret = calculate(stack);
-            return (ret == 24);
+    private boolean backtrack(List<Operand> nums){
+        if(nums.size() == 1 && nums.get(0).numerator != 0 && nums.get(0).denominator != 0){
+            return (nums.get(0).numerator == 24 * nums.get(0).denominator);
         }
         
-        LinkedList<String> exprs = new LinkedList<>();
-        for(int i = idx; i < nums.length; ++i){
-            if(i == idx){
-                exprs.add(Integer.toString(nums[i]));
-            }
-            else{
-                int size = exprs.size();
-                for(int j = 0; j < size; ++j){
-                    String top = exprs.poll();
-                    for(String opr: oprs){
-                        exprs.add(top + opr + Integer.toString(nums[i]));
-                    }
-                }
-            }
-            
-            for(String expr: exprs){
-                boolean ret = false;
-                if(i == nums.length - 1){
-                    Cell cell = new Cell(expr);
-                    LinkedList<Cell> nextStack = new LinkedList<>(stack);
-                    nextStack.add(cell);
-                    if(backtrack(nums, i + 1, nextStack)){
-                        return true;
-                    }
-                }
-                else{
-                    for(String opr: oprs){
-                        Cell cell = new Cell(expr);
-                        cell.opr = opr;
-                        LinkedList<Cell> nextStack = new LinkedList<>(stack);
-                        nextStack.add(cell);
-                        if(backtrack(nums, i + 1, nextStack)){
+        char[] oprs = {'+', '-', '*', '/'};
+        for(int i = 0; i < nums.size(); ++i){
+            for(int j = 0; j < nums.size(); ++j){
+                if(i != j){   
+                    for(char opr: oprs){
+                        List<Operand> nextNums = new ArrayList<>();
+                        Operand opd = operate(nums.get(i), opr, nums.get(j));
+                        nextNums.add(opd);
+                        for(int k = 0; k < nums.size(); ++k){
+                            if(k != i && k != j){
+                                nextNums.add(nums.get(k));
+                            }
+                        }
+                        if(backtrack(nextNums)){
                             return true;
                         }
                     }
@@ -133,42 +66,14 @@ public class Solution{
         return false;
     }
     
-    private boolean helper(List<Integer> list, List<Integer> path){
-        if(path.size() == 4){
-            int[] nums = new int[4];
-            for(int i = 0; i < 4; ++i){
-                nums[i] = path.get(i);
-            }
-            if(backtrack(nums, 0, new LinkedList<Cell>())){
-                System.out.println(Arrays.toString(nums));
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
-        
-        for(int i = 0; i < list.size(); ++i){
-            int num = list.get(i);
-            list.remove(i);
-            path.add(num);
-            if(helper(list, path)){
-                return true;
-            }
-            path.remove(path.size() - 1);
-            list.add(i, num);
-        }
-        return false;
-    }
-    
     public boolean judgePoint24(int[] nums) {
-        List<Integer> list = new ArrayList<>();
+        List<Operand> list = new ArrayList<>();
         for(int num: nums){
-            list.add(num);
+            list.add(new Operand(num, 1));
         }
-        return helper(list, new ArrayList<>());
+        return backtrack(list);
     }
- 
+
     public static void main(String[] args){
         int[] nums = {4, 1, 8, 7};
         Solution sol = new Solution();
