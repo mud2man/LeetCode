@@ -1,4 +1,4 @@
-/* Map: O(n^2) 
+/* Map: O(n^2). LeetCode's solution is nonsense 
  * 1. Have a map with key = word, value is a list, where list.get(i) is the set of words with i matched chars
  * 2. Have a set "candidates" to store possible word
  * 3. Every time pick a word from the candidate, and do intersection with map.get(word).get(matchCount) to reduce the candidates
