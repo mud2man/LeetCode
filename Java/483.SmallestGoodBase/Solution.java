@@ -5,7 +5,7 @@
  * 4. Traverse e from 1 to log2(num), and get the base, then check if num == (b^(e + 1) - 1) / (b - 1)
  */
 
-import java.util.*;
+import java.math.*;
 
 public class Solution{
     public String smallestGoodBase(String n) {
