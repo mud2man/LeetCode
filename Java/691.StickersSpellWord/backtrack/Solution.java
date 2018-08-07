@@ -1,4 +1,4 @@
-/* Slide window + min heap: Time:O(n^m), where n. LeetCode has a dynamic programming solution 
+/* Slide window + min heap: Time:O(n^m), where n = target's length, m = stickers's length
  * 1. Enoce the remaining chars as a string by "hashcode", and have a map "solutions" to store the minimum stickers with key = remain
  * 2. Apply backtrack to find all the combination, and return solution if the "remain" in map "solution"
  */
