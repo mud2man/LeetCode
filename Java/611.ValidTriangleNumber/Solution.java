@@ -1,34 +1,23 @@
-/* Greedy: Time:O(n^2*logn), Space:O(1). LeetCode has O(n^2) solution
- * 1. Sort numbers, and fixed i and k, and binary search j, because if nums[i] + nums[j] > nums[k], then there is a triangle
- * 2. Accumulate count with (k - j)
+/* Greedy: Time:O(n^2), Space:O(1).
+ * 1. Sort numbers, and fixed i and j, then shift k until (nums[i] + nums[j]) <= nums[k]
+ * 2. Accumulate count with (k - j - 1)
+ * 3. Since j and k only move right, so the inner loop is O(n)
  */
 
 import java.util.*;
 
 public class Solution{
-    private int binarySearch(int i, int k, int[] nums){
-        int lb = i;
-        int hb = k;
-        while(lb <= hb){
-            int mid = (lb + hb) / 2;
-            if((nums[i] + nums[mid]) > nums[k] && i != mid){
-                hb = mid - 1;
-            }
-            else{
-                lb = mid + 1;
-            }
-        }
-        return lb;
-    }
-    
     public int triangleNumber(int[] nums) {
         Arrays.sort(nums);
         
         int count = 0;
-        for(int k = 2; k < nums.length; ++k){
-            for(int i = 0; i < k - 1; ++i){
-                int j = binarySearch(i, k, nums);
-                count += (k > j)? (k - j): 0;
+        for(int i = 0; i < nums.length - 2; ++i){
+            int k = i + 2;
+            for(int j = i + 1; j < nums.length - 1; ++j){
+                while(k < nums.length && (nums[i] + nums[j]) > nums[k]){
+                    ++k;
+                }
+                count += ((k - j) > 1)? (k - j - 1): 0;
             }
         }
         return count;
