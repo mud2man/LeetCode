@@ -7,14 +7,14 @@
 import java.util.*;
 
 public class Solution{
-    public int triangleNumber(int[] nums) {
+    public <T extends Number> int triangleNumber(T[] nums) {
         Arrays.sort(nums);
         
         int count = 0;
         for(int i = 0; i < nums.length - 2; ++i){
             int k = i + 2;
             for(int j = i + 1; j < nums.length - 1; ++j){
-                while(k < nums.length && (nums[i] + nums[j]) > nums[k]){
+                while(k < nums.length && (nums[i].doubleValue() + nums[j].doubleValue()) > nums[k].doubleValue()){
                     ++k;
                 }
                 count += ((k - j) > 1)? (k - j - 1): 0;
@@ -25,7 +25,7 @@ public class Solution{
  
     public static void main(String[] args){
         Solution sol = new Solution();
-        int nums[] = {2, 2, 3, 4};
+        Integer nums[] = {2, 2, 3, 4};
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("triangle number: " + sol.triangleNumber(nums));
     }
