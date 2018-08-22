@@ -1,71 +1,76 @@
-/* Disjoint sets: O(e + nlogn)
- * 1. Create a component array, which every node is its component
- * 2. Union: merge component1 to component0 by comps[compId1] = comps[compId0];
- * 3. Find: loop until nodeId = comps[nodeId];
- * 4. Path compression: comps[nodeId] = comps[comps[nodeId]];
+/* Disjoint sets: O(e)
+ * 1. Create an array "roots", roots[i] store the root node for node i
+ * 1. Create an array "ranks", ranks[i] store the rank for node i
+ * 2. Union: merge by rank, the root which has higher rank keeps the same
+ * 3. Find: loop until roots[node] == node
+ * 4. Path compression: roots[node] = roots[roots[node]];
  */
 
 import java.util.*;
 
 public class Solution{
-	public int find(int[] comps, int nodeId){
-        
-        while(comps[nodeId] != nodeId){
-            nodeId = comps[nodeId];
-            
-            //path compression
-            comps[nodeId] = comps[comps[nodeId]];
+    private int getRoot(int[] roots, int node){
+        if(roots[node] == node){
+            return node;
+        }    
+        else{
+            //compression
+            roots[node] = roots[roots[node]];
+            return getRoot(roots, roots[node]);
         }
-        
-        return nodeId;
     }
     
     public int countComponents(int n, int[][] edges) {
-        int[] comps;
-        int i;
-        int compId0;
-        int compId1;
-        int count;
+        int count = n;
+        int[] roots = new int[n];
+        int[] ranks = new int[n];
         
-        comps = new int[n];
-        count = n;
-        
-        for(i = 0; i < n; ++i){
-            comps[i] = i;
+        for(int i = 0; i < n; ++i){
+            roots[i] = i;
         }
         
         for(int[] edge: edges){
-            compId0 =  find(comps, edge[0]);
-            compId1 =  find(comps, edge[1]);
+            int leftNode = edge[0];
+            int rightNode = edge[1];
+            int leftRoot = getRoot(roots, leftNode);
+            int rightRoot = getRoot(roots, rightNode);
             
-            //union
-            if(compId0 != compId1){
+            if(leftRoot != rightRoot){
                 count--;
-                comps[compId1] = comps[compId0];
+                if(ranks[leftRoot] == ranks[rightRoot]){
+                    roots[leftRoot] = rightRoot;
+                    ranks[rightRoot]++;
+                }
+                else if(ranks[leftRoot] < ranks[rightRoot]){
+                    roots[leftRoot] = rightRoot;
+                }
+                else{
+                    roots[rightRoot] = leftRoot;
+                }
             }
         }
-    
+        
         return count;
     }
 
-	public static void main(String[] args){
-		Solution sol;
-		int[][] edges = {{0, 1}, {1, 2}, {3, 4}};
-		int n;
-		int count;
-		
-		n = 5;
+    public static void main(String[] args){
+        Solution sol;
+        int[][] edges = {{0, 1}, {1, 2}, {3, 4}};
+        int n;
+        int count;
+        
+        n = 5;
 
-		System.out.println("nodes: 0" + " to " + (n -1));
-		System.out.println("edges: ");
-		
-		for(int[] edge: edges){
-			System.out.println(Arrays.toString(edge));
-		}
-		
-		sol = new Solution();	
-		count = sol.countComponents(n, edges);
+        System.out.println("nodes: 0" + " to " + (n -1));
+        System.out.println("edges: ");
+        
+        for(int[] edge: edges){
+            System.out.println(Arrays.toString(edge));
+        }
+        
+        sol = new Solution();    
+        count = sol.countComponents(n, edges);
 
-		System.out.println("#components: " + count);
-	}
+        System.out.println("#components: " + count);
+    }
 }
