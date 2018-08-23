@@ -1,8 +1,9 @@
-/* Preorder + stack: O(n)
+/* Preorder + stack: Time:O(n), Space:O(n)
  * 1. Serialize with preorder traversal, and denote Null pointer with string "null"
- * 2. Retrieve tree node by visiting "data" from the 0-th position, and use stack to record the path
- * 3. Have a variable" temp" to store the latest poped node
- * 4. If temp != null, append the "newNode" to its right. Otherwise, append it to stack.peek().left, then reset temp
+ * 2. Have a variable" top" to store the actual top node, and the virtual stack is (stack + top)
+ * 2. Retrieve tree node by visiting "data" from the 0-th position
+ * 3. push null or newNode into virtual stack (stack + top)
+ * 4. pop stack if the top 2 element of virtual stack are null
  */
 
 import java.util.*; // Stack
@@ -16,7 +17,7 @@ class TreeNode {
 }
 
 public class Codec {
-    private void preOrder(TreeNode root, StringBuilder preOrderStr){
+        private void preOrder(TreeNode root, StringBuilder preOrderStr){
         if(root == null){
             preOrderStr.append("null");
             preOrderStr.append(',');
@@ -43,30 +44,37 @@ public class Codec {
             return null;
         }
         
-        TreeNode dummy = new TreeNode(0);
+        TreeNode root = new TreeNode(Integer.parseInt(preOrderValues[0]));
+        TreeNode top = root;
         Stack<TreeNode> stack = new Stack<TreeNode>();
-        stack.push(dummy);
-        int index = 0;
-        TreeNode temp = null;
+        int index = 1;
         while(index < preOrderValues.length){
             String nodeString = preOrderValues[index++];
+            //push null or newNode into virtual stack (stack + top)
             if(nodeString.equals("null")){
-                temp = stack.pop();
+                stack.push(top);
+                top = null;
             }
             else{
                 TreeNode newNode = new TreeNode(Integer.parseInt(nodeString));
-                if(temp != null){
-                    temp.right = newNode;
+                if(top == null){
+                    stack.peek().right = newNode;
                 }
                 else{
-                    stack.peek().left = newNode;
+                    top.left = newNode;
                 }
-                temp = null;
-                stack.push(newNode);
+                stack.push(top);
+                top = newNode;
+            }
+            
+            //pop stack if the top 2 element of virtual stack are null
+            while(top == null && stack.size() > 1 && stack.peek() == null){
+                stack.pop();
+                stack.pop();
             }
         }
         
-        return dummy.left;
+        return root;
     }
 
     public static void main(String[] args){
