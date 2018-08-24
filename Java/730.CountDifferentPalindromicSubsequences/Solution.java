@@ -1,7 +1,7 @@
-/* Dynamic Programming: Time:O(n^3), Space:O(n^2)
- * 1. dp[y][x] = the count of different palindromic subsequences between S.substring[y][x]
+/* Dynamic Programming: Time:O(n^3), Space:O(n^2). LeetCode has a O(n^2) solution
+ * 1. dp[y][x] = the count of different palindromic subsequences between S.substring(x, y)
  * 2. dp[y][x] = dp[y - 1][x](without S.charAt(y)) + dp[y - 1][z](with S.charAt(y)) - dp[w][z](intersection), 
-      where S.charAt(z - 1) = target, S.charAt(w + 1) = target
+      where S.charAt(z - 1) == S.charAt(y), S.charAt(w + 1) == S.charAt(y)
  */
 
 import java.util.*;
@@ -30,9 +30,11 @@ public class Solution{
         
         int countIntersect;
         if(headIdx <= tailIdx){
+            // don't take any chars between headIdx and tailIdx is also an option, so add 1
             countIntersect = dp[tailIdx][headIdx] + 1;
         }
         else if(S.charAt(headIdx) == target){
+            // S.charAt(headIdx) is the only insection
             countIntersect = 1;
         }
         else{
