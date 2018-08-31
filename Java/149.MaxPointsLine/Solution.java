@@ -19,12 +19,7 @@ public class Solution{
     private int gcd(int x, int y){
         int small = Math.min(x, y);
         int big = Math.max(x, y);
-        if((big % small) == 0){
-            return small;
-        }
-        else{
-            return gcd(small, big % small);
-        }
+        return (big % small == 0)? small: gcd(small, big % small);
     }
     
     public int maxPoints(Point[] points) {
