@@ -1,4 +1,4 @@
-/* Selection algorithm: O(n) amortized
+/* Selection algorithm: Time:O(n) amortized, Space:O(1)
  * 1. Partition: select nums[hb] as target, and find its position, s.t. all the elements before "pointer" is bigger than target
  * 2. Repeat step1 until lb == hb
  */         
