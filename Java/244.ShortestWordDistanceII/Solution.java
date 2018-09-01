@@ -6,7 +6,7 @@
 import java.util.*;
 
 public class Solution{
-	private HashMap<String, List<Integer>> posList;
+    private HashMap<String, List<Integer>> posList;
 
     public Solution(String[] words) {
         int idx;
@@ -56,22 +56,22 @@ public class Solution{
         return shortestDis(word1Pos, word2Pos);
     }
 
-	public static void main(String[] args){
-		Solution sol;
-		String[] words = {"practice", "makes", "perfect", "coding", "makes"};
-		String word1;
-		String word2;		
+    public static void main(String[] args){
+        Solution sol;
+        String[] words = {"practice", "makes", "perfect", "coding", "makes"};
+        String word1;
+        String word2;        
 
-		sol = new Solution(words);
-		
-		System.out.println("words: " + Arrays.toString(words));
-		
-		word1 = "practice";
-		word2 = "coding";
-		System.out.println("distence between " + word1 + " and " + word2 + ": " + sol.shortest(word1, word2));
-		
-		word1 = "makes";
-		word2 = "coding";
-		System.out.println("distence between " + word1 + " and " + word2 +  ": " + sol.shortest(word1, word2));
-	}
+        sol = new Solution(words);
+        
+        System.out.println("words: " + Arrays.toString(words));
+        
+        word1 = "practice";
+        word2 = "coding";
+        System.out.println("distence between " + word1 + " and " + word2 + ": " + sol.shortest(word1, word2));
+        
+        word1 = "makes";
+        word2 = "coding";
+        System.out.println("distence between " + word1 + " and " + word2 +  ": " + sol.shortest(word1, word2));
+    }
 }
