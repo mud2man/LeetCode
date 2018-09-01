@@ -1,4 +1,4 @@
-/* Use preorder: O(nlgn) in average, but O(n^2) in worst case
+/* Use preorder: O(nlgn) in average, but O(n^2) in worst case. You can use the solution of LC#297 to get an O(n) solution
  * 1. Use preorder to serialize
  * 2. Translate string to array of integer and deserialize
  */
