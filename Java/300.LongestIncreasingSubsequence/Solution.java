@@ -1,5 +1,5 @@
 /* Binary search: O(nlogn)
- * 1. Have anincreasing sequence increaseList
+ * 1. Have an increasing sequence increaseList, increaseList[i] = the last number with length (i + 1)
  * 2. Iterate nums and binary search the index for nums[i], 
  * 3. If the index is equal to the size of increaseList, increase maxLen
  * 4. Otherwise, replace nums[index] with num
@@ -20,7 +20,7 @@ import java.util.*;
 
 public class Solution{
     public int lengthOfLIS(int[] nums) {
-        LinkedList<Integer> increaseList = new LinkedList<Integer>();
+        List<Integer> increaseList = new ArrayList<Integer>();
         int maxLen = 0;
 
         for(int num: nums){
