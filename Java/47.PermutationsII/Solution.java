@@ -26,18 +26,21 @@ public class Solution {
             return;
         }
         
-        preVal = remain.get(0) - 1;
+        preVal = remain.peekFirst() - 1;
         size = remain.size();
+        
         for(i = 0; i < size; ++i){
-            if(preVal != remain.get(i)){
-                preVal = remain.get(i);
-                permutation.add(remain.remove(i));
+            int head = remain.pollFirst();
+            if(head != preVal){
+                preVal = head;
+                permutation.add(head);
                 helper(remain, permutation, permutations);
-                remain.add(i, permutation.pollLast());
+                permutation.pollLast();
             }
+            remain.add(head);
         }
     }
-    
+ 
     public List<List<Integer>> permuteUnique(int[] nums) {
         LinkedList<Integer> permutation, remain;
         List<List<Integer>> permutations;
