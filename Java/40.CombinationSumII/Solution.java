@@ -1,79 +1,50 @@
 /* DFS + Sort: O(2^n)
- * 1. Sort and merger the original numbers
- * 2. Call the DFS helper recursively
- * 3. Before leaving helper, pop the backtracking log "sum"
- *
+ * 1. Sort and get the count map "counts"
+ * 2. Use backtarck to traverse the given number nums.get(idx)
+ * 3. Before leaving backtrack, pop the backtracking log "path"
  */          
 
 import java.util.*; // Stack
 
 public class Solution {
-    private class Node{
-        int val;
-        int count;
-        Node(int x, int y){val = x; count = y;}
-    }
-    
-    public void helper(List<Node> nodes, int target, List<List<Integer>> combinationSums, ArrayList<Integer> sum, int idx){
-        int count, val, i;
-        
+    private void backtrack(List<Integer> nums, int idx, Map<Integer, Integer> counts, LinkedList<Integer> path, List<List<Integer>> combinations, int target){
         if(target == 0){
-            combinationSums.add(new  ArrayList<Integer>(sum));
+            combinations.add(new ArrayList(path));
             return;
         }
-                
-        if(idx == nodes.size() || nodes.get(idx).val > target){
+        else if(target < 0 || idx == nums.size()){
             return;
         }
         
-        val = nodes.get(idx).val;
-        for(count = 0; count <= nodes.get(idx).count; count++){
-            helper(nodes, (target - count * val), combinationSums, sum, idx + 1);
-            if(target >= (count + 1) * val){
-                sum.add(val);
-            }
-            else{
-                break;
-            }
+        int num = nums.get(idx);
+        int count = counts.get(num);
+        for(int i = 0; i <= count; ++i){
+            backtrack(nums, idx + 1, counts, path, combinations, target);
+            path.add(num);
+            target -= num;
         }
         
-        //pop
-        for(i = 0; i < count ; ++i){
-            sum.remove(sum.size() - 1);
+        for(int i = 0; i <= count; ++i){
+            path.pollLast();
         }
     }
     
-    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
-        List<List<Integer>> combinationSums;
-        ArrayList<Integer> sum;
-        int idx, size, firstVal, count;
-        Node node;
-        List<Node> nodes;
-        
-        combinationSums = new ArrayList<List<Integer>>();
-        sum = new ArrayList<Integer>();
-        idx = 0;
-        size = candidates.length;
-        nodes = new ArrayList<Node>();
-        
-        Arrays.sort(candidates);
-        
-        //merge
-        while(idx < size){
-            firstVal = candidates[idx];
-            count = 0;
-            while(idx < size &&  firstVal == candidates[idx]){
-                count++;
-                idx++;
+    public List<List<Integer>> combinationSum2(int[] nums, int target) {
+        List<List<Integer>> combinations = new ArrayList<>();
+        Arrays.sort(nums);
+        List<Integer> sortNums = new ArrayList<>();
+        Map<Integer, Integer> counts = new HashMap<>();
+        for(int num: nums){
+            if(sortNums.isEmpty() || sortNums.get(sortNums.size() - 1) != num){
+                sortNums.add(num);
             }
-            nodes.add(new Node(firstVal, count));
+            counts.putIfAbsent(num, 0);
+            counts.put(num, counts.get(num) + 1);
         }
-        
-        helper(nodes, target, combinationSums, sum, 0);
-        
-        return combinationSums;
+        backtrack(sortNums, 0, counts, new LinkedList<Integer>(), combinations, target);
+        return combinations;
     }
-  
+ 
     public static void main(String[] args){
         Solution sol;
         int[] candidates = {10, 1, 2, 7, 6, 1, 5};
