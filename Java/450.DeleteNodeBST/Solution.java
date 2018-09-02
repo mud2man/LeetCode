@@ -41,35 +41,25 @@ public class Solution {
         TreeNode farther = fartherAndSon[0];
         TreeNode son = fartherAndSon[1];
 
-        if(son.right != null && son.left != null){
-            fartherAndSon[0] = son.right;
-            fartherAndSon[1] = fartherAndSon[0].left;
-            
-            //find the leftest node
-            while(fartherAndSon[1] != null && fartherAndSon[1].left != null){
-                fartherAndSon[0] = fartherAndSon[1];
-                fartherAndSon[1] = fartherAndSon[1].left;
-            }
-            
-            if(fartherAndSon[1] != null){
-                son.val = fartherAndSon[1].val;
-                delete(fartherAndSon);
+        if(son.right == null){
+            if(farther.right == son){
+                farther.right = son.left;
             }
             else{
-                son.val =  fartherAndSon[0].val;
-                fartherAndSon[0] = son;
-                fartherAndSon[1] = son.right;
-                delete(fartherAndSon);
+                farther.left = son.left;
             }
         }
         else{
-            TreeNode successor = (son.left != null)? son.left: son.right;
-            if(farther.left == son){
-                farther.left = successor;
+            farther = son;
+            son = son.right;
+            while(son.left != null){
+                farther = son;
+                son = son.left;
             }
-            else{
-                farther.right = successor;
-            }
+            fartherAndSon[1].val = son.val;
+            fartherAndSon[0] = farther;
+            fartherAndSon[1] = son;
+            delete(fartherAndSon);
         }
     }
     
