@@ -1,4 +1,4 @@
-/* Union and Find: O(eloge), where e is the number of edges
+/* Union and Find: Time:O(e), Space:O(n), where e is the number of edges
  * 1. Return false if edges.length != (n - 1)
  * 2. Use union and find to check if the added edge belongs to the same component
  */
@@ -13,7 +13,6 @@ public class Solution{
         else{
             //compression
             roots[node] = roots[roots[node]];
-            
             return find(roots, roots[roots[node]]);
         }
     }
@@ -24,6 +23,7 @@ public class Solution{
         }
         
         int[] roots = new int[n];
+        int[] ranks = new int[n];
         for(int i = 0; i < n; ++i){
             roots[i] = i;
         }
@@ -37,7 +37,16 @@ public class Solution{
             }
             else{
                 //union
-                roots[root1] = root0; 
+                if(ranks[root0] == ranks[root1]){
+                    ranks[root0]++;
+                    roots[root1] = root0;
+                }
+                else if(ranks[root0] < ranks[root1]){
+                    roots[root0] = root1;
+                }
+                else{
+                    roots[root1] = root0;
+                } 
             }
         }
         
