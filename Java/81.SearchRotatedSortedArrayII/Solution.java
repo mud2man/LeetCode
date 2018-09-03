@@ -1,103 +1,57 @@
-/* Binary search: O(logn), the solution on LeetCode is better
- * 1. Find the idx with minimum value
- * 2. Get the starting position with the lowest value nums[minIdx]
- * 3. Binary search the target with the offset minIdx
+/* Binary search: Average: O(logn), Worst:O(n)
+ * 1. Call helper recursively
+ * 2. In helper, there are 4 cases: nums[mid] == target, nums[mid] > nums[lb] (1st slope), nums[mid] < nums[lb](2nd slope), others 
+ * 3. If nums[mid] == target, return true
+ * 4. If mid is in 1st slope, find targert from right half if target is not in 1st slope, or find it from left half if target is in
+ *    in 1st slope, otherwise find it from both halves
+ * 5. If mid is in 2nd slope, find targert from left half if target is not in 2nd slope, or find it from right half if target is in
+ *    in 2nd slop, otherwise find it from both halvese
+ * 6. Otherwise, find target from both halvese
  */         
 
 import java.util.*;
 
 public class Solution {
-    public boolean search(int[] nums, int target) {
-        int lb, hb, mid, minIdx, rVal, lVal, tmpIdx;
-        
-        if(nums.length == 0){
+    private boolean helper(int lb, int hb, int[] nums, int target){
+        if(lb > hb){
             return false;
         }
         
-        //Find the idx with minimum value
-        lb = 0;
-        hb = nums.length - 1;
-        if(nums[0] < nums[nums.length - 1]){
-            minIdx = 0;
+        int mid = (lb + hb) / 2;
+        if(nums[mid] == target){
+            return true;
+        }
+        else if(nums[mid] > nums[lb]){
+            if(target > nums[mid] || target < nums[lb]){
+                return helper(mid + 1, hb, nums, target);
+            }
+            else if(target < nums[mid] && target >= nums[lb]){
+                return helper(lb, mid - 1, nums, target);
+            }
+            else{
+                return helper(lb, mid - 1, nums, target) | helper(mid + 1, hb, nums, target);
+            }
+        }
+        else if(nums[mid] < nums[lb]){
+            if(target < nums[mid] || target > nums[hb]){
+                return helper(lb, mid - 1, nums, target);
+            }
+            else if(target > nums[mid] && target <= nums[hb]){
+                return helper(mid + 1, hb, nums, target);
+            }
+            else{
+                return helper(lb, mid - 1, nums, target) | helper(mid + 1, hb, nums, target);
+            }
         }
         else{
-            while(lb + 1 < hb){
-                mid = (lb + hb) / 2;
-                
-                //check if the right element of the middle is the lowest
-                rVal = nums[mid];
-                tmpIdx = mid;
-                while(tmpIdx < nums.length - 1 && rVal == nums[mid]){
-                    rVal = nums[++tmpIdx];
-                }
-                if(rVal < nums[mid]){
-                    lb = tmpIdx;
-                    hb = tmpIdx;
-                    break;
-                }
-                
-                //check if the left element of the middle is the highest
-                lVal = nums[mid];
-                tmpIdx = mid;
-                while(tmpIdx > 0 && lVal == nums[mid]){
-                    lVal = nums[--tmpIdx];
-                }
-                if(lVal > nums[mid]){
-                    lb = mid;
-                    hb = mid;
-                    break;
-                }
-                
-                //original binary search for the lowest value
-                if(nums[mid] >= nums[lb]){
-                    lb = mid;
-                }
-                else{
-                    hb = mid;
-                }
-                
-                if(nums[lb] <= nums[hb]){
-                    hb = lb;
-                    break;
-                }
-            }
-            
-            //pick the lower value between lb and hb, because lb and hb are now adjacent
-            if(nums[lb] < nums[hb]){
-                minIdx = lb; 
-            }
-            else{
-                minIdx = hb;
-            }
+            return helper(lb, mid - 1, nums, target) | helper(mid + 1, hb, nums, target);
         }
-        
-        //get the starting position with the lowest value nums[minIdx]
-        if(nums[minIdx] == nums[nums.length - 1]){
-            minIdx = nums.length - 1;
-        }
-        while(minIdx > 0 && nums[minIdx - 1] == nums[minIdx]){
-            minIdx--;
-        }
-        
-        //binary search the target with the offset minIdx
-        lb = 0;
-        hb = nums.length - 1;
-        while(lb <= hb){
-            mid = (lb + hb) / 2;
-            if(nums[(mid + minIdx) % nums.length] == target){
-                return true;
-            }
-            else if(nums[(mid + minIdx) % nums.length] > target){
-                hb = mid - 1;
-            }
-            else{
-                lb = mid + 1;
-            }
-        }
-        
-        return false;
     }
- 
+    
+    public boolean search(int[] nums, int target) {
+        return helper(0, nums.length - 1, nums, target);
+    }
+
     public static void main(String[] args){
         Solution sol;
         int[] nums = {4, 5, 5, 6, 7, 0, 1, 1, 2};
