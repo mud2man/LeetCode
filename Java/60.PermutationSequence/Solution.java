@@ -1,4 +1,4 @@
-/* Math: O(n)
+/* Math: O(n^2)
  * 1. Build the list of non-used number
  * 2. Select the corresponding number from the un-used number list 
  * 
