@@ -40,14 +40,13 @@ public class Solution {
                 continue;
             }
             
-            //pop
+            //push
             remainSteps[i] = false;
             if(!helper(remainSteps, loseSet, winSet, desiredTotal - i, max)){
                 remainSteps[i] = true;
                 winSet.add(remainStepsId);
                 return true;
             }
-            
             //push
             remainSteps[i] = true;
         }
