@@ -1,4 +1,4 @@
-/* O(n)
+/* Time:O(n), Space:O(n)
  * 1. Reverse the whole string
  * 2. Reverse every word in the string
  */
@@ -7,50 +7,27 @@ import java.util.*;
 
 public class Solution{
     public String reverseWords(String s) {
+        s = s.trim();
         StringBuilder sb = new StringBuilder(s);
         sb.reverse();
-        
-        int currIndex = 0;
-        StringBuilder reverseSb = new StringBuilder("");
-        while(currIndex >= 0 && currIndex < sb.length()){
-            int nexIndex = sb.indexOf(" ", currIndex);
-            if(nexIndex == -1){
-                break;
+        String reverse = "";
+        int i = 0;
+        while(i < sb.length()){
+            StringBuilder word = new StringBuilder("");
+            while(i < sb.length() && sb.charAt(i) != ' '){
+                word.append(sb.charAt(i++));
+            }
+            word.reverse();
+            reverse += word.toString();
+            if(i != sb.length()){
+                reverse += " ";
             }
             
-            //space found
-            if(nexIndex == currIndex){
-                currIndex++;
-                if(reverseSb.length() > 0 && reverseSb.charAt(reverseSb.length() - 1) != ' '){
-                    reverseSb.append(' ');
-                }
-                continue;
-            }
-            
-            //reverse word 
-            for(int i = nexIndex - 1; i >= currIndex; --i){
-                reverseSb.append(sb.charAt(i));
-            }
-            currIndex = nexIndex;
-        }
-        
-        if(currIndex < sb.length()){
-            for(int i = sb.length() - 1; i >= currIndex; --i){
-                reverseSb.append(sb.charAt(i));
+            while(i < sb.length() && sb.charAt(i) == ' '){
+                ++i;
             }
         }
-
-        //clean leading spaces
-        if(reverseSb.length() > 0 && reverseSb.charAt(0) == ' '){
-            reverseSb.deleteCharAt(0);
-        }
-        
-        //clean tailing spaces
-        if(reverseSb.length() > 0 && reverseSb.charAt(reverseSb.length() - 1) == ' '){
-            reverseSb.deleteCharAt(reverseSb.length() - 1);
-        }
-        
-        return reverseSb.toString();
+        return reverse;
     }
     
     public static void main(String[] args){
