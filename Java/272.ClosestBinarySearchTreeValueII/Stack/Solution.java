@@ -1,9 +1,9 @@
 /* Stack: O(k*logn)
- * 1. Have two stacks "successors" and "predecessors" 
- * 2. Initialize the two stack by visiting from root
- * 3. In every loop, get the closer node choosing from predecessors and successors 
- * 4. If predecessor is choosen, invoke addNext with root = predecessor.left, because we need to add farer elements
- * 5. If sucessor is choosen, invoke addNext with root = sucessor.right, because we need to add farer elements
+ * 1. Have two queues "small" and "big" 
+ * 2. Initialize the two queues by visiting from root
+ * 3. In every loop, get the closer node choosing from small and big
+ * 4. If small is choosen, invoke "search" with root = smallNode.left, because we need to add farer elements
+ * 5. If big is choosen, invoke "search" with root = bigNode.right, because we need to add farer elements
  * 6. However, if predecessor = target, we need add both left and right
  */
 
@@ -18,60 +18,60 @@ class TreeNode {
 }
 
 public class Solution {
-    private void addNext(TreeNode root, double target, LinkedList<TreeNode> path, boolean isSucessor){
+    private void search(TreeNode root, Deque<TreeNode> list, double target, boolean isSmall){
         if(root == null){
             return;
         }
-        
-        int val = root.val;
-        if((double)val == target){
-            if(!isSucessor){
-                path.add(root);
+        else if((double)root.val == target){
+            if(isSmall){
+                list.add(root);
             }
-        }
-        else if((double)val < target){
-            if(!isSucessor){
-                path.add(root);
-            }
-            addNext(root.right, target, path, isSucessor);
         }
         else{
-            if(isSucessor){
-                path.add(root);
+            if((double)root.val < target){
+                if(isSmall){
+                    list.add(root);
+                }
+                search(root.right, list, target, isSmall);
             }
-            addNext(root.left, target, path, isSucessor);
+            else{
+                if(!isSmall){
+                    list.add(root);
+                }
+                search(root.left, list, target, isSmall);
+            }
         }
     }
     
     public List<Integer> closestKValues(TreeNode root, double target, int k) {
-        LinkedList<TreeNode> successors = new LinkedList<TreeNode>();
-        LinkedList<TreeNode> predecessors = new LinkedList<TreeNode>();
-        addNext(root, target, successors, true);
-        addNext(root, target, predecessors, false);
-        List<Integer> closestValues = new LinkedList<Integer>();
+        Deque<TreeNode> small = new LinkedList<>();
+        Deque<TreeNode> big = new LinkedList<>();
+        search(root, small, target, true);
+        search(root, big, target, false);
         
-        while(closestValues.size() < k){
-            double diffSucessor = successors.isEmpty()? Double.MAX_VALUE: (double)successors.peekLast().val - target;
-            double diffPredecessor = predecessors.isEmpty()? Double.MAX_VALUE: target - (double)predecessors.peekLast().val;
-
-            if(diffPredecessor < diffSucessor){
-                TreeNode predecessor = predecessors.pollLast();
-                closestValues.add(predecessor.val);
-                if(diffPredecessor == 0.0){
-                    addNext(predecessor.right, target, successors, true);
+        List<Integer> ret = new ArrayList<>();
+        for(int i = 0; i < k; ++i){
+            TreeNode smallNode = small.peekLast();
+            TreeNode bigNode = big.peekLast();
+            double smallDiff = (smallNode == null)? Double.MAX_VALUE: target - (double)smallNode.val;
+            double bigDiff = (bigNode == null)? Double.MAX_VALUE: (double)bigNode.val - target;
+            if(smallDiff < bigDiff){
+                ret.add(smallNode.val);
+                small.pollLast();
+                if(smallDiff == 0.0){
+                    search(smallNode.right, big, target, false);
                 }
-                addNext(predecessor.left, target, predecessors, false);
+                search(smallNode.left, small, target, true);
             }
             else{
-                TreeNode sucessor = successors.pollLast();
-                closestValues.add(sucessor.val);
-                addNext(sucessor.right, target, successors, true);
+                ret.add(bigNode.val);
+                big.pollLast();
+                search(bigNode.right, big, target, false);
             }
         }
-        
-        return closestValues;
+        return ret;
     }
-
+ 
     public static void main(String[] args){
         List<Integer> closestValues;
         TreeNode root;
