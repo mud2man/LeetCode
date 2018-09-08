@@ -17,53 +17,54 @@
 import java.util.*;
 
 public class Solution{
-    public int minDistance(String word1, String word2) {
+        public int minDistance(String word1, String word2) {
+        if(word1.length() == 0 || word2.length() == 0){
+            return Math.max(word1.length(), word2.length());
+        }
+        
         int depth = word1.length();
         int width = word2.length();
         int[][] dp = new int[depth][width];
-        
-        if(depth == 0 || width == 0){
-            return Math.max(depth, width);
-        }
-        
         for(int y = 0; y < depth; ++y){
-            char word1Char = word1.charAt(y);
             for(int x = 0; x < width; ++x){
-                char word2Char = word2.charAt(x);
                 if(y == 0 && x == 0){
-                    dp[y][x] = (word1Char == word2Char)? 0: 1;
+                    if(word1.charAt(y) == word2.charAt(x)){
+                        dp[y][x] = 0;
+                    }
+                    else{
+                        dp[y][x] = 1;
+                    }
                 }
                 else if(y == 0){
-                    if(word1Char == word2Char){
-                        dp[y][x] = (dp[y][x - 1] == x)? dp[y][x - 1]: dp[y][x - 1] + 1;
+                    if(word1.charAt(y) == word2.charAt(x)){
+                        dp[y][x] = x;
                     }
                     else{
                         dp[y][x] = dp[y][x - 1] + 1;
                     }
                 }
                 else if(x == 0){
-                    if(word1Char == word2Char){
-                        dp[y][x] = (dp[y - 1][x] == y)? dp[y - 1][x]: dp[y - 1][x] + 1;
+                    if(word1.charAt(y) == word2.charAt(x)){
+                        dp[y][x] = y;
                     }
                     else{
                         dp[y][x] = dp[y - 1][x] + 1;
                     }
                 }
                 else{
-                    int minSteps = Math.min(dp[y - 1][x] + 1, dp[y][x - 1] + 1);
-                    if(word1Char == word2Char){
-                        minSteps = Math.min(minSteps, dp[y - 1][x - 1]);
+                    if(word1.charAt(y) == word2.charAt(x)){
+                        dp[y][x] = dp[y - 1][x - 1];
                     }
                     else{
-                        minSteps = Math.min(minSteps, dp[y - 1][x - 1] + 1);
+                        dp[y][x] = Math.min(dp[y - 1][x] + 1, dp[y][x - 1] + 1);
+                        dp[y][x] = Math.min(dp[y][x], dp[y - 1][x - 1] + 1);
                     }
-                    dp[y][x] = minSteps;
                 }
             }
         }
         return dp[depth - 1][width - 1];
     }
- 
+  
     public static void main(String[] args){
         Solution sol;
         String word1 = "ab";
