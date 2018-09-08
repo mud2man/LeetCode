@@ -1,64 +1,56 @@
-/* Dynamic Programming: Time:O(n^3), Space:O(n^2). LeetCode has a O(n^2) solution
- * 1. dp[y][x] = the count of different palindromic subsequences between S.substring(x, y)
- * 2. dp[y][x] = dp[y - 1][x](without S.charAt(y)) + dp[y - 1][z](with S.charAt(y)) - dp[w][z](intersection), 
-      where S.charAt(z - 1) == S.charAt(y), S.charAt(w + 1) == S.charAt(y)
+/* Dynamic Programming: Time:O(n^2), Space:O(n^2).
+ * 1. dp[i][tail][head] = the count of different palindromic subsequences in S.substring(head, tail + 1), with two endpoints = 'a' + i
+ * 2. Traverse on tail (0, n - 1), head = (0, tail), i = (0, 3)
+ * 3. There are three cases: two endpoints = 'a' + i, S.charAt(head) != ('a' + i), and others
+ * 4. In case0: differentiate with head and tail
+ * 5. In case1: dp[i][tail][head] = (head < tail)? dp[i][tail][head + 1]: 0
+ * 6. In case2: dp[i][tail][head] = (head < tail)? dp[i][tail - 1][head]: 0;
  */
 
 import java.util.*;
 
 public class Solution{
-    private int helper(String S, int[][] dp, int y, int x){
-        if(y == x){
-            return 1;
-        }   
-        
-        char target = S.charAt(y);
-        int countWithout = dp[y - 1][x];
-        int headIdx = x;
-        int tailIdx = y - 1;
-        
-        while(S.charAt(headIdx) != target && headIdx <= tailIdx){headIdx++;}
-        headIdx++;
-        int countWith = (headIdx <= tailIdx)? dp[tailIdx][headIdx] + 1: 1;
-        
-        if(headIdx > tailIdx){
-            return (countWithout + countWith) % 1000000007;
-        }
-        
-        while(S.charAt(tailIdx) != target && headIdx <= tailIdx){tailIdx--;}
-        tailIdx--;
-        
-        int countIntersect;
-        if(headIdx <= tailIdx){
-            // don't take any chars between headIdx and tailIdx is also an option, so add 1
-            countIntersect = dp[tailIdx][headIdx] + 1;
-        }
-        else if(S.charAt(headIdx) == target){
-            // S.charAt(headIdx) is the only insection
-            countIntersect = 1;
-        }
-        else{
-            countIntersect = 0;
-        }
-        
-        int count = (countWithout + countWith - countIntersect) % 1000000007;
-        count = (count < 0)? count += 1000000007: count;
-        return count;
-    }
-    
-    public int countPalindromicSubsequences(String S) {
-        int length = S.length();
-        int[][] dp = new int[length][length];
-        
-        for(int y = 0; y < length; ++y){
-            for(int x = y; x >= 0; --x){
-                dp[y][x] = helper(S, dp, y, x);
+       public int countPalindromicSubsequences(String S) {
+        int n = S.length();
+        int[][][] dp = new int[4][n][n];
+        for(int tail = 0; tail < n; ++tail){
+            for(int head = tail; head >= 0; --head){
+                for(int i = 0; i < 4; ++i){
+                    if(S.charAt(head) == ('a' + i) && S.charAt(tail) == ('a' + i)){
+                        if(head == tail){
+                            dp[i][tail][head] = 1;
+                        }
+                        else if(head == tail - 1){
+                            dp[i][tail][head] = 2;
+                        }
+                        else{
+                            for(int j = 0; j < 4; ++j){
+                                dp[i][tail][head] += dp[j][tail - 1][head + 1];
+                                dp[i][tail][head] = dp[i][tail][head] % 1000000007;
+                            }
+                            //case0: don't take any chars between tail - 1 and head + 1
+                            //case1: only take S.charAt(head);
+                            dp[i][tail][head]+=2;
+                        }
+                    }
+                    else if(S.charAt(head) != ('a' + i)){
+                        dp[i][tail][head] = (head < tail)? dp[i][tail][head + 1]: 0;
+                    }
+                    else{
+                        dp[i][tail][head] = (head < tail)? dp[i][tail - 1][head]: 0;
+                    }
+                }
             }
         }
         
-        return dp[length - 1][0];
+        int sum = 0;
+        for(int i = 0; i < 4; ++i){
+            sum += dp[i][n - 1][0];
+            sum %= 1000000007;
+        }
+        return sum;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         String S = "bccb";
