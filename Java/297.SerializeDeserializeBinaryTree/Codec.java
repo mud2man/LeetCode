@@ -17,66 +17,52 @@ class TreeNode {
 }
 
 public class Codec {
-        private void preOrder(TreeNode root, StringBuilder preOrderStr){
-        if(root == null){
-            preOrderStr.append("null");
-            preOrderStr.append(',');
-            return;
-        }
-        preOrderStr.append(Integer.toString(root.val));
-        preOrderStr.append(',');
-        preOrder(root.left, preOrderStr);
-        preOrder(root.right, preOrderStr);
-    }
-    
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        StringBuilder preOrderStr = new StringBuilder("");
-        preOrder(root, preOrderStr);
-        return preOrderStr.toString();
+        if(root == null){
+            return "#,";
+        }
+        
+        String s = "";
+        s += (Integer.toString(root.val) + ",");
+        s += serialize(root.left);
+        s += serialize(root.right);
+        return s;
     }
     
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        String[] preOrderValues = data.split(",");
-
-        if(preOrderValues[0].equals("null")){
-            return null;
-        }
-        
-        TreeNode root = new TreeNode(Integer.parseInt(preOrderValues[0]));
-        TreeNode top = root;
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        int index = 1;
-        while(index < preOrderValues.length){
-            String nodeString = preOrderValues[index++];
-            //push null or newNode into virtual stack (stack + top)
-            if(nodeString.equals("null")){
-                stack.push(top);
+        String[] nums = data.split(",");
+        System.out.println(data);
+        System.out.println(Arrays.toString(nums));
+        Deque<TreeNode> stack = new LinkedList<>();
+        TreeNode top = new TreeNode(0);
+        TreeNode root = top;
+        for(String num: nums){
+            if(num.equals("#")){
+                stack.add(top);
                 top = null;
+                if(!stack.isEmpty() && stack.peekLast() == null){
+                    stack.pollLast();
+                    stack.pollLast();
+                }
             }
             else{
-                TreeNode newNode = new TreeNode(Integer.parseInt(nodeString));
+                TreeNode newNode = new TreeNode(Integer.valueOf(num));
                 if(top == null){
-                    stack.peek().right = newNode;
+                    top = stack.pollLast();
+                    top.right = newNode;
                 }
                 else{
                     top.left = newNode;
+                    stack.add(top);
                 }
-                stack.push(top);
                 top = newNode;
             }
-            
-            //pop stack if the top 2 element of virtual stack are null
-            while(top == null && stack.size() > 1 && stack.peek() == null){
-                stack.pop();
-                stack.pop();
-            }
         }
-        
-        return root;
+        return stack.peekLast().left;
     }
-
+ 
     public static void main(String[] args){
         TreeNode root;
         Codec codec;
