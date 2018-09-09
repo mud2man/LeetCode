@@ -1,44 +1,57 @@
 /* Backtrack: Time:O(3^n), Space:O(n)
- * 1. In helper, check if result == target. If so, add path into "results"
- * 2. Then, retrieve the next number from (index + 1) to num.length() of num
- * 3. In '+'/'-', update result with result +/- currentNumber, and update multiply with (-)currentNumber
- * 4. In '*', update result with result - multiply + (multiply * currentNumber), and update multiply with multiply * currentNumber
+ * 1. In the first time, retrieve the first number, and assign it to "multiply", and assign "sum" with 0
+ * 2. Theni call backtarck, retrieve the next number from (start + 1) to num.length() of num, and maintain "sum" and "multiply"
+ * 3. For '+', update sum with sum + multiply, and multiply with "nextNum", since '+' terminate multiply chain
+ * 4. For '-', update sum with sum + multiply, and multiply with "-nextNum", since '-' terminate multiply chain
+ * 5. For '*', keep sum the same, and multiply with (multiply * nextNum), since '*' expend multiply chain
  */
 
 import java.util.*;
 public class Solution{
-    private void helper(String num, int index, int target, String path, long result, long multiply, List<String> results){
-        if(index == num.length()) {
-            if((long)target == result){
-                results.add(path);
+    private void backtarck(long sum, long multiply, String num, int start, long target, String path, List<String> ret){
+        if(start == num.length()){
+            if(sum + multiply == target){
+                ret.add(path);
             }
             return;
-        }   
+        }
         
-        for(int i = index + 1; i <= num.length(); ++i){
-            String currentString = num.substring(index, i);
-            long currentNumber = Long.parseLong(currentString);
+        for(int end = start + 1; end <= num.length(); ++end){
+            String nextNum = num.substring(start, end);
+            //plus
+            String plusPath = path + "+" + nextNum;
+            long nextSum = sum + multiply;
+            long nextMultiply = Long.valueOf(nextNum);
+            backtarck(nextSum, nextMultiply, num, end, target, plusPath, ret);
             
-            if(num.charAt(index) == '0' && i > (index + 1)){
+            //minus
+            String minusPath = path + "-" + nextNum;
+            nextSum = sum + multiply;
+            nextMultiply = -Long.valueOf(nextNum);
+            backtarck(nextSum, nextMultiply, num, end, target, minusPath, ret);
+            
+            //multiply
+            String multilpyPath = path + "*" + nextNum;
+            nextSum = sum;
+            nextMultiply = multiply*Long.valueOf(nextNum);
+            backtarck(nextSum, nextMultiply, num, end, target, multilpyPath, ret);
+            
+            if(num.charAt(start) == '0'){
                 break;
-            }
-            
-            if(index == 0){
-                helper(num, i, target, path + currentString, currentNumber, currentNumber, results);
-            }
-            else{
-                helper(num, i, target, path + "+" + currentString, result + currentNumber, currentNumber, results);
-                helper(num, i, target, path + "-" + currentString, result - currentNumber, -currentNumber, results);
-                long nextMultiply = multiply * currentNumber;
-                helper(num, i, target, path + "*" + currentString, result - multiply + nextMultiply, nextMultiply, results);
             }
         }
     }
     
     public List<String> addOperators(String num, int target) {
-        List<String> results = new ArrayList<String>();
-        helper(num, 0, target, "", 0, 0, results);
-        return results;
+        List<String> ret = new ArrayList<>();
+        for(int i = 1; i <= num.length(); ++i){
+            long multiply = Long.valueOf(num.substring(0, i));
+            backtarck(0L, multiply, num, i, (long)target, num.substring(0, i), ret);
+            if(num.charAt(0) == '0'){
+                break;
+            }
+        }
+        return ret;
     }
 
     public static void main(String[] args){
