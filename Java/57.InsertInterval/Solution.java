@@ -1,6 +1,8 @@
-/* Binary Search: Time:O(n), Space:O(1)
- * 1. Find the first interval overlapped with "newInterval"
- * 2. Delete the overlapped intervals, and add "newInterval"
+/* Binary Search: Time:O(n), Space:O(1), Don't have to use binary search
+ * 1. Find the first interval overlapped with "newInterval" or the insert position
+ * 2. Append all the intervals before insert position "index"
+ * 3. Update newInterval as long as there is overlapping 
+ * 4. Append all the intervals which is no overlap with newInterval
  */
 
 import java.util.*;
@@ -12,41 +14,41 @@ public class Solution{
         Interval(int s, int e) { start = s; end = e; }
     }
 
-    private boolean overlap(Interval interval1, Interval interval2){
-        return !((interval1.end < interval2.start) || (interval2.end < interval1.start));
+    private boolean isOverlap(Interval x, Interval y){
+        return !(x.end < y.start || y.end < x.start);
     }
     
     public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
-        int newStart = newInterval.start;
-        int newEnd = newInterval.end;
-        int i = 0;
-        int j = intervals.size() - 1;
-        int size = intervals.size();
-        
-        while(i <= j){
-            int mid = (i + j) / 2;
-            if(intervals.get(mid).end < newStart){
-                i = mid + 1;
+        int lb = 0;
+        int hb = intervals.size() - 1;
+        while(lb <= hb){
+            int mid = (lb + hb) / 2;
+            Interval interval = intervals.get(mid);
+            if(interval.end < newInterval.start){
+                lb = mid + 1;
             }
             else{
-                j = mid - 1;
+                hb = mid - 1;
             }
         }
         
-        int startIndex = i;
-        newInterval.start = (startIndex < size)? Math.min(intervals.get(startIndex).start, newStart): newInterval.start;
-        for(i = startIndex; i < size; ++i){
-            if(overlap(newInterval, intervals.get(startIndex))){
-                newInterval.end = Math.max(intervals.get(startIndex).end, newEnd);
-                intervals.remove(startIndex);
-            }
-            else{
-                break;
-            }
+        int index = lb;
+        List<Interval> merged = new ArrayList<>();
+        for(int i = 0; i < index; ++i){
+            merged.add(intervals.get(i));
         }
-        intervals.add(startIndex, newInterval);
         
-        return intervals;
+        while(index >= 0 && index < intervals.size() && isOverlap(intervals.get(index), newInterval)){
+            newInterval.start = Math.min(newInterval.start, intervals.get(index).start);
+            newInterval.end = Math.max(newInterval.end, intervals.get(index).end);
+            index++;
+        }
+        merged.add(newInterval);
+        
+        for(int i = index; i < intervals.size(); ++i){
+            merged.add(intervals.get(i));   
+        }
+        return merged;
     }
 
     public static void main(String[] args){
