@@ -1,123 +1,109 @@
 /* Circular queue and Has: O(1)
- * 1. Have an circular queue with "head", where head is the node stored minumum value, and head.prev stored maximum value
+ * 1. Have an circular queue with "head", where head is the node stored 0, head.next stored minimum, head.prev stored maximum
  * 2. Have "key2Value" to store key to value map
  * 3. Have "value2Keys" to store key sets with the same value
  * 4. Have "value2Node" to store value to node of circular queue
- * 5. Need to update circular queue if value2Keys.get(preValue) is empty
+ * 5. When update circular queue, need to do add, and then delete
+ * 6. When deleteNode, need to get the previous node of inserted node
+ * 7. When addNode, just delete the node
  */
 
 import java.util.*;
 
 public class AllOne {
     private class Node{
-        int value;
+        int val;
         Node next;
         Node prev;
-        Node(int v){next = this; prev = this; value = v;}
+        Node(int v){val = v; next = this; prev = this;} 
     }
-    
+    Map<String, Integer> key2Val;
+    Map<Integer, Set<String>> val2Keys;
+    Map<Integer, Node> val2Node;
     Node head;
-    Map<String, Integer> key2Value;
-    Map<Integer, Set<String>> value2Keys;
-    Map<Integer, Node> value2Node;
     
     /** Initialize your data structure here. */
     public AllOne() {
-        head = null;
-        key2Value = new HashMap<String, Integer>();
-        value2Keys = new HashMap<Integer, Set<String>>();
-        value2Node = new HashMap<Integer, Node>();
+        key2Val = new HashMap<>();
+        val2Keys = new HashMap<>();
+        val2Node = new HashMap<>();
+        head = new Node(0);
+        val2Node.put(0, head);
     }
     
-    private Node deleteNode(Node node){
-        if(node.next == node){
-            head = null;
-            return null;
+    private void addNode(Node prev, int val){
+        if(val2Keys.get(val).size() == 1){
+            Node node = new Node(val);
+            Node next = prev.next;
+            prev.next = node;
+            next.prev = node;
+            node.next = next;
+            node.prev = prev;
+            val2Node.put(val, node);
         }
-        else{
-            if(node == head){
-                head = node.next;
-            }
-            node.prev.next = node.next;
+    }
+    
+    private void deleteNode(int val){
+        if(val != 0 && val2Keys.get(val).isEmpty()){
+            Node node = val2Node.get(val);
             node.next.prev = node.prev;
-            return node.prev;
-        }
-    }
-    
-    private void addNode(Node prevNode, Node nextNode){
-        if(prevNode == null){
-            head = nextNode;
-        }
-        else{
-            if(nextNode.value < head.value){
-                head = nextNode;
-            }
-            nextNode.prev = prevNode;
-            nextNode.next = prevNode.next;
-            nextNode.prev.next = nextNode;
-            nextNode.next.prev = nextNode;
-        }
-    }
-    
-    private void update(int preValue, String key){
-        Node prevNode = null;
-        if(value2Keys.containsKey(preValue)){
-            value2Keys.get(preValue).remove(key);
-            if(value2Keys.get(preValue).isEmpty()){
-                Node node = value2Node.get(preValue);
-                value2Node.remove(preValue);
-                value2Keys.remove(preValue);
-                prevNode = deleteNode(node);
-            }
-            else{
-                prevNode = value2Node.get(preValue);
-            }
-        }
-        else{
-            prevNode = (head != null)? head.prev: null;
-        }
-        
-        if(key2Value.containsKey(key)){
-            int newValue = key2Value.get(key);
-            value2Keys.putIfAbsent(newValue, new HashSet<String>());
-            if(value2Keys.get(newValue).isEmpty()){
-                Node nextNode = new Node(newValue);
-                addNode(prevNode, nextNode);
-                value2Node.put(newValue, nextNode);
-            }
-            value2Keys.get(newValue).add(key);
+            node.prev.next = node.next;
+            val2Node.remove(val);
         }
     }
     
     /** Inserts a new key <Key> with value 1. Or increments an existing key by 1. */
     public void inc(String key) {
-        key2Value.putIfAbsent(key, 0);
-        key2Value.put(key, key2Value.get(key) + 1);
-        update(key2Value.get(key) - 1, key);
+        if(key2Val.containsKey(key)){
+            int val = key2Val.get(key);
+            key2Val.put(key, val + 1);
+            val2Keys.get(val).remove(key);
+            val2Keys.putIfAbsent(val + 1, new HashSet<String>());
+            val2Keys.get(val + 1).add(key);
+            addNode(val2Node.get(val), val + 1);
+            deleteNode(val);
+        }
+        else{
+            key2Val.put(key, 1);
+            val2Keys.putIfAbsent(1, new HashSet<String>());
+            val2Keys.get(1).add(key);
+            addNode(val2Node.get(0), 1);
+        }
     }
     
     /** Decrements an existing key by 1. If Key's value is 1, remove it from the data structure. */
     public void dec(String key) {
-        if(!key2Value.containsKey(key)){
+        if(!key2Val.containsKey(key)){
             return;
         }
-        key2Value.put(key, key2Value.get(key) - 1);
-        if(key2Value.get(key) == 0){
-            key2Value.remove(key);
+        else{
+            int val = key2Val.get(key);
+            if(val == 1){
+                key2Val.remove(key);
+                val2Keys.get(1).remove(key);
+                deleteNode(1);
+            }
+            else{
+                key2Val.put(key, val - 1);
+                val2Keys.get(val).remove(key);
+                val2Keys.putIfAbsent(val - 1, new HashSet<String>());
+                val2Keys.get(val - 1).add(key);
+                addNode(val2Node.get(val).prev, val - 1);
+                deleteNode(val);
+            }
         }
-        update(key2Value.containsKey(key)? key2Value.get(key) + 1: 1, key);
     }
     
     /** Returns one of the keys with maximal value. */
     public String getMaxKey() {
-        return (head != null)? value2Keys.get(head.prev.value).iterator().next(): "";
+        return (head.next == head)? "": val2Keys.get(head.prev.val).iterator().next();
     }
     
     /** Returns one of the keys with Minimal value. */
     public String getMinKey() {
-        return (head != null)? value2Keys.get(head.value).iterator().next(): "";
+        return (head.next == head)? "": val2Keys.get(head.next.val).iterator().next();
     }
-  
+ 
     public static void main(String[] args){
         AllOne obj = new AllOne();;
         String key;
