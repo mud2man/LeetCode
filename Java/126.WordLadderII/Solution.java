@@ -1,9 +1,6 @@
-/* BFS + backtrack: time: max(O(n * stringLength * 26), O(path#)), space:O(n^2)
- * 1. Use BFS to traverse, and get the neighbors by character iteration
- * 2. Only put the non-visted node into the end of queue
- * 3. Only get the neighbors only with the same current distance or the one never visited 
- * 4. Build the predecessorMap from neighbor-currNode pair
- * 5. In the end, use backtreack to find all the paths by predecessorMap, and starting from endWord
+/* BFS + DFS: time: max(O(n * stringLength * 26), O(path#)), space:O(n^2)
+ * 1. Use BFS to create graph, where edge is between two closed words, and direction is from right to left
+ * 2. Use DFS to collect all paths from endWord to beginWord
  */
 
 import java.util.*;
@@ -11,99 +8,66 @@ import java.util.*;
 
 //Definition for singly-linked list.
 public class Solution{
-    private void backtarcker(List<List<String>> sequences, HashMap<String, List<String>> predecessorMap, 
-                              LinkedList<String> sequence, String endWord){
+    private void bfs(String beginWord, String endWord, Set<String> unvisited, Map<String, Set<String>> right2Left){
+        Set<String> queue = new HashSet<>();
+        queue.add(beginWord);
         
-        if(!predecessorMap.containsKey(endWord)){
-            return;
-        }
-        else if(predecessorMap.get(endWord).isEmpty()){
-            LinkedList<String> newSequence = new LinkedList<String>(sequence);
-            newSequence.addFirst(endWord);
-            sequences.add(newSequence);
-        }
-        else{
-            //push
-            sequence.addFirst(endWord);
-            for(String prevWord: predecessorMap.get(endWord)){
-                backtarcker(sequences, predecessorMap, sequence, prevWord);
+        while(!queue.isEmpty()){
+            Set<String> nextQueue = new HashSet<>();
+            for(String visitedWord: queue){
+                StringBuilder word = new StringBuilder(visitedWord);
+                for(int i = 0; i < word.length(); ++i){
+                    for(char c = 'a'; c <= 'z'; ++c){
+                        word.setCharAt(i, c);
+                        if(visitedWord.charAt(i) != word.charAt(i) && unvisited.contains(word.toString())){
+                            right2Left.putIfAbsent(word.toString(), new HashSet<>());
+                            right2Left.get(word.toString()).add(visitedWord);
+                            nextQueue.add(word.toString()); 
+                        }
+                    }
+                    word.setCharAt(i, visitedWord.charAt(i));
+                }
             }
-            //pop
-            sequence.pollFirst();
+            if(nextQueue.contains(endWord)){
+                return;
+            }
+            else{
+                for(String visitedWord: nextQueue){
+                    unvisited.remove(visitedWord);
+                }
+                queue = nextQueue;
+            }
         }
     }
     
-    private List<String> getNeighbors(String currNode, Set<String> dictionary, HashMap<String, Integer> distanceMap, 
-                                      int distance){
-        
-        List<String> neighbors = new ArrayList<String>();
-        StringBuilder sb = new StringBuilder(currNode);
-        for(char c = 'a'; c <= 'z'; ++c){
-            for(int i = 0; i < sb.length(); ++i){
-                if(sb.charAt(i) == c){
-                    continue;
-                }
-                char tmp = sb.charAt(i);
-                sb.setCharAt(i, c);
-                String currWord = sb.toString();
-                if(dictionary.contains(currWord)){
-                    if(!distanceMap.containsKey(currWord) || distanceMap.get(currWord) == (distance + 1)){
-                        neighbors.add(currWord);
-                    }
-                }
-                sb.setCharAt(i,tmp);
-            }
+    private void dfs(String begin, String curr, Map<String, Set<String>> right2Left, Deque<String> path, List<List<String>> ladders){
+        path.addFirst(curr);
+        if(curr.equals(begin)){
+            List<String> ladder = new LinkedList<>(path);
+            ladders.add(ladder);
+            path.pollFirst();
+            return;
         }
-        return neighbors;
+        Set<String> lefts = right2Left.get(curr);
+        for(String left: lefts){
+            dfs(begin, left, right2Left, path, ladders);
+        }
+        path.pollFirst();
     }
     
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-        HashMap<String, Integer> distanceMap = new HashMap<String, Integer>();
-        HashMap<String, List<String>> predecessorMap = new HashMap<String, List<String>>();
-        predecessorMap.put(beginWord, new LinkedList<String>());
+        Set<String> unvisited = new HashSet<>(wordList);
+        Map<String, Set<String>> right2Left = new HashMap<>();
+        bfs(beginWord, endWord, unvisited, right2Left);
         
-        Set<String> dictionary = new HashSet<String>(wordList);
-        dictionary.remove(beginWord);
-        if(!dictionary.contains(endWord)){
-            return new LinkedList<List<String>>();
+        if(!right2Left.containsKey(endWord)){
+            return new ArrayList<>();
         }
-        
-        boolean isFound = false;
-        LinkedList<String> queue = new LinkedList<String>();
-        queue.add(beginWord);
-        int distance = 0;
-        while(!queue.isEmpty() && !isFound){
-            int size = queue.size();
-            for(int i = 0; i < size; ++i){
-                String currNode = queue.pollFirst();
-                if(currNode.equals(endWord)){
-                    isFound = true;
-                    break;
-                }
-                else{
-                    List<String> neighbors = getNeighbors(currNode, dictionary, distanceMap, distance);
-                    for(String neighbor: neighbors){
-                        //not visited this neighbor before
-                        if(!distanceMap.containsKey(neighbor)){
-                            queue.add(neighbor);
-                        }
-                        
-                        distanceMap.put(neighbor, distance + 1);
-                        
-                        if(!predecessorMap.containsKey(neighbor)){
-                            predecessorMap.put(neighbor, new LinkedList<String>());
-                        }
-                        predecessorMap.get(neighbor).add(currNode);
-                    }
-                }
-            }
-            distance++;
+        else{
+            List<List<String>> ladders = new LinkedList<>();
+            dfs(beginWord, endWord, right2Left, new LinkedList<String>(), ladders);
+            return ladders;
         }
-
-        List<List<String>> sequences = new LinkedList<List<String>>();
-        LinkedList<String> sequence = new LinkedList<String>();
-        backtarcker(sequences, predecessorMap, sequence, endWord);
-        return sequences;
     }
 
     public static void main(String[] args){
