@@ -1,84 +1,58 @@
-/* Time:O(n), Space:O(n)
- * 1. Strip the leading zeros and tail zeros, then split the string to base part and exponent part
- * 2. In base part, it can come along with dot
- * 3. In exponent, it can only be integer
+/* Time:O(n), Space:O(1)
+ * 1. Have indicator sawE, sawPoint, sawBase, sawExp, sawDigit
+ * 2. Traverse char in s after trim, and handle cases 0~9, e, +/-, .
+ * 3. If sawE, then requies sawBase&sawExp, otherwise tre 
  */
 
 import java.util.*;
 
 public class Solution{
-    String strip(String s){
-        int start = 0;
-        int end = s.length() - 1;
-        while(start < s.length() && s.charAt(start) == ' '){start++;}
-        while(end > 0 && s.charAt(end) == ' '){end--;}
-        return s.substring(start, end + 1);
-    }
-        
-    private boolean isBase(String s){
-        if(s.length() < 1){
+    public boolean isNumber(String s) {
+        s = s.trim();
+        if(s.length() == 0){
             return false;
         }
-        int start = (s.charAt(0) == '+' || s.charAt(0) == '-')? 1: 0;
-        int dotCount = 0;
-        int length = 0;
-        for(int i = start; i < s.length(); ++i){
-            if(s.charAt(i) == '.'){
-                dotCount++;
+        boolean sawE = false;
+        boolean sawPoint = false;
+        boolean sawBase = false;
+        boolean sawExp = false;
+        boolean sawDigit = false;
+        for(int i = 0; i < s.length(); ++i){
+            char c = s.charAt(i);
+            if(c >= '0' && c <= '9'){
+                if(!sawE){
+                    sawBase = true;
+                }
+                else{
+                    sawExp = true;
+                }
+                sawDigit = true;
             }
-            else if(!Character.isDigit(s.charAt(i))){
-                return false;
+            else if(c == 'e'){
+                if(sawE == true){
+                    return false;
+                }
+                sawE = true;
+            }
+            else if(c == '+' || c == '-'){
+                if(i != 0 && s.charAt(i - 1) != 'e'){
+                    return false;
+                }
+            }
+            else if(c == '.'){
+                if(sawPoint == true || sawE == true){
+                    return false;
+                }
+                if(!sawDigit && (i + 1 == s.length() || !Character.isDigit(s.charAt(i + 1)))){
+                    return false;
+                }
+                sawPoint = true;
             }
             else{
-                length++;
-            }
-        }
-        
-        if(dotCount > 1 || (dotCount == 1 && length == 0)){
-            return false;
-        }
-        else if(dotCount == 0){
-            return (s.substring(start).length() > 0);
-        }
-        else{
-            return true;
-        }
-    }
-    
-    private boolean isExponent(String s){
-        if(s.length() < 1){
-            return false;
-        }
-        int start = (s.charAt(0) == '+' || s.charAt(0) == '-')? 1: 0;
-        for(int i = start; i < s.length(); ++i){
-            if(!Character.isDigit(s.charAt(i))){
                 return false;
             }
         }
-        return (s.substring(start).length() > 0);
-    }
-    
-    public boolean isNumber(String s) {
-        s = strip(s);
-        if(s.indexOf(' ') != -1){
-            return false;
-        }
-        
-        String[] baseAndExponent = s.split("e");
-        if(baseAndExponent.length > 2 || s.indexOf('e') != s.lastIndexOf('e')){
-            return false;
-        }
-        else if(baseAndExponent.length == 2){
-            if(!isBase(baseAndExponent[0]) || !isExponent(baseAndExponent[1])){
-                return false;
-            }
-        }
-        else{
-            if(s.indexOf("e") != -1 || !isBase(baseAndExponent[0])){
-                return false;
-            }
-        }
-        return true;
+        return sawE? (sawBase&sawExp): true;
     }
  
     public static void main(String[] args){
