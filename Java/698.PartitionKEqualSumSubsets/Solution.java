@@ -1,4 +1,4 @@
-/* DFS: Time:O(n^k) Space:O(n)
+/* DFS: Time:O(k^n) Space:O(n)
  * 1. Sort the input array, and create a array residure[] with initial value (sum / k)
  * 2. Call helper and put the nums[index] into different residure[] every time 
  * 3. If index == -1 and remain == 0 retunr true
