@@ -1,57 +1,38 @@
 /* Binary search: Average: O(logn), Worst:O(n)
- * 1. Call helper recursively
- * 2. In helper, there are 4 cases: nums[mid] == target, nums[mid] > nums[lb] (1st slope), nums[mid] < nums[lb](2nd slope), others 
- * 3. If nums[mid] == target, return true
- * 4. If mid is in 1st slope, find targert from right half if target is not in 1st slope, or find it from left half if target is in
- *    in 1st slope, otherwise find it from both halves
- * 5. If mid is in 2nd slope, find targert from left half if target is not in 2nd slope, or find it from right half if target is in
- *    in 2nd slop, otherwise find it from both halvese
- * 6. Otherwise, find target from both halvese
+ * 1. Call binarySearch recursively
+ * 2. If nums[mid] > nums[lb], then mid is on left slope, then check if target in left slope. If so, search the left
+ * 3. If nums[mid] < nums[hb], then mid is on right slope, then check if target in right slope. If so, search the right
+ * 6. Otherwise, find target from both halves
  */         
 
 import java.util.*;
 
 public class Solution {
-    private boolean helper(int lb, int hb, int[] nums, int target){
+    private boolean binarySearch(int[] nums, int lb, int hb, int target){
         if(lb > hb){
             return false;
         }
-        
+
         int mid = (lb + hb) / 2;
         if(nums[mid] == target){
             return true;
         }
-        else if(nums[mid] > nums[lb]){
-            if(target > nums[mid] || target < nums[lb]){
-                return helper(mid + 1, hb, nums, target);
-            }
-            else if(target < nums[mid] && target >= nums[lb]){
-                return helper(lb, mid - 1, nums, target);
-            }
-            else{
-                return helper(lb, mid - 1, nums, target) | helper(mid + 1, hb, nums, target);
-            }
+        
+        if(nums[mid] > nums[lb] && target <= nums[mid] && target >= nums[lb]){ //left slope
+            return binarySearch(nums, lb, mid - 1, target);
         }
-        else if(nums[mid] < nums[lb]){
-            if(target < nums[mid] || target > nums[hb]){
-                return helper(lb, mid - 1, nums, target);
-            }
-            else if(target > nums[mid] && target <= nums[hb]){
-                return helper(mid + 1, hb, nums, target);
-            }
-            else{
-                return helper(lb, mid - 1, nums, target) | helper(mid + 1, hb, nums, target);
-            }
+        else if(nums[mid] < nums[hb] && target <= nums[hb] && target >= nums[mid]){ // right slope
+            return binarySearch(nums, mid + 1, hb, target);
         }
         else{
-            return helper(lb, mid - 1, nums, target) | helper(mid + 1, hb, nums, target);
+            return binarySearch(nums, lb, mid - 1, target) | binarySearch(nums, mid + 1, hb, target);
         }
     }
     
     public boolean search(int[] nums, int target) {
-        return helper(0, nums.length - 1, nums, target);
+        return binarySearch(nums, 0, nums.length - 1, target);
     }
-
+ 
     public static void main(String[] args){
         Solution sol;
         int[] nums = {4, 5, 5, 6, 7, 0, 1, 1, 2};
