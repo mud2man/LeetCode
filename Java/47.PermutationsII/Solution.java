@@ -18,46 +18,38 @@
 import java.util.*;
 
 public class Solution {
-    public void helper(LinkedList<Integer> remain, LinkedList<Integer> permutation, List<List<Integer>> permutations){
-        int i, preVal, size;
-        
-        if(remain.isEmpty()){
-            permutations.add(new LinkedList<Integer>(permutation));
+    private void backtrack(Deque<Integer> queue, List<List<Integer>> permutations, Deque<Integer> path){
+        if(queue.isEmpty()){
+            permutations.add(new LinkedList<>(path));
             return;
         }
         
-        preVal = remain.peekFirst() - 1;
-        size = remain.size();
-        
-        for(i = 0; i < size; ++i){
-            int head = remain.pollFirst();
-            if(head != preVal){
-                preVal = head;
-                permutation.add(head);
-                helper(remain, permutation, permutations);
-                permutation.pollLast();
+        int prev = queue.peekFirst() - 1;
+        int size = queue.size();
+        for(int i = 0; i < size; i++){
+            int curr = queue.pollFirst();
+            if(prev != curr){
+                path.add(curr);
+                backtrack(queue, permutations, path);
+                path.pollLast();
             }
-            remain.add(head);
+            queue.add(curr);
+            prev = curr;
         }
-    }
- 
-    public List<List<Integer>> permuteUnique(int[] nums) {
-        LinkedList<Integer> permutation, remain;
-        List<List<Integer>> permutations;
-        
-        permutation = new LinkedList<Integer>();
-        remain = new LinkedList<Integer>();
-        permutations = new LinkedList<List<Integer>>();
-        
-        Arrays.sort(nums);
-        for(int num: nums){
-            remain.add(num);
-        }
-        
-        helper(remain, permutation, permutations);
-        return permutations;
     }
     
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        Arrays.sort(nums);
+        Deque<Integer> queue = new LinkedList<>();
+        for(int num: nums){
+            queue.add(num);
+        }
+        List<List<Integer>> permutations = new LinkedList<>();
+        Deque<Integer> path = new LinkedList<>();
+        backtrack(queue, permutations, path);
+        return permutations;
+    }
+  
     public static void main(String[] args){
         Solution sol;
         int[] nums = {1, 1, 2};
