@@ -1,82 +1,49 @@
 /* Binary search: O(logn)
- * 1. Calssify the following scenerios] => mid: *, lb: #, ub: #
- * 2. Case0: nums[ub] < nums[lb] && midVal >= nums[lb]
- *
- *     / |
- *    *  |
- *   /   |
- *  #    | 
- *       |
- *       |  #
- *       | / 
- *
- * 3. Case1: nums[ub] < nums[lb] && midVal < nums[ub]
- *      
- *     / |
- *    #  |
- *       |
- *       |    #
- *       |   /
- *       |  *
- *       | /
- *
- * 4. Case1: nums[ub] > nums[lb]
- *      
- *           #
- *          /
- *         *
- *        /
- *       /
- *      #
+ * 1. Find the "start", where nums[start] is the lowest
+ * 2. Binary search target with given starting index "start"
  */         
 
 import java.util.*;
 
 public class Solution {
     public int search(int[] nums, int target) {
-        int lb, ub, mid, midVal;
-        
-        lb = 0;
-        ub = nums.length - 1;
-        
-        while(lb <= ub){
-            mid = (lb + ub) / 2;
-            midVal = nums[mid];
-
-            if(nums[mid] == target){
-                return mid;
+        int lb = 0;
+        int hb = nums.length - 1;
+        while(lb <= hb){
+            int mid = (lb + hb) / 2;
+            int num = nums[mid];
+            int left = (mid > 0)? nums[mid - 1]: Integer.MAX_VALUE;
+            int right = (mid < nums.length - 1)? nums[mid + 1]: Integer.MAX_VALUE;
+            if(num < left && num < right){
+                lb = mid;
+                break;
             }
-            else if(nums[ub] < nums[lb]){
-                if(midVal >= nums[lb]){
-                    if(target > midVal || target < nums[lb]){
-                        lb = mid + 1;
-                    }
-                    else{
-                        ub = mid - 1;
-                    }
-                }
-                else{
-                    if(target < midVal || target > nums[ub]){
-                        ub = mid - 1;
-                    } 
-                    else{
-                        lb = mid + 1; 
-                    }
-                }
+            else if(num >= nums[lb] && num > nums[hb]){
+                lb = mid + 1;
             }
             else{
-                if(target > midVal){
-                    lb = mid + 1;
-                }
-                else{
-                    ub = mid - 1;
-                }
+                hb = mid - 1;
             }
         }
         
-        return -1;
+        int len = nums.length;
+        int start = lb;
+        lb = 0;
+        hb = nums.length - 1;
+        while(lb <= hb){
+            int mid = (lb + hb) / 2;
+            int num = nums[(mid + start) % len];
+            if(target > num){
+                lb = mid + 1;
+            }
+            else{
+                hb = mid - 1;
+            }
+        }
+        
+        return (lb < len && nums[(lb + start) % len] == target)? (lb + start) % len: -1;
     }
- 
+
     public static void main(String[] args){
         Solution sol;
         int[] nums = {4, 5, 6, 7, 0, 1, 2};
