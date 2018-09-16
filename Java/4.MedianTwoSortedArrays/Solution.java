@@ -12,9 +12,9 @@ import java.util.*;
 
 public class Solution{
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        int[] big = null;
-        int[] small = null;
-        if(nums1.length <= nums2.length){
+        int[] big;
+        int[] small;
+        if(nums1.length >= nums2.length){
             big = nums1;
             small = nums2;
         }
@@ -23,36 +23,37 @@ public class Solution{
             small = nums1;
         }
         
-        int lb = 0;
-        int hb = big.length;
-        int halfSize = (big.length + small.length) / 2;
+        int halfSize = (small.length + big.length) / 2;
+        int lb = halfSize - small.length; //count all nums in small
+        int hb = halfSize; //doesn't count any num in small
         while(lb <= hb){
             int mid = (lb + hb) / 2;
-            int bigRight = (mid == big.length)? Integer.MAX_VALUE: big[mid];
-            int smallLeft = ((halfSize - mid - 1) < 0)? Integer.MIN_VALUE: small[halfSize - mid - 1];
+            int bigRight = (mid < big.length)? big[mid]: Integer.MAX_VALUE;
             int bigLeft = (mid > 0)? big[mid - 1]: Integer.MIN_VALUE;
-            int smallRight = ((halfSize - mid) == small.length)? Integer.MAX_VALUE: small[halfSize - mid];
+            int smallIdx = halfSize - mid;
+            int smallRight = (smallIdx < small.length)?  small[smallIdx]: Integer.MAX_VALUE;
+            int smallLeft = (smallIdx > 0)? small[smallIdx - 1]: Integer.MIN_VALUE;
             
-            if(bigRight < smallLeft){
-                lb = mid + 1;
-            }
-            else if(bigLeft > smallRight){
-                hb = mid - 1;
-            }
-            else{
-                int right = Math.min(bigRight, smallRight);
-                int left = Math.max(bigLeft, smallLeft);
-                if((nums1.length + nums2.length) % 2 == 1){
-                    return (double)right;
-                }
-                else{
+            if(bigRight >= smallLeft && smallRight >= bigLeft){
+                if((small.length + big.length) % 2 == 0){
+                    int right = Math.min(bigRight, smallRight); 
+                    int left = Math.max(bigLeft, smallLeft); 
                     return (double)(right + left) / 2.0;
                 }
+                else{
+                    return (double)Math.min(bigRight, smallRight);   
+                }
+            }
+            else if(bigRight < smallLeft){
+                lb = mid + 1;
+            }
+            else{
+                hb = mid - 1;
             }
         }
         return 0.0;
     }
- 
+  
     public static void main(String[] args){
         int[] nums1 = {1, 2};
         int[] nums2 = {3, 4};
