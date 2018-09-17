@@ -1,13 +1,11 @@
-/* BFS: O(n)
- * 1. Visist every level and store their children into the queue
- * 2. Repeat step 1 until the queue is empty
+/* Inorder: O(n)
+ * 1. Visit tree inordely, and append new level if levels.size() == depth 
  */
 
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeNode 
-{
+class TreeNode {
     int val;
     TreeNode left;
     TreeNode right;
@@ -15,33 +13,26 @@ class TreeNode
 }
 
 public class Solution {
+        private void inorder(TreeNode root, int depth, List<List<Integer>> levels){
+        if(root == null){
+            return;
+        }
+        
+        if(levels.size() == depth){
+            levels.add(new ArrayList<>());
+        }
+        
+        levels.get(depth).add(root.val);
+        inorder(root.left, depth + 1, levels);
+        inorder(root.right, depth + 1, levels);
+    }
+    
     public List<List<Integer>> levelOrder(TreeNode root) {
-        List<List<Integer>> levels = new LinkedList<List<Integer>>();
-        List<Integer> level;
-        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
-        int size;
-        TreeNode farther;
-        
-        if(root != null){
-            queue.add(root);
-        }
-        
-        while(!queue.isEmpty()){
-            size = queue.size();
-            level = new LinkedList<Integer>();
-            for(int i = 0; i < size; ++i){
-                farther = queue.pollFirst();
-                level.add(farther.val);
-                if(farther.left != null)
-                    queue.add(farther.left);
-                if(farther.right != null)
-                    queue.add(farther.right);
-            }
-            levels.add(level);
-        }
+        List<List<Integer>> levels = new ArrayList<>();
+        inorder(root, 0, levels);
         return levels;
     }
-  
+ 
     public static void main(String[] args){
         TreeNode root;
         Solution sol;
