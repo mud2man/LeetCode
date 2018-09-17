@@ -1,4 +1,4 @@
-/* Backtrack: O(logn * n^0.5), because n^0.5*((0.5n)^0.5)*((0.25n)^0.5)
+/* Backtrack: O((n^0.5)!), Most n^0.5 factors, so combination# is (n^0.5)!
  * 1. In the backtracker, if the last factor is smaller or equal to n, put it factor list
  * 2. Iterate all the possible factors from last factor to n^0.5
  * 3. Before enter the next-level backtracker, push the factor into factors
