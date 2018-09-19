@@ -49,10 +49,7 @@ public class Solution{
                 if(currNode.equals(endWord)){
                     return distance;
                 }
-                List<String> neighbors = getNeighbors(wordSet, currNode);
-                for(String neighbor: neighbors){
-                    queue.add(neighbor);
-                }
+                queue.addAll(getNeighbors(wordSet, currNode));
             }
             distance++;
         }
