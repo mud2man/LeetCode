@@ -45,7 +45,8 @@ public class Solution{
                         dp[y][x] = dp[y - 2][x];
                     }
                     else{
-                        dp[y][x] = dp[y - 1][x] | dp[y][x - 1] | dp[y - 1][x - 1] | dp[y - 2][x];
+                        //not use p | use more than 1 p | use 1 p | remove previous p
+                        dp[y][x] = dp[y - 1][x] | dp[y][x - 1] | dp[y - 1][x - 1] | dp[y - 2][x]; 
                     }
                 }
                 else if(charP == '.' || charP == charS){
