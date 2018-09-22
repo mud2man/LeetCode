@@ -33,11 +33,13 @@ public class Solution{
                     return false;
                 }
                 sawE = true;
+                sawDigit = false;
             }
             else if(c == '+' || c == '-'){
                 if(i != 0 && s.charAt(i - 1) != 'e'){
                     return false;
                 }
+                sawDigit = false;
             }
             else if(c == '.'){
                 if(sawPoint == true || sawE == true){
@@ -47,6 +49,7 @@ public class Solution{
                     return false;
                 }
                 sawPoint = true;
+                sawDigit = false;
             }
             else{
                 return false;
