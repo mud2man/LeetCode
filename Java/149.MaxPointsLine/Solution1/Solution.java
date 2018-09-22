@@ -53,14 +53,9 @@ public class Solution{
                     numerator = numerator / maxfactor;
                 }
                 
-                if(!countMap.containsKey(denominator)){
-                    countMap.put(denominator, new HashMap<Integer,Integer>());
-                }
+                countMap.putIfAbsent(denominator, new HashMap<>());
                 HashMap<Integer,Integer> innerMap = countMap.get(denominator);
-                
-                if(!innerMap.containsKey(numerator)){
-                    innerMap.put(numerator, 0);
-                }
+                innerMap.putIfAbsent(numerator, 0);
                 innerMap.put(numerator, innerMap.get(numerator) + 1);
                 localMaxCount = Math.max(localMaxCount, duplicateCount + innerMap.get(numerator) + 1);
             }
