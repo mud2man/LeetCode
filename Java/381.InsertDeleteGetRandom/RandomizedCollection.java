@@ -1,5 +1,5 @@
 /* HashMap: time = O(1), space = O(n)
- * 1. Have a bucket to store all avaolable values
+ * 1. Have a bucket "val2Idx" to store all available values
  * 2. Have a HashMap valueIndexMap to store the index set of indexes w.r.t. the value as the key
  * 3. When insert, accumulate lastIndex if bucket full, and put the val-index pair into valueIndexMap
  * 4. WHen remove, remove val from bucket and valueIndexMap, replace val in bucket with lastValue and update valueIndexMap
@@ -9,69 +9,59 @@
 import java.util.*;
 
 public class RandomizedCollection{
-    List<Integer> bucket;
-    int lastIndex;
-    HashMap<Integer, HashSet<Integer>> valueIndexMap;
-    Random random;
+    List<Integer> list;
+    Map<Integer, Set<Integer>> val2Idx;
+    int len;
+    Random rand;
     
     /** Initialize your data structure here. */
     public RandomizedCollection() {
-        bucket = new ArrayList<Integer>();
-        lastIndex = -1;
-        valueIndexMap = new HashMap<Integer, HashSet<Integer>>();
-        random = new Random();
+        rand = new Random();
+        list = new ArrayList<>();
+        val2Idx = new HashMap<>();
+        len = 0;
     }
     
     /** Inserts a value to the collection. Returns true if the collection did not already contain the specified element. */
     public boolean insert(int val) {
-        lastIndex++;
-        boolean ret = false;
+        boolean ret = true;
+        if(val2Idx.containsKey(val) && !val2Idx.get(val).isEmpty()){
+            ret = false;
+        }
         
-        if(lastIndex == bucket.size()){
-            bucket.add(val);
+        len++;
+        if(list.size() >= len){
+            list.set(len - 1, val);
         }
         else{
-            bucket.set(lastIndex, val);
+            list.add(val);
         }
-        
-        if(!valueIndexMap.containsKey(val)){
-            ret = true;
-            valueIndexMap.put(val, new HashSet<Integer>());
-        }
-        valueIndexMap.get(val).add(lastIndex);
-        
+        val2Idx.putIfAbsent(val, new HashSet<>());
+        val2Idx.get(val).add(len - 1);
         return ret;
     }
     
     /** Removes a value from the collection. Returns true if the collection contained the specified element. */
     public boolean remove(int val) {
-        if(!valueIndexMap.containsKey(val) || valueIndexMap.get(val).isEmpty()){
+        if(!val2Idx.containsKey(val) || val2Idx.get(val).isEmpty()){
             return false;
         }
         
-        //remove val from bucket and valueIndexMap
-        Iterator<Integer> iterator = valueIndexMap.get(val).iterator();
-        int removeIndex = iterator.next();
-        valueIndexMap.get(val).remove(removeIndex);
+        Iterator<Integer> itr = val2Idx.get(val).iterator();
+        int removeIdx = itr.next();
+        itr.remove();
+        len--;
+        list.set(removeIdx, list.get(len));
         
-        //replace the position of val with lastValue
-        if(removeIndex != lastIndex){
-            int lastValue = bucket.get(lastIndex--);
-            bucket.set(removeIndex, lastValue);
-            valueIndexMap.get(lastValue).remove(lastIndex + 1);
-            valueIndexMap.get(lastValue).add(removeIndex);
-        }
-        else{
-            lastIndex--;
-        }
-        
+        val2Idx.get(list.get(removeIdx)).add(removeIdx);
+        val2Idx.get(list.get(removeIdx)).remove(len);
         return true;
     }
     
     /** Get a random element from the collection. */
     public int getRandom() {
-        int randomNum = random.nextInt(lastIndex + 1);
-        return bucket.get(randomNum);
+        int idx = rand.nextInt(len);
+        return list.get(idx);
     }
 
     public static void main(String[] args){
