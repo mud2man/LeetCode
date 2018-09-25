@@ -31,36 +31,36 @@ public class Solution{
         Node[][] dp = new Node[length + 1][2];
         dp[0][0] = new Node(-1, 0);
         dp[0][1] = new Node(-2, 0);
-        PriorityQueue<Node> minHeap = new PriorityQueue(new MaxHeapComparator());
+        PriorityQueue<Node> maxHeap = new PriorityQueue(new MaxHeapComparator());
         for(int i = 0; i < length; ++i){
             for(int color = 0; color < depth; ++color){
                 int cost = costs[i][color];
                 cost += (dp[i][0].color != color)? dp[i][0].cost: dp[i][1].cost;
                 
-                if(minHeap.size() < 2){
-                    minHeap.add(new Node(color, cost));
+                if(maxHeap.size() < 2){
+                    maxHeap.add(new Node(color, cost));
                 }
                 else{
-                    if(minHeap.peek().cost > cost){
-                        minHeap.poll();
-                        minHeap.add(new Node(color, cost));
+                    if(maxHeap.peek().cost > cost){
+                        maxHeap.poll();
+                        maxHeap.add(new Node(color, cost));
                     }
                 }
             }
             
-            if(minHeap.size() == 2){
-                dp[i + 1][1] = minHeap.poll();
-                dp[i + 1][0] = minHeap.poll();
+            if(maxHeap.size() == 2){
+                dp[i + 1][1] = maxHeap.poll();
+                dp[i + 1][0] = maxHeap.poll();
             }
             else{
-                Node top = minHeap.poll();
+                Node top = maxHeap.poll();
                 dp[i + 1][1] = top;
                 dp[i + 1][0] = top;
             }
         }
         return dp[length][0].cost; 
     }
- 
+
     public static void main(String[] args){
         Solution sol = new Solution();
         int [][] costs = {{1, 2, 3},
