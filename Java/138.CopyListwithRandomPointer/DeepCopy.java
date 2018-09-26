@@ -1,3 +1,8 @@
+/* Map: Time:O(n), Space:O(n), LeetCode has a Space:O(1) solution
+ * 1. Visit list and construct a map "copiedPairs"
+ * 2. Vist the new list and assign the random pointer
+ */
+
 import java.util.*;
 
 class RandomListNode {
