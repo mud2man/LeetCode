@@ -47,7 +47,7 @@ public class Solution {
                 winSet.add(remainStepsId);
                 return true;
             }
-            //push
+            //pop
             remainSteps[i] = true;
         }
         
