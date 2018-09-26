@@ -9,42 +9,27 @@ import java.util.*;
 
 //Definition for singly-linked list.
 public class Solution{
-    public boolean dfs(boolean[][] used, char[][] board, int y, int x, String word, int idx){
-        
-        if(idx == word.length() - 1 && word.charAt(idx) == board[y][x]){
-            return true;
+    public boolean dfs(boolean[][] used, char[][] board, int y, int x, String word, int i){
+        if(y < 0 || y >= board.length || x < 0 || x >= board[0].length || used[y][x] == true || board[y][x] != word.charAt(i)){
+            return false;
         }
         
-        if(board[y][x] != word.charAt(idx)){
-            return false;
+        if(i + 1 == word.length()){
+            return true;
         }
         
         //push
         used[y][x] = true;
         
-        // walk up
-        if(y > 0 && used[y - 1][x] == false && dfs(used, board, y - 1, x, word, idx + 1)){
-            return true;
-        }
-        
-        // walk down
-        if(y < board.length - 1 && used[y + 1][x] == false && dfs(used, board, y + 1, x, word, idx + 1)){
-            return true;
-        }
-        
-        // walk left
-        if(x > 0 && used[y][x - 1] == false && dfs(used, board, y, x - 1, word, idx + 1)){
-            return true;
-        }
-        
-        // walk right
-        if(x <  board[0].length - 1 && used[y][x + 1] == false && dfs(used, board, y, x + 1, word, idx + 1)){
-            return true;
+        int[][] shifts = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        for(int[] shift: shifts){
+            if(dfs(used, board, y + shift[0], x + shift[1], word, i + 1)){
+                return true;
+            }  
         }
         
         //pop
-        used[y][x] = false;;
-        
+        used[y][x] = false; 
         return false;
     }
     
