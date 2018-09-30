@@ -1,4 +1,4 @@
-/* Inorder: O(n)
+/* PreOrder: O(n)
  * 1. Visit tree inordely, and append new level if levels.size() == depth 
  */
 
@@ -13,7 +13,7 @@ class TreeNode {
 }
 
 public class Solution {
-        private void inorder(TreeNode root, int depth, List<List<Integer>> levels){
+        private void preorder(TreeNode root, int depth, List<List<Integer>> levels){
         if(root == null){
             return;
         }
@@ -23,13 +23,13 @@ public class Solution {
         }
         
         levels.get(depth).add(root.val);
-        inorder(root.left, depth + 1, levels);
-        inorder(root.right, depth + 1, levels);
+        preorder(root.left, depth + 1, levels);
+        preorder(root.right, depth + 1, levels);
     }
     
     public List<List<Integer>> levelOrder(TreeNode root) {
         List<List<Integer>> levels = new ArrayList<>();
-        inorder(root, 0, levels);
+        preorder(root, 0, levels);
         return levels;
     }
  
