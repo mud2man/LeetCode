@@ -1,4 +1,4 @@
-/* HashMap and minimum heap O(nlogk)
+/* HashMap and minimum heap O(nlogk). LeetCode has O(n) solution
  * 1. Collect the frequency hash map from the input array
  * 2. Use minimum heap to select the top K frequent element among the frequency hash map
  */
