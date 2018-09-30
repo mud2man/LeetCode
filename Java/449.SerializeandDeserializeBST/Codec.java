@@ -1,6 +1,9 @@
-/* Use preorder: O(nlgn) in average, but O(n^2) in worst case. You can use the solution of LC#297 to get an O(n) solution
- * 1. Use preorder to serialize
- * 2. Translate string to array of integer and deserialize
+/* Use preorder: TimeO(n), SpaceO(n)
+ * 1. Serialize with preorder traversal, and denote Null pointer with string "null"
+ * 2. Have a variable" top" to store the actual top node, and the virtual stack is (stack + top)
+ * 2. Retrieve tree node by visiting "data" from the 0-th position
+ * 3. push null or newNode into virtual stack (stack + top)
+ * 4. pop stack if the top 2 element of virtual stack are null
  */
 
 import java.util.*; // Stack
@@ -14,58 +17,64 @@ class TreeNode {
 }
 
 public class Codec {
-    private void preOrderEncode(StringBuilder preOrderString, TreeNode root){
+    private void preOrder(TreeNode root, StringBuilder preOrderStr){
         if(root == null){
+            preOrderStr.append("null");
+            preOrderStr.append(',');
             return;
         }
-        preOrderString.append(",");
-        preOrderString.append(root.val);
-        preOrderEncode(preOrderString, root.left);
-        preOrderEncode(preOrderString, root.right);
+        preOrderStr.append(Integer.toString(root.val));
+        preOrderStr.append(',');
+        preOrder(root.left, preOrderStr);
+        preOrder(root.right, preOrderStr);
     }
     
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        StringBuilder data = new StringBuilder("");
-        preOrderEncode(data, root);
-        return (data.length() > 0)? data.toString().substring(1, data.length()): "";
+        StringBuilder preOrderStr = new StringBuilder("");
+        preOrder(root, preOrderStr);
+        return preOrderStr.toString();
     }
 
-    private TreeNode preOrderDecode(int[] nodeNums, int startIdx, int endIdx){
-        if(startIdx > endIdx){
-            return null;
-        }
-        
-        int rootVal = nodeNums[startIdx];
-        TreeNode root = new TreeNode(rootVal);
-        int rightRootIdx = startIdx + 1;
-        while(rightRootIdx <= endIdx && nodeNums[rightRootIdx] < rootVal){
-            rightRootIdx++;
-        }
-        
-        root.left = preOrderDecode(nodeNums, startIdx + 1, rightRootIdx - 1);
-        root.right = preOrderDecode(nodeNums, rightRootIdx, endIdx);
-        
-        return root;
-    }
-    
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        if(data.length() == 0){
+        String[] preOrderValues = data.split(",");
+        if(preOrderValues[0].equals("null")){
             return null;
         }
         
-        String[] nodeStrings =  data.split(",");
-        int[] nodeNums = new int[nodeStrings.length];
-        for(int i = 0; i < nodeStrings.length; ++i){
-            nodeNums[i] = Integer.parseInt(nodeStrings[i]);
+        TreeNode root = new TreeNode(Integer.parseInt(preOrderValues[0]));
+        TreeNode top = root;
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        for(int index = 1; index < preOrderValues.length; ++index){
+            String nodeString = preOrderValues[index];
+            //push null or newNode into virtual stack (stack + top)
+            if(nodeString.equals("null")){
+                if(top == null){
+                    stack.pollLast();
+                }
+                else{
+                    stack.add(top);
+                    top = null;
+                }
+            }
+            else{
+                TreeNode newNode = new TreeNode(Integer.parseInt(nodeString));
+                if(top == null){
+                    stack.pollLast().right = newNode;
+                    top = newNode;
+                }
+                else{
+                    top.left = newNode;
+                    stack.add(top);
+                    top = newNode;
+                }
+            }
         }
-        TreeNode root = preOrderDecode(nodeNums, 0, nodeNums.length - 1);
         return root;
     }
- 
-    public static void main(String[] args)
-    {
+  
+    public static void main(String[] args){
         TreeNode root;
         Codec codec;
         
