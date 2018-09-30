@@ -1,7 +1,7 @@
 /* Dynamic programming: O(n^2), where n is the length of string
  * 1. dp[tailIdx][headIdx] is the max length of palindromic subsequence between index headIdx and tailIdx
  * 2. dp[tailIdx][headIdx] = max(dp[tailIdx][headIdx + 1], dp[tailIdx - 1][headIdx], 
- *    dp[tailIdx - 1][headIdx + 1] iff s.charAt(headIdx) == s.charAt(tailIdx))
+ *    (dp[tailIdx - 1][headIdx + 1] + 2) iff s.charAt(headIdx) == s.charAt(tailIdx))
  */
 
 import java.util.*;
