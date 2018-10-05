@@ -13,27 +13,27 @@ import java.util.*;
 public class AllOne {
     private class Node{
         int val;
+        Set<String> keys;
         Node next;
         Node prev;
-        Node(int v){val = v; next = this; prev = this;} 
+        Node(int v){val = v; keys = new HashSet<>(); next = this; prev = this;} 
     }
     Map<String, Integer> key2Val;
-    Map<Integer, Set<String>> val2Keys;
     Map<Integer, Node> val2Node;
     Node head;
     
     /** Initialize your data structure here. */
     public AllOne() {
         key2Val = new HashMap<>();
-        val2Keys = new HashMap<>();
         val2Node = new HashMap<>();
         head = new Node(0);
         val2Node.put(0, head);
     }
     
-    private void addNode(Node prev, int val){
-        if(val2Keys.get(val).size() == 1){
+    private void addNode(Node prev, String key, int val){
+        if(!val2Node.containsKey(val)){
             Node node = new Node(val);
+            node.keys.add(key);
             Node next = prev.next;
             prev.next = node;
             next.prev = node;
@@ -41,10 +41,13 @@ public class AllOne {
             node.prev = prev;
             val2Node.put(val, node);
         }
+        else{
+            val2Node.get(val).keys.add(key);
+        }
     }
     
     private void deleteNode(int val){
-        if(val != 0 && val2Keys.get(val).isEmpty()){
+        if(val != 0 && val2Node.get(val).keys.isEmpty()){
             Node node = val2Node.get(val);
             node.next.prev = node.prev;
             node.prev.next = node.next;
@@ -57,17 +60,13 @@ public class AllOne {
         if(key2Val.containsKey(key)){
             int val = key2Val.get(key);
             key2Val.put(key, val + 1);
-            val2Keys.get(val).remove(key);
-            val2Keys.putIfAbsent(val + 1, new HashSet<String>());
-            val2Keys.get(val + 1).add(key);
-            addNode(val2Node.get(val), val + 1);
+            val2Node.get(val).keys.remove(key);
+            addNode(val2Node.get(val), key, val + 1);
             deleteNode(val);
         }
         else{
             key2Val.put(key, 1);
-            val2Keys.putIfAbsent(1, new HashSet<String>());
-            val2Keys.get(1).add(key);
-            addNode(val2Node.get(0), 1);
+            addNode(val2Node.get(0), key, 1);
         }
     }
     
@@ -80,15 +79,13 @@ public class AllOne {
             int val = key2Val.get(key);
             if(val == 1){
                 key2Val.remove(key);
-                val2Keys.get(1).remove(key);
+                val2Node.get(1).keys.remove(key);
                 deleteNode(1);
             }
             else{
                 key2Val.put(key, val - 1);
-                val2Keys.get(val).remove(key);
-                val2Keys.putIfAbsent(val - 1, new HashSet<String>());
-                val2Keys.get(val - 1).add(key);
-                addNode(val2Node.get(val).prev, val - 1);
+                val2Node.get(val).keys.remove(key);
+                addNode(val2Node.get(val).prev, key, val - 1);
                 deleteNode(val);
             }
         }
@@ -96,14 +93,14 @@ public class AllOne {
     
     /** Returns one of the keys with maximal value. */
     public String getMaxKey() {
-        return (head.next == head)? "": val2Keys.get(head.prev.val).iterator().next();
+        return (head.next == head)? "": head.prev.keys.iterator().next();
     }
     
     /** Returns one of the keys with Minimal value. */
     public String getMinKey() {
-        return (head.next == head)? "": val2Keys.get(head.next.val).iterator().next();
+        return (head.next == head)? "": head.next.keys.iterator().next();
     }
- 
+  
     public static void main(String[] args){
         AllOne obj = new AllOne();;
         String key;
