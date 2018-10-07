@@ -15,7 +15,7 @@ public class Solution{
         for(int z = 1; z < group.length + 1; ++z){
             for(int y = 0; y < G + 1; ++y){
                 //caculate the schemes with profit < P
-                for(int x = 0; x < P + 1; ++x){
+                for(int x = 0; x < P; ++x){
                     dp[z][y][x] = dp[z - 1][y][x];
                     int prevX = x - profit[z - 1];
                     int prevY = y - group[z - 1];
