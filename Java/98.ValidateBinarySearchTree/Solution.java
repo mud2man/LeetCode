@@ -21,15 +21,13 @@ public class Solution {
         if((lb != null && root.val <= lb.val) || (hb != null && root.val >= hb.val)){
             return false;
         }
-        
-        TreeNode newHb = (hb!= null && Math.min(hb.val, root.val) == hb.val)? hb: root;
-        TreeNode newLb = (lb!= null && Math.max(lb.val, root.val) == lb.val)? lb: root;   
-        return preOrder(root.left, lb, newHb) & preOrder(root.right, newLb, hb);
+  
+        return preOrder(root.left, lb, root) & preOrder(root.right, root, hb);
     }
 
     public boolean isValidBST(TreeNode root) {
         return preOrder(root, null, null);
-    }
+    } 
 
     public static void main(String[] args){
         TreeNode root;
