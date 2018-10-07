@@ -1,27 +1,46 @@
-/* Sort: O(n^2)
+/* Sort + Two Pointers: Time: O(n^2), Space:O(1)
+ * 1. Sort nums
+ * 2. Fix first element nums[i], set lb = i + 1, hb = length - 1, to find the tuples
+ * 3. Move i, lb, hb until no duplicates
  */
 
 import java.util.*;
 
 public class Solution{
-    public List<List<Integer>> threeSum(int[] nums) {
+        public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> tuples = new ArrayList<List<Integer>>();
         Arrays.sort(nums);
-        List<List<Integer>> result = new ArrayList<>();
-        for (int i = 0; i < nums.length - 2; i++) {
-            if (i > 0 && nums[i - 1] == nums[i]) continue;
-            for (int j = i + 1, k = nums.length - 1; j < k; ) {
-                if (nums[i] + nums[j] + nums[k] < 0) j++;
-                else if (nums[i] + nums[j] + nums[k] > 0) k--;
-                else {
-                    result.add(Arrays.asList(nums[i], nums[j++], nums[k--]));
-                    while (j < k && nums[j] == nums[j - 1]) j++;
-                    while (j < k && nums[k] == nums[k + 1]) k--;
+        int i = 0;
+        while(i < nums.length - 2){
+            int lb = i + 1;
+            int hb = nums.length - 1;
+            while(lb < hb){
+                if(nums[i] + nums[lb] + nums[hb] == 0){
+                    tuples.add(Arrays.asList(nums[i], nums[lb], nums[hb]));
+                    while(lb + 1 < nums.length && nums[lb] == nums[lb + 1]){
+                        lb++;
+                    }
+                    lb++;
+                    while(hb - 1 >= 0 && nums[hb] == nums[hb - 1]){
+                        hb--;
+                    }
+                    hb--;
+                }
+                else if(nums[i] + nums[lb] + nums[hb] < 0){
+                    lb++;
+                }
+                else{
+                    hb--;
                 }
             }
+            while(i + 1 < nums.length && nums[i] == nums[i + 1]){
+                i++;
+            }
+            i++;
         }
-        return result;
+        return tuples;
     }
- 
+  
     public static void main(String[] args){
         Solution sol;
         List<List<Integer>> triplets;
