@@ -37,7 +37,6 @@ public class Codec {
         System.out.println(Arrays.toString(nums));
         Deque<TreeNode> stack = new LinkedList<>();
         TreeNode top = new TreeNode(0);
-        TreeNode root = top;
         for(String num: nums){
             if(num.equals("#")){
                 stack.add(top);
