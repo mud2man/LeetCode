@@ -1,4 +1,4 @@
-/* Map: Time:O(logn), Space:O(logn)
+/* Map: Time:O(logn), Space:O(logn). LeetCode has O(logn)-O(1) solution
  * 1. Have a map "cache" to store the mapping between exponent to number
  * 2. Call helper recursively, where helper calculate the closest number given exponent "n"
  * 3. Because during the first call of helper, we store all possible expoent<->number pair into cache. 
