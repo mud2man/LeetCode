@@ -49,6 +49,10 @@ public class Solution {
                 farther.left = son.left;
             }
         }
+        else if(son.right.left == null){
+            son.val = son.right.val;
+            son.right = son.right.right;
+        }
         else{
             farther = son;
             son = son.right;
@@ -57,9 +61,7 @@ public class Solution {
                 son = son.left;
             }
             fartherAndSon[1].val = son.val;
-            fartherAndSon[0] = farther;
-            fartherAndSon[1] = son;
-            delete(fartherAndSon);
+            farther.left = son.right;
         }
     }
     
