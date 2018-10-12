@@ -1,7 +1,9 @@
 /* Slide window: O(n)
- * 1. Have a window "queue" with 0 < sum < K, and "len" to record its length
- * 2. If num >= 0, add it to end of window, and pop front out of "queue" until sum < K, and update minLen
- * 3. If num < 0, merge the num with the ned of queue until end[0] > 0, while end[1] record its length 
+ * 1. If the all elemnet array int A >= 0, it's would be easy
+ * 2. Change A[i] = {number, length}, and maintain each element A[i][0] >= 0
+ * 3. Have a window "queue" with 0 < sum < K, and "len" to record its length
+ * 4. If num >= 0, add it to end of window, and pop front out of "queue" until sum < K, and update minLen
+ * 5. If num < 0, merge the num with the ned of queue until end[0] > 0, while end[1] record its length 
  */
 
 import java.util.*;
