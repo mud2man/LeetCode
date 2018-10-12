@@ -14,22 +14,20 @@ public class Solution {
         
         Map<Character, Integer> visited = new HashMap<>();
         int maxLen = 1;
-        int head = 0;
+        int head = -1;
         for(int tail = 0; tail < s.length(); tail++){
             char c = s.charAt(tail);
             if(visited.containsKey(c) && visited.get(c) == 1){
-                while(s.charAt(head) != c){
+                while(s.charAt(++head) != c){
                     visited.put(s.charAt(head), visited.get(s.charAt(head)) - 1);
-                    head++;
                 }
-                head++;
             }
             else{
                 visited.put(c, 1);
             }
-            maxLen = Math.max(maxLen, tail - head + 1);
+            maxLen = Math.max(maxLen, tail - head);
         }
-        return maxLen; 
+        return maxLen;
     }
  
     public static void main(String[] args){
