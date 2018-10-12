@@ -1,45 +1,32 @@
-/* Sort: O(nlog(n))
+/* Sort: Time:O(nlog(n)), SpaceO(1). Can use string compareTo
  * 1. Compare if a.b is larger than b.a
  */          
 
 import java.util.*; // Stack
 
 public class Solution {
-    private class SeqComparator implements Comparator<Integer>{
-        public int compare(Integer x, Integer y ){
-            if(x == 0 && y == 0){
-                return 0;
-            }
-            else if(x == 0){
-                return 1;
-            }
-            else if(y == 0){
-                return -1;
-            }
-            else{
-                int xy = Integer.valueOf(x) * (int)Math.pow(10, (int)Math.log10(Integer.valueOf(y)) + 1) + y;
-                int yx = Integer.valueOf(y) * (int)Math.pow(10, (int)Math.log10(Integer.valueOf(x)) + 1) + x;
-                return yx - xy;
-            }
+    private class OrderComparator implements Comparator<Integer>{
+        public int compare(Integer x, Integer y){
+            long xy = Long.valueOf(Long.toString(x) + Long.toString(y));
+            long yx = Long.valueOf(Long.toString(y) + Long.toString(x));
+            return (int)(yx - xy);
         }
     }
     
     public String largestNumber(int[] nums) {
-        Integer[] sortedNums = new Integer[nums.length];
+        Integer[] numObjects = new Integer[nums.length];
         for(int i = 0; i < nums.length; ++i){
-            sortedNums[i] = Integer.valueOf(nums[i]);
+            numObjects[i] = new Integer(nums[i]);
         }
-        Arrays.sort(sortedNums, new SeqComparator());
+        Arrays.sort(numObjects, new OrderComparator());
         
-        String maxSeq = "";
-        for(Integer num: sortedNums){
-            System.out.println(Integer.valueOf(num));
-            maxSeq = maxSeq + Integer.toString(Integer.valueOf(num));
+        StringBuilder sb = new StringBuilder("");
+        for(int numObject: numObjects){
+            sb.append(numObject);
         }
-        
-        return (maxSeq.charAt(0) == '0')? "0": maxSeq;
+        return (sb.charAt(0) == '0')? "0": sb.toString();
     }
- 
+  
     public static void main(String[] args){
         Solution sol;
         int[] nums = {3, 30, 34, 5, 9};
