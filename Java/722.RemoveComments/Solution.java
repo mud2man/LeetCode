@@ -1,102 +1,61 @@
 /* Time:O(n), Space:O(n). Need official answer, it's to lenthy
- * 1.  
+ * 1. Scan the line every two chars, and have a "state" to indicate if during comment "/*"
+ * 2. Handle the case given state
  * */
 
 import java.util.*;
 
 public class Solution{
-    private void helper(List<String> code, boolean inComment, String[] source, int index, boolean append){
-        if(index == source.length){
-            return;
-        }
-        
-        String line = source[index++];
-        int length = line.length();
-        int starStart = line.indexOf("/*");
-        starStart = (starStart != -1)? starStart: length;
-        int starEnd = (starStart < length)? line.indexOf("*/", starStart + 2): line.indexOf("*/");
-        starEnd = (starEnd != -1)? starEnd: length;
-        int lineStart = line.indexOf("//");
-        lineStart = (lineStart != -1)? lineStart: length;
-
-        if(line.length() == 0){
-            helper(code, inComment, source, index, append);
-            return;
-        }
-        
-        if(inComment){
-            starEnd = line.indexOf("*/");
-            starEnd = (starEnd != -1)? starEnd: length;
-            if(starEnd < length){
-                index--;
-                line = line.substring(starEnd + 2);
-                source[index] = line;
-                if(starEnd == length - 2){
-                    helper(code, false, source, index, false);
-                }
-                else{
-                    helper(code, false, source, index, append);
-                }
-            }
-            else{
-                helper(code, true, source, index, append);
-            }
-        }
-        else{
-            if(starStart < length || lineStart < length){
-                if(starStart < lineStart){
-                    if(starEnd < length){
-                        line = line.substring(0, starStart) + line.substring(starEnd + 2);
-                        index--;
-                        source[index] = line;
-                        helper(code, false, source, index, false);
-                    }
-                    else{
-                        line = line.substring(0, starStart);
-                        if(line.length() > 0){
-                            code.add(line);
-                        }
-                        
-                        if(starStart > 0){
-                            helper(code, true, source, index, true);
-                        }
-                        else{
-                            helper(code, true, source, index, false);
-                        }
-                    }
-                }
-                else{
-                    line = line.substring(0, lineStart);
-                    if(line.length() > 0){
-                        if(append){
-                            String lastLine = code.get(code.size() - 1);
-                            code.set(code.size() - 1, lastLine + line);
-                        }
-                        else{
-                            code.add(line);
-                        }
-                    }
-                    helper(code, false, source, index, false);
-                }
-            }
-            else{
-                if(line.length() > 0){
-                    if(append){
-                        String lastLine = code.get(code.size() - 1);
-                        code.set(code.size() - 1, lastLine + line);
-                    }
-                    else{
-                        code.add(line);
-                    }
-                }
-                helper(code, false, source, index, false);
-            }
-        }
-    }
-    
     public List<String> removeComments(String[] source) {
-        List<String> code = new ArrayList<String>();
-        helper(code, false, source, 0, false);
+        int state = 0; //0:normal, 1:during comment
+        List<String> code = new ArrayList<>();
+        boolean append = false;
+        
+        for(String line: source){
+            StringBuilder sb = new StringBuilder("");
+            int i = 0;
+            while(i < line.length()){
+                StringBuilder token = new StringBuilder("");
+                token.append(line.charAt(i));
+                if(i + 1 < line.length()){
+                    token.append(line.charAt(i + 1));
+                }
+                
+                if(state == 0){
+                    if(token.toString().equals("/*")){
+                        state = 1;
+                        i += 2;
+                        append = (sb.length() > 0)? true: false;
+                    }
+                    else if(token.toString().equals("//")){
+                        break;
+                    }
+                    else{
+                        sb.append(line.charAt(i));
+                        ++i;
+                    }
+                }
+                else{
+                    if(token.toString().equals("*/")){
+                        //append only if current line "sb" is empty
+                        if(append && code.size() > 0 && sb.length() == 0){
+                            sb.append(code.get(code.size() - 1));
+                            code.remove(code.size() - 1);
+                        }
+                        append = false;
+                        state = 0;
+                        i += 2;
+                    }
+                    else{
+                        ++i;
+                    }
+                }
+            }
+                                            
+            if(sb.toString().length() > 0){
+                code.add(sb.toString());
+            }
+        }
         return code;
     }
 
