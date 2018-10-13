@@ -16,7 +16,7 @@ public class Solution {
             return mid;
         }
         
-        if(nums[mid] >= nums[lb]){ // left slope
+        if(nums[mid] >= nums[lb] && nums[mid] > nums[hb]){ // left slope
             if(target >= nums[lb] && target < nums[mid]){
                 return helper(lb, mid - 1, nums, target);
             }
