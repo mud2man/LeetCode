@@ -1,46 +1,30 @@
 /* Binary search: O(logn)
- * 1. Find the case: nums[lb] <= nums[ub])
- *
- * ex: 4 5 6 7 0 1 2
- *           
- *            * 
- * 1. Case1:  | *   , move right
- *            |/
- *            
- *              *
- *             /|
- *            * | *
- * 2. Case2:    |/ , move right
- *
- *             
- *            /|   *  
- * 3. Case3: * |  / , move left
- *             | *
- *             |/
+ * 1. If nums[mid] < left && nums[mid] < right, return the current number
+ * 2. Otherwise, shift right if nums[mid] > nums[hb]
  */
 
 import java.util.*;
 
 public class Solution {
     public int findMin(int[] nums) {
-        int size = nums.length;
-        int ub = size - 1;
         int lb = 0;
-        while(lb < ub){
-            int mid = (ub + lb) / 2;
-            if(nums[lb] <= nums[ub]){
-                return nums[lb];
+        int hb = nums.length - 1;
+        while(lb <= hb){
+            int mid = (lb + hb) / 2;
+            int left = (mid > 0)? nums[mid - 1]: Integer.MAX_VALUE;
+            int right = (mid < nums.length - 1)? nums[mid + 1]: Integer.MAX_VALUE;
+            if(nums[mid] < left && nums[mid] < right){
+                return nums[mid];
             }
-            else if(nums[mid] >= nums[lb]){
+            else if(nums[mid] > nums[hb]){
                 lb = mid + 1;
             }
             else{
-                ub = mid;
+                hb = mid - 1;
             }
         }
         return nums[lb];
-    }
-
+    } 
     public static void main(String[] args){
         Solution sol;
         int maximum;
