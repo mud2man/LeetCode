@@ -1,6 +1,9 @@
 /* HashMap: Time:O(n), Space:O(n)
  * 1. Have a hashmap "sumToCount" to record the count of sum which is sum of nums[0], nums[1], ... nums[i] 
  * 2. In the loop, we accumulate count if we find (sum - k) in "sumToCount"
+ *
+ * ex: nums: {1, 1, 1}, k = 2
+ * Two answers: {1, 1} - {}, {1 ,1 ,1} - {1}
  */
 
 import java.util.*;
