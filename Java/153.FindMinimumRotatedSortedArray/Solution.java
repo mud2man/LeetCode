@@ -1,6 +1,19 @@
 /* Binary search: O(logn)
  * 1. If nums[mid] < left && nums[mid] < right, return the current number
  * 2. Otherwise, shift right if nums[mid] > nums[hb]
+ * 3. The formula works under three cases
+ * case1:
+ *        *  
+ *       /|
+ *        |/ 
+ * case2:
+ *          /  
+ *         /
+ *        /
+ * case3:
+ *        \
+ *         \
+ *          \
  */
 
 import java.util.*;
@@ -23,7 +36,9 @@ public class Solution {
                 hb = mid - 1;
             }
         }
-        return nums[lb];
+
+        //unreachale
+        return 0;
     } 
     public static void main(String[] args){
         Solution sol;
