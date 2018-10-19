@@ -1,4 +1,4 @@
-/* DFS + Sort: O(2^n)
+ /* DFS + Sort: O(2^n)
  * 1. Sort and get the count map "counts"
  * 2. Use backtarck to traverse the given number nums.get(idx)
  * 3. Before leaving backtrack, pop the backtracking log "path"
