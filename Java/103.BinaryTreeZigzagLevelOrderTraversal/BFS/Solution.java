@@ -1,5 +1,6 @@
 /* In oredr: Time:O(n), Space:O(n)
  * 1. Traverse BST inorderly, and transfom it in place
+ * 2. Keep the order as they in tree, add the polled node to the end for even-number hight, haed for odd-number
  */
 
 import java.util.*; // Stack
@@ -30,13 +31,13 @@ public class Solution {
             if(hight % 2 == 0){
                 //left to right
                 for(int i = 0; i < size; ++i){
-                    currNode =  queue.pollLast();
+                    currNode =  queue.pollFirst();
                     level.add(currNode.val);
                     if(currNode.left != null){
-                        queue.addFirst(currNode.left);
+                        queue.add(currNode.left);
                     }
                     if(currNode.right != null){
-                        queue.addFirst(currNode.right);
+                        queue.add(currNode.right);
                     }
                 }
             }
@@ -44,12 +45,12 @@ public class Solution {
                 //right to left
                 for(int i = 0; i < size; ++i){
                     currNode =  queue.pollFirst();
-                    level.add(currNode.val);
+                    level.add(0, currNode.val);
                     if(currNode.right != null){
-                        queue.addLast(currNode.right);
+                        queue.addLast(currNode.left);
                     }
                     if(currNode.left != null){
-                        queue.addLast(currNode.left);
+                        queue.addLast(currNode.right);
                     } 
                 }
             }
