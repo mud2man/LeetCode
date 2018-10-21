@@ -1,4 +1,4 @@
-/* Preorder + stack: Time:O(n), Space:O(n)
+/* Use preorder: TimeO(n), SpaceO(n)
  * 1. Serialize with preorder traversal, and denote Null pointer with string "null"
  * 2. Have a variable" top" to store the actual top node, and the virtual stack is (stack + top)
  * 2. Retrieve tree node by visiting "data" from the 0-th position
@@ -17,51 +17,63 @@ class TreeNode {
 }
 
 public class Codec {
-    // Encodes a tree to a single string.
-    public String serialize(TreeNode root) {
+    private void preOrder(TreeNode root, StringBuilder preOrderStr){
         if(root == null){
-            return "#,";
+            preOrderStr.append("null");
+            preOrderStr.append(',');
+            return;
         }
-        
-        String s = "";
-        s += (Integer.toString(root.val) + ",");
-        s += serialize(root.left);
-        s += serialize(root.right);
-        return s;
+        preOrderStr.append(Integer.toString(root.val));
+        preOrderStr.append(',');
+        preOrder(root.left, preOrderStr);
+        preOrder(root.right, preOrderStr);
     }
     
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        StringBuilder preOrderStr = new StringBuilder("");
+        preOrder(root, preOrderStr);
+        return preOrderStr.toString();
+    }
+
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        String[] nums = data.split(",");
-        System.out.println(data);
-        System.out.println(Arrays.toString(nums));
-        Deque<TreeNode> stack = new LinkedList<>();
-        TreeNode top = new TreeNode(0);
-        for(String num: nums){
-            if(num.equals("#")){
-                stack.add(top);
-                top = null;
-                if(!stack.isEmpty() && stack.peekLast() == null){
+        String[] preOrderValues = data.split(",");
+        if(preOrderValues[0].equals("null")){
+            return null;
+        }
+        
+        TreeNode root = new TreeNode(Integer.parseInt(preOrderValues[0]));
+        TreeNode top = root;
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        for(int index = 1; index < preOrderValues.length; ++index){
+            String nodeString = preOrderValues[index];
+            //push null or newNode into virtual stack (stack + top)
+            if(nodeString.equals("null")){
+                if(top == null){
                     stack.pollLast();
-                    stack.pollLast();
+                }
+                else{
+                    stack.add(top);
+                    top = null;
                 }
             }
             else{
-                TreeNode newNode = new TreeNode(Integer.valueOf(num));
+                TreeNode newNode = new TreeNode(Integer.parseInt(nodeString));
                 if(top == null){
-                    top = stack.pollLast();
-                    top.right = newNode;
+                    stack.pollLast().right = newNode;
+                    top = newNode;
                 }
                 else{
                     top.left = newNode;
                     stack.add(top);
+                    top = newNode;
                 }
-                top = newNode;
             }
         }
-        return stack.peekLast().left;
+        return root;
     }
- 
+  
     public static void main(String[] args){
         TreeNode root;
         Codec codec;
