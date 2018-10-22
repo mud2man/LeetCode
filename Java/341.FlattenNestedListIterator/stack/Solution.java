@@ -24,11 +24,9 @@ import java.util.*;
  */
 public class NestedIterator implements Iterator<Integer> {
     private LinkedList<NestedInteger> stack;
-    private NestedInteger top;
-
+    
     public NestedIterator(List<NestedInteger> nestedList) {
         this.stack = new LinkedList<NestedInteger>();
-
         for(int i = nestedList.size() - 1; i >= 0; --i){
             stack.add(nestedList.get(i));
         }
@@ -36,27 +34,23 @@ public class NestedIterator implements Iterator<Integer> {
 
     @Override
     public Integer next() {
-        return top.getInteger();
+        return stack.pollLast().getInteger();
     }
 
     @Override
     public boolean hasNext() {
-        top = stack.pollLast();
-        while(top != null && !top.isInteger()){
-            List<NestedInteger> nestedList = top.getList();
+        while(!stack.isEmpty()){
+            NestedInteger top = stack.peekLast();
+            if(top.isInteger()){
+                return true;
+            }
+            
+            List<NestedInteger> nestedList = stack.pollLast().getList();
             for(int i = nestedList.size() - 1; i >= 0; --i){
                 stack.add(nestedList.get(i));
             }
-            
-            if(!stack.isEmpty()){
-                top = stack.pollLast();
-            }
-            else{
-                top = null;
-            }
         }
-
-        return (top != null);
+        return false;
     }
 }
 
