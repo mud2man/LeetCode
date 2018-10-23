@@ -1,4 +1,4 @@
-/* DFS: O(n^2)
+/* DFS: Time:O(n^2), Space:O(n). There are two solutions: BFS, UnionFind
  * 1. Have a array visited to record if we meet the person
  * 2. Iterate all person if we never meet (visited[person] == false), and call dfs to visit all his friends
  * 3. In dfs, visit all the person's friend. If we didn't meet the friend visited[friend], the call dfs again
@@ -11,13 +11,15 @@ import java.util.*;
 
 public class Solution{
     private void dfs(int person, boolean[] visited, int[][] matrix){
+        if(visited[person] == true){
+            return;
+        }
+       
         visited[person] = true;
         int[] friendList = matrix[person];
         for(int friend = 0; friend < friendList.length; ++friend){
             if(friendList[friend] == 1){
-                if(visited[friend] == false){
-                    dfs(friend, visited, matrix);
-                }
+                dfs(friend, visited, matrix);
             }
         }
     }
@@ -36,7 +38,6 @@ public class Solution{
                 circles++;
             }
         }
-        
         return circles;
     }
 
