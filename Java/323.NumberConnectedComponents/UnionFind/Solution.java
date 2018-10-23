@@ -1,9 +1,9 @@
-/* Disjoint sets: O(e)
+/* Disjoint sets: Time:O(e), Space:O(n)
  * 1. Create an array "roots", roots[i] store the root node for node i
- * 1. Create an array "ranks", ranks[i] store the rank for node i
- * 2. Union: merge by rank, the root which has higher rank keeps the same
- * 3. Find: loop until roots[node] == node
- * 4. Path compression: roots[node] = roots[roots[node]];
+ * 2. Create an array "ranks", ranks[i] store the rank for node i
+ * 3. Union: merge by rank, the root which has higher rank keeps the same
+ * 4. Find: loop until roots[node] == node
+ * 5. Path compression: roots[node] = roots[roots[node]];
  */
 
 import java.util.*;
