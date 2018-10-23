@@ -1,38 +1,32 @@
 /* Time:O(n), Space:O(n)
- * 1. Have array "buffer" to store the current permutation, "original" to store the original permutation
- * 2. When shuffle, random pick the buffer[index], where idx between 0 and length, and swap buffer[index] with buffer[length - 1]
- * 3. After that, decrease length 1, so we pick idx between 0 and (length - 1) nex time
+ * 1. Have array "shuffled" to store the current permutation, "original" to store the original permutation
+ * 2. When shuffle, random pick the shuffled[index], where idx between 0 and i, and swap shuffled[index] with shuffled[i]
  */
 
 import java.util.*;
 
 public class Solution {
-    int[] buffer;
     int[] shuffled;
     int[] original;
     
     public Solution(int[] nums) {
         original = nums;
-        buffer = nums.clone();
-        shuffled = new int[nums.length];
+        shuffled = nums.clone();
     }
     
     /** Resets the array to its original configuration and return it. */
     public int[] reset() {
-        buffer = original.clone();
-        return buffer;
+        return original;
     }
     
     /** Returns a random shuffling of the array. */
     public int[] shuffle() {
         Random rand = new Random();
-        int length = buffer.length;
-        for(int i = 0; i < buffer.length; ++i){
-            int idx = rand.nextInt(length);
-            shuffled[i] = buffer[idx];
-            int temp = buffer[idx];
-            buffer[idx] = buffer[length - 1];
-            buffer[--length] = temp;
+        for(int i = shuffled.length - 1; i >= 0; --i){
+            int idx = rand.nextInt(i + 1);
+            int temp = shuffled[i];
+            shuffled[i] = shuffled[idx];
+            shuffled[idx] = temp;
         }
         return shuffled;
     }
