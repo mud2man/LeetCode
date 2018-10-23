@@ -18,13 +18,14 @@ public class Solution {
         String[][] romans = {{"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"},
                              {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"},
                              {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"},
-                             {"", "M", "MM", "MMM","MMMM"}};
-        int digit, weight;
+                             {"", "M", "MM", "MMM"}};
         
-        for(weight = 0; weight < 4; weight++){
-            digit = num % (int)Math.pow(10, weight + 1) - num % (int)Math.pow(10, weight);
-            digit = digit / (int)Math.pow(10, weight);
-            roman = romans[weight][digit] + roman;
+        int weight = 1000;
+        for(int i = 3; i >= 0; i--){
+            int digit = num / weight;
+            num = num % weight;
+            weight = weight / 10;
+            roman = roman + romans[i][digit];
         }
         return roman;
     }
