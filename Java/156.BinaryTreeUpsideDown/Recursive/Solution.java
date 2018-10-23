@@ -13,32 +13,25 @@ class TreeNode {
 }
 
 public class Solution {
-    private TreeNode inorderFlip(TreeNode root){
-        if(root.left == null){
-            return root;
-        }
-        
-        TreeNode newRoot = inorderFlip(root.left);
-        newRoot.left = root.right;
-        newRoot.right = root;
-        root.left = null;
-        root.right = null;
-        return root; 
-    }
-    
     public TreeNode upsideDownBinaryTree(TreeNode root) {
         if(root == null){
             return null;
         }
-        
-        TreeNode newRoot = root;
-        while(newRoot.left != null){
-            newRoot = newRoot.left;
+        else if(root.left == null){
+            return root;
         }
-        inorderFlip(root);
-        return newRoot;
+        else{
+            TreeNode left = root.left;
+            TreeNode right = root.right;
+            TreeNode newRoot = upsideDownBinaryTree(left);
+            left.left = right;
+            left.right = root;
+            root.left = null;
+            root.right = null;
+            return newRoot;
+        }
     }
-
+ 
     private void preOrder(TreeNode root){
         if(root == null){
             return;

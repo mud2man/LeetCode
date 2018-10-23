@@ -40,7 +40,7 @@ public class Solution {
             ptr0Right = ptr1Right;
             ptr0Left = ptr1Left;
             ptr0 = ptr1;
-            ptr1 = ptr0Left; 
+            ptr1 = ptr1Left; 
             ptr1Right = (ptr1 != null)? ptr1.right: null;
             ptr1Left = (ptr1 != null)? ptr1.left: null;
             
