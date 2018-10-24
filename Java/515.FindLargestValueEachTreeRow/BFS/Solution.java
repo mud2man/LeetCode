@@ -1,4 +1,4 @@
-/* BFS: O(n)
+/* BFS: Time:O(n), Space:O(n)
  * 1. Traverse all nodes on the same row, and find the maimum
  */
 
