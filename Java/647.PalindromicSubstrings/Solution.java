@@ -1,12 +1,12 @@
-/* Two Pointer: Time:O(n^2), Space:O(1)
- * 1. Have a utility method entend to conut the palidrom with extending tow ends 'h' and 't'
+/* Two Pointer: Time:O(n^2), Space:O(1). The optimal solution is Manacher's Algorithm
+ * 1. Have a utility method extend to conut the palidrom with extending tow ends 'h' and 't'
  * 2. Traverse string s, and extend with odd and even length
  */          
 
 import java.util.*; // Stack
 
 public class Solution {
-    private int entend(String s, int h, int t){
+    private int extend(String s, int h, int t){
         int count = 0;
         while(h >= 0 && t < s.length() && s.charAt(h) == s.charAt(t)){
             count++;
@@ -19,8 +19,8 @@ public class Solution {
     public int countSubstrings(String s) {
         int count = 0;
         for(int i = 0; i < s.length(); ++i){
-            count += entend(s, i, i);
-            count += entend(s, i - 1, i);
+            count += extend(s, i, i);
+            count += extend(s, i - 1, i);
         }
         return count;
     }
