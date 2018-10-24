@@ -1,37 +1,30 @@
-/* Dynamic programming: O(n^2)
- * 1. Have a list prevLens to store all the lengths of palindromic substring ending with index currIdx - 1
- * 2. In every loop, traverse all len in prevLens and check if s.charAt(currIdx - len - 1) == s.charAt(currIdx)
- * 3. If yes, newPrevLens.add(currIdx - startIdx + 1) and accumulate totalCount
- * 4. In the end of a single loop, prevLens = newPrevLens
+/* Two Pointer: Time:O(n^2), Space:O(1)
+ * 1. Have a utility method entend to conut the palidrom with extending tow ends 'h' and 't'
+ * 2. Traverse string s, and extend with odd and even length
  */          
 
 import java.util.*; // Stack
 
 public class Solution {
-    public int countSubstrings(String s) {
-        List<Integer> prevLens = new ArrayList<Integer>();
-        int totalCount = s.length();
-        
-        prevLens.add(0);
-        prevLens.add(1);
-        for(int currIdx = 1; currIdx < s.length(); ++currIdx){
-            char currChar = s.charAt(currIdx);
-            List<Integer> newPrevLens = new ArrayList<Integer>();
-            newPrevLens.add(0);
-            newPrevLens.add(1);
-            for(int len: prevLens){
-                int startIdx = currIdx - len - 1;
-                if(startIdx >= 0 && s.charAt(startIdx) == currChar){
-                    totalCount++;
-                    newPrevLens.add(currIdx - startIdx + 1);
-                }
-            }
-            prevLens = newPrevLens;
+    private int entend(String s, int h, int t){
+        int count = 0;
+        while(h >= 0 && t < s.length() && s.charAt(h) == s.charAt(t)){
+            count++;
+            --h;
+            ++t;
         }
-        
-        return totalCount;
+        return count;
     }
- 
+    
+    public int countSubstrings(String s) {
+        int count = 0;
+        for(int i = 0; i < s.length(); ++i){
+            count += entend(s, i, i);
+            count += entend(s, i - 1, i);
+        }
+        return count;
+    }
+  
     public static void main(String[] args){
         Solution sol;
         String s = "aaa";
