@@ -8,7 +8,7 @@
 import java.util.*;
 
 public class MaxStack {
-        private class Node{
+    private class Node{
         int val;
         Node next;
         Node prev;
