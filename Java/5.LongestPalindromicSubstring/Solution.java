@@ -12,35 +12,40 @@ public class Solution {
         t.append("*");
         for(int i = 0; i < s.length(); ++i){
             t.append(s.charAt(i));
-            t.append("#");
+            t.append('#');
         }
         
-        int c = 1;
-        int rightBound = 1;
         int[] r = new int[t.length()];
-        int max = 0;
+        int c = 1;
+        int right = 1;
+        int maxRadius = 0;
+        int maxC = 1;
         for(int i = 2; i < t.length(); ++i){
-            r[i] = (i > rightBound)? 0 : Math.min(rightBound - i, r[2 * c - i]);
-            while((i - r[i] - 1) >= 0 && (i + r[i] + 1) < t.length() && t.charAt(i - r[i] - 1) == t.charAt(i + r[i] + 1)){
+            r[i] = (right > i)? Math.min(right - i, r[2 * c - i]) : 0;
+            while(i - r[i] - 1 >= 0 && i + r[i] + 1 < t.length() && t.charAt(i - r[i] - 1) == t.charAt(i + r[i] + 1)){
                 r[i]++;
             }
             
-            if(r[i] > max){
-                rightBound = i + r[i];
+            if(i + r[i] > right){
+                right = i + r[i];
                 c = i;
-                max = r[i];
+            }
+            
+            if(maxRadius < r[i]){
+                maxC = i;
+                maxRadius = r[i];
             }
         }
         
-        StringBuilder palindrome = new StringBuilder("");
-        int start = ((c - max) == 1)? 1: c - max + 1;
-        int end = ((c - max) == 1)? c + max + 1: c + max;
-        for(int i = start; i < end && i < t.length(); i += 2){
-            palindrome.append(t.charAt(i));
+        int start = ((maxC - maxRadius) == 1)? 1: maxC - maxRadius + 1;
+        int end = maxC + maxRadius;
+        StringBuilder p = new StringBuilder("");
+        for(int i = start; i <= end && i < t.length(); i += 2){
+            p.append(t.charAt(i));
         }
-        return palindrome.toString();
+        return p.toString();
     }
- 
+  
     public static void main(String[] args){
         Solution sol;
         String s = "babad";
