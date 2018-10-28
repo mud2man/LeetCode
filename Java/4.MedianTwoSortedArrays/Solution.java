@@ -12,17 +12,8 @@ import java.util.*;
 
 public class Solution{
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        int[] big;
-        int[] small;
-        if(nums1.length >= nums2.length){
-            big = nums1;
-            small = nums2;
-        }
-        else{
-            big = nums2;
-            small = nums1;
-        }
-        
+        int[] big = (nums1.length >= nums2.length)? nums1: nums2;
+        int[] small = (nums1.length < nums2.length)? nums1: nums2;  
         int halfSize = (small.length + big.length) / 2;
         int lb = halfSize - small.length; //count all nums in small
         int hb = halfSize; //doesn't count any num in small
