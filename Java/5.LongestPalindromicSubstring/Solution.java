@@ -1,40 +1,44 @@
-/* Time:O(n^2), Space:O(n^2)
+/* Manacher's Algorithm: Time:O(n), Space:O(n)
+ * 1. Have a right bound of palindrome, and then traverse t
+ * 2. If i > rightBound, then set r[i] = 0. Otherwise, set r[i] = min(rightBound - i, r[2 * c - i])
+ * 3. Retrieve palindrome given c and its radius "max"
  */         
 
 import java.util.*;
 
 public class Solution {
     public String longestPalindrome(String s) {
-        int idx, maxIdx, maxLen;
-        char c;
-        List<List<Integer>> dp;
-        List<Integer> prevPalindromeLens, currPalindromeLens;
-        
-        dp = new ArrayList<List<Integer>>();
-        dp.add(new ArrayList<Integer>());
-        dp.get(0).add(1);
-        dp.get(0).add(0);
-        maxIdx = 0;
-        maxLen = 1;
-        
-        for(idx = 1; idx < s.length(); idx++){
-            prevPalindromeLens = dp.get(idx - 1);
-            currPalindromeLens = new ArrayList<Integer>();
-            currPalindromeLens.add(1);
-            currPalindromeLens.add(0);
-            for(int len: prevPalindromeLens){
-                if(idx - len - 1 >= 0 && s.charAt(idx - len - 1) == s.charAt(idx)){
-                    currPalindromeLens.add(len + 2);
-                    if(len + 2 > maxLen){
-                        maxLen = len + 2;
-                        maxIdx = idx;
-                    }
-                }
-            }
-            dp.add(currPalindromeLens);
+        StringBuilder t = new StringBuilder("");
+        t.append("*");
+        for(int i = 0; i < s.length(); ++i){
+            t.append(s.charAt(i));
+            t.append("#");
         }
         
-        return s.substring(maxIdx - maxLen + 1, maxIdx + 1);
+        int c = 1;
+        int rightBound = 1;
+        int[] r = new int[t.length()];
+        int max = 0;
+        for(int i = 2; i < t.length(); ++i){
+            r[i] = (i > rightBound)? 0 : Math.min(rightBound - i, r[2 * c - i]);
+            while((i - r[i] - 1) >= 0 && (i + r[i] + 1) < t.length() && t.charAt(i - r[i] - 1) == t.charAt(i + r[i] + 1)){
+                r[i]++;
+            }
+            
+            if(r[i] > max){
+                rightBound = i + r[i];
+                c = i;
+                max = r[i];
+            }
+        }
+        
+        StringBuilder palindrome = new StringBuilder("");
+        int start = ((c - max) == 1)? 1: c - max + 1;
+        int end = ((c - max) == 1)? c + max + 1: c + max;
+        for(int i = start; i < end && i < t.length(); i += 2){
+            palindrome.append(t.charAt(i));
+        }
+        return palindrome.toString();
     }
  
     public static void main(String[] args){
