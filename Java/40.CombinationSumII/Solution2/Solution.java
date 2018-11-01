@@ -7,40 +7,32 @@
 import java.util.*; // Stack
 
 public class Solution {
-        private void backtrack(int[] candidates, int idx, int remain, Deque<Integer> combination, List<List<Integer>> combinations){
-        if(idx == candidates.length){
-            if(remain == 0){
-                combinations.add(new LinkedList<>(combination));
+    private void backtrack(int[] candidates, int start, int reamin, Deque<Integer> path, List<List<Integer>> ret){
+        if(start == candidates.length || reamin <= 0){
+            if(reamin == 0){
+                ret.add(new ArrayList<>(path));
             }
             return;
-        }   
+        }
         
-        if(remain == 0){
-            combinations.add(new LinkedList<>(combination));
-        }
-        else if(remain < 0){
-            return;
-        }
-        else{ 
-            for(int i = idx, prev = candidates[idx] - 1; i < candidates.length; ++i){
-                if(prev != candidates[i]){
-                    combination.add(candidates[i]);
-                    backtrack(candidates, i + 1, remain - candidates[i], combination, combinations);
-                    combination.pollLast();
-                }
+        int prev = candidates[start] - 1;
+        for(int i = start; i < candidates.length; ++i){
+            if(candidates[i] != prev){
+                path.add(candidates[i]);
+                backtrack(candidates, i + 1, reamin - candidates[i], path, ret);
+                path.pollLast();
                 prev = candidates[i];
             }
         }
     }
     
     public List<List<Integer>> combinationSum2(int[] candidates, int target) {
-        List<List<Integer>> combinations = new ArrayList<>();
-        Deque<Integer> combination = new LinkedList<>();
         Arrays.sort(candidates);
-        backtrack(candidates, 0, target, combination, combinations);
-        return combinations;
+        List<List<Integer>> ret = new ArrayList<>();
+        backtrack(candidates, 0, target, new LinkedList<>(), ret);
+        return ret;
     }
-  
+ 
     public static void main(String[] args){
         Solution sol;
         int[] candidates = {10, 1, 2, 7, 6, 1, 5};
