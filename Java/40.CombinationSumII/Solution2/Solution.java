@@ -1,7 +1,8 @@
 /* Backtrack + Sort: O(2^n)
  * 1. Sort and then call backtrack
  * 2. Use backtarck to traverse "nums" from "idx", prevent use the same number by comparing "prev"
- * 3. Before leaving backtrack, pop the backtracking log "combination"
+ * 3. The reason don't take the dulicate is the first shot of for loop will take them
+ * 4. Before leaving backtrack, pop the backtracking log "path"
  */          
 
 import java.util.*; // Stack
