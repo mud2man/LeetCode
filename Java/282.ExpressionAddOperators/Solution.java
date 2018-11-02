@@ -1,4 +1,4 @@
-/* Backtrack: Time:O(3^n), Space:O(n)
+/* Backtrack: Time:O(n^2 * 3^n), Space:O(n), n^2:for loop and string operation; 3^n: branch of plus, minus, and multiply
  * 1. In the first time, retrieve the first number, and assign it to "multiply", and assign "sum" with 0
  * 2. Theni call backtarck, retrieve the next number from (start + 1) to num.length() of num, and maintain "sum" and "multiply"
  * 3. For '+', update sum with sum + multiply, and multiply with "nextNum", since '+' terminate multiply chain
