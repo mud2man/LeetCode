@@ -1,8 +1,8 @@
-/* Binary search: Average: O(logn), Worst:O(n)
+/* Binary search: Average: O(logn), Worst:O(n), Space:O(n)
  * 1. Call binarySearch recursively
  * 2. If nums[mid] > nums[lb], then mid is on left slope, then check if target in left slope. If so, search the left
  * 3. If nums[mid] < nums[hb], then mid is on right slope, then check if target in right slope. If so, search the right
- * 6. Otherwise, find target from both halves
+ * 4. Otherwise, find target from both halves
  */         
 
 import java.util.*;
@@ -17,11 +17,13 @@ public class Solution {
         if(nums[mid] == target){
             return true;
         }
-        
-        if(nums[mid] > nums[lb] && target <= nums[mid] && target >= nums[lb]){ //left slope
+
+        //left slope
+        if(nums[mid] > nums[lb] && target <= nums[mid] && target >= nums[lb]){ 
             return binarySearch(nums, lb, mid - 1, target);
-        }
-        else if(nums[mid] < nums[hb] && target <= nums[hb] && target >= nums[mid]){ // right slope
+        } 
+        // right slope
+        else if(nums[mid] < nums[hb] && target <= nums[hb] && target >= nums[mid]){
             return binarySearch(nums, mid + 1, hb, target);
         }
         else{
