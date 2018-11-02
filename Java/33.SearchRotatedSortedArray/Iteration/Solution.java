@@ -1,6 +1,6 @@
-/* Binary search: O(logn)
- * 1. Find the "start", where nums[start] is the lowest
- * 2. Binary search target with given starting index "start"
+/* Binary search: Time:O(logn), Space:O(1)
+ * 1. In loop, return mid if nums[mid] == target
+ * 2. Then, identify if mid on left or right slope, then check if target on left or right half
  */         
 
 import java.util.*;
@@ -11,39 +11,32 @@ public class Solution {
         int hb = nums.length - 1;
         while(lb <= hb){
             int mid = (lb + hb) / 2;
-            int num = nums[mid];
-            int left = (mid > 0)? nums[mid - 1]: Integer.MAX_VALUE;
-            int right = (mid < nums.length - 1)? nums[mid + 1]: Integer.MAX_VALUE;
-            if(num < left && num < right){
-                lb = mid;
-                break;
+            if(nums[mid] == target){
+                return mid;
             }
-            else if(num >= nums[lb] && num > nums[hb]){
-                lb = mid + 1;
+            
+            //left solpe
+            if(nums[mid] >= nums[lb]){
+                if(nums[mid] > target && nums[lb] <= target){
+                    hb = mid - 1;
+                }
+                else{
+                    lb = mid + 1;
+                }
             }
+            //right solpe
             else{
-                hb = mid - 1;
+                if(nums[mid] < target && nums[hb] >= target){
+                    lb = mid + 1;
+                }
+                else{
+                    hb = mid - 1;
+                }
             }
         }
-        
-        int len = nums.length;
-        int start = lb;
-        lb = 0;
-        hb = nums.length - 1;
-        while(lb <= hb){
-            int mid = (lb + hb) / 2;
-            int num = nums[(mid + start) % len];
-            if(target > num){
-                lb = mid + 1;
-            }
-            else{
-                hb = mid - 1;
-            }
-        }
-        
-        return (lb < len && nums[(lb + start) % len] == target)? (lb + start) % len: -1;
+        return -1;
     }
-
+ 
     public static void main(String[] args){
         Solution sol;
         int[] nums = {4, 5, 6, 7, 0, 1, 2};

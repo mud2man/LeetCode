@@ -1,4 +1,4 @@
-/* Binary search: O(logn)
+/* Binary search: Time:O(logn), Space:O(logn)
  * 1. In helper, return mid if nums[mid] == target
  * 2. Then, identify if mid on left or right slope, then check if target on left or right half
  */         
