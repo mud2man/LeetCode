@@ -13,11 +13,8 @@ import java.util.*;
 public class Solution {
     private void permutate(Deque<Character> remain, String m, List<String> ps, String path){
         if(remain.isEmpty()){
-            StringBuilder right = new StringBuilder("");
-            for(int i = path.length() - 1; i >= 0; --i){
-                right.append(path.charAt(i));
-            }
-            ps.add(path + m + right.toString());
+            StringBuilder right = new StringBuilder(path);
+            ps.add(path + m + right.reverse());
             return;
         }
         
