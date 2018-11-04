@@ -1,11 +1,10 @@
-/* Time:O(n), Space:O(1)
- * 1. Get the length for both list
- * 2. Move forward the longer list with the "difference of length" times
- * 3. Start compare, if hit the same node, then return it
+/* Two Pointers: Time:O(n), Space:O(1)
+ * 1. Have ptrA starting at headA, ptrB starting at headB
+ * 2. When ptrA reach to the end, swith to headB, ptrB do the same thing
+ * 3. Ih there is an intersection, ptrA and ptrB will meet at the intersection
  */
 
 import java.util.*;
-
 
 //Definition for singly-linked list.
 class ListNode {
@@ -15,44 +14,47 @@ class ListNode {
 }
  
 public class Solution{
-    private int getLength(ListNode head){
-        int length = 0;
-        while(head != null){
-            length++;
-            head = head.next;
-        }
-        return length;
-    }
-    
     public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
-        int lengthA = getLength(headA);
-        int lengthB = getLength(headB);
-        ListNode nodeA = headA;
-        ListNode nodeB = headB;
+        ListNode ptrA = headA;
+        ListNode ptrB = headB;
+        boolean hitEndA = false;
+        boolean hitEndB = false;
         
-        if(lengthA > lengthB){
-            for(int i = 0; i < (lengthA - lengthB); ++i){
-                nodeA = nodeA.next;
-            }
-        }
-        else if(lengthA < lengthB){
-            for(int i = 0; i < (lengthB - lengthA); ++i){
-                nodeB = nodeB.next;
-            }
-        }
-        
-        while(nodeA != null && nodeB != null){
-            if(nodeA != nodeB){
-                nodeA = nodeA.next;
-                nodeB = nodeB.next;
+        while(ptrA != null && ptrB != null){
+            if(ptrA == ptrB){
+                return ptrA;
             }
             else{
-                return nodeA;
+                if(ptrA.next != null){
+                    ptrA = ptrA.next;
+                }
+                else{
+                    if(!hitEndA){
+                        ptrA = headB;
+                        hitEndA = true;
+                    }
+                    else{
+                        ptrA = null;
+                    }
+                }
+                
+                if(ptrB.next != null){
+                    ptrB = ptrB.next;
+                }
+                else{
+                    if(!hitEndB){
+                        ptrB = headA;
+                        hitEndB = true;
+                    }
+                    else{
+                        ptrB = null;
+                    }
+                }
             }
         }
-        
         return null;
-    } 
+    }
+ 
     public static void main(String[] args){
         Solution sol;
         ListNode headA;
