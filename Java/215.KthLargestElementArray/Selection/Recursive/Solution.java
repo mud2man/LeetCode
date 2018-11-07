@@ -8,6 +8,17 @@
 import java.util.*;
 
 public class Solution {
+    private void shuffle(int[] nums){
+        Random rand = new Random();
+        int range = nums.length;
+        for(int i = nums.length - 1; i >= 0; --i){
+            int idx = rand.nextInt(range--);
+            int tmp = nums[i];
+            nums[i] = nums[idx];
+            nums[idx] = tmp;
+        }
+    }
+
     private int select(int lb, int hb, int[] nums, int k){
         int pivot = nums[hb];
         int ptr = lb - 1;
@@ -33,6 +44,7 @@ public class Solution {
     }
     
     public int findKthLargest(int[] nums, int k) {
+        shuffle(nums);
         return select(0, nums.length - 1, nums, k);
     }
  

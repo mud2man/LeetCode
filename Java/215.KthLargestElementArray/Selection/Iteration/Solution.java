@@ -6,6 +6,17 @@
 import java.util.*;
 
 public class Solution {
+    private void shuffle(int[] nums){
+        Random rand = new Random();
+        int range = nums.length;
+        for(int i = nums.length - 1; i >= 0; --i){
+            int idx = rand.nextInt(range--);
+            int tmp = nums[i];
+            nums[i] = nums[idx];
+            nums[idx] = tmp;
+        }
+    }
+ 
     private int partition(int[] nums, int lb, int hb){
         int target = nums[hb];
         int pointer = lb -1;
@@ -24,22 +35,20 @@ public class Solution {
     }
     
     public int findKthLargest(int[] nums, int k) {
+        shuffle(nums);
         int lb = 0;
         int hb = nums.length - 1;
-        
         k--;
         while(lb < hb){
             int mid = partition(nums, lb, hb);
             if(mid == k){
                 return nums[mid];
             }
+            else if(mid > k){
+                hb = mid - 1; 
+            }
             else{
-                if(mid > k){
-                    hb = mid - 1; 
-                }
-                else{
-                    lb = mid + 1;
-                }
+                lb = mid + 1;
             }
         }
         return nums[lb];
