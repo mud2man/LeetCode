@@ -1,5 +1,5 @@
-/* MinHeap: O(klogn), where n is the length of num1
- * 1. Store all pairs (nums1[i], nums2[0]) in MinHeap;
+/* MinHeap: O(klog(min(n, k))), where n is the length of num1
+ * 1. Store all pairs (nums1[i], nums2[0]) in MinHeap, where 0 <= i < k, since (nums1[k], nums2[0]) has at least k pairs which sum is smaller thant it
  * 2. Get and remove the minimum pair p=(nums1[i], nums2[j) from the MinHeap
  * 3. Add the pair p'=(nums1[i], nums2[j+1]) to MinHeap
  * 4. Repeat step2 and step3 k times
@@ -36,34 +36,25 @@ public class Solution{
     }
     
     public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-        PriorityQueue<Pair> minHeap;
-        List<int[]> kPairs;
-        int i;
-        Pair pair;
-        int[] p;
-        
+        PriorityQueue<Pair> minHeap;        
         minHeap = new PriorityQueue<Pair>(new sumComparator());
-        kPairs = new ArrayList<int[]>();
-        
-        for(i = 0; (i < nums1.length) && (nums2.length > 0); ++i){
-            pair = new Pair(i, 0, nums1[i] + nums2[0]);
+        for(int i = 0; i < nums1.length && nums2.length > 0 && i < k; ++i){
+            Pair pair = new Pair(i, 0, nums1[i] + nums2[0]);
             minHeap.add(pair);
         }
         
-        for(i = 0; (i < k) && (!minHeap.isEmpty()); ++i){
-            pair = minHeap.poll();
-            p = new int[2];
-            p[0] = nums1[pair.idx1];
-            p[1] = nums2[pair.idx2];
+        List<int[]> kPairs = new ArrayList<>();
+        for(int i = 0; (i < k) && (!minHeap.isEmpty()); ++i){
+            Pair pair = minHeap.poll();
+            int[] p = new int[]{nums1[pair.idx1], nums2[pair.idx2]};
             kPairs.add(p);
             
-            if(pair.idx2 != (nums2.length - 1)){
+            if(pair.idx2 < (nums2.length - 1)){
                 pair.idx2 = pair.idx2 + 1;
                 pair.sum = nums1[pair.idx1] + nums2[pair.idx2];
                 minHeap.add(pair); 
             }
         }
-        
         return kPairs;
     }
 
