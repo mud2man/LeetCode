@@ -1,4 +1,4 @@
-/* Binary search: O(log(n+m)), where n = row#, m = column#
+/* Binary search: O(log(n*m)), where n = row#, m = column#
  * 1. Treat the 2D matrix as a sorted list
  * 2. Use binary search to find the target
  */
@@ -7,21 +7,17 @@ import java.util.*;
 
 public class Solution{
     public boolean searchMatrix(int[][] matrix, int target) {
-        int lb, hb, mid, colNum, rowNum, len;
-        
-        rowNum = matrix.length;
-        
-        if(rowNum == 0){
+        if(matrix == null || matrix.length == 0){
             return false;
         }
         
-        colNum = matrix[0].length;
-        len = rowNum * colNum;
-        lb = 0;
-        hb = len - 1;
-        
+        int colNum = matrix[0].length;
+        int rowNum = matrix.length;
+        int len = rowNum * colNum;
+        int lb = 0;
+        int hb = len - 1;
         while(lb <= hb){
-            mid = (lb + hb) / 2;
+            int mid = (lb + hb) / 2;
             if(matrix[mid / colNum][ mid % colNum] > target){
                 hb = mid - 1;
             }
