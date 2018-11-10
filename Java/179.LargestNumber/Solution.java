@@ -7,9 +7,9 @@ import java.util.*; // Stack
 public class Solution {
     private class OrderComparator implements Comparator<Integer>{
         public int compare(Integer x, Integer y){
-            long xy = Long.valueOf(Long.toString(x) + Long.toString(y));
-            long yx = Long.valueOf(Long.toString(y) + Long.toString(x));
-            return (int)(yx - xy);
+            String xy = Integer.toString(x) + Integer.toString(y);
+            String yx = Integer.toString(y) + Integer.toString(x);
+            return yx.compareTo(xy);
         }
     }
     
