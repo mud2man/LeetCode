@@ -17,23 +17,24 @@ class TreeNode {
 }
 
 public class Codec {
-    private void preOrder(TreeNode root, StringBuilder preOrderStr){
-        if(root == null){
-            preOrderStr.append("null");
-            preOrderStr.append(',');
-            return;
-        }
-        preOrderStr.append(Integer.toString(root.val));
-        preOrderStr.append(',');
-        preOrder(root.left, preOrderStr);
-        preOrder(root.right, preOrderStr);
-    }
-    
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
-        StringBuilder preOrderStr = new StringBuilder("");
-        preOrder(root, preOrderStr);
-        return preOrderStr.toString();
+        if(root == null){
+            return "null";
+        }
+        StringBuilder data = new StringBuilder("");
+        Deque<TreeNode> stack = new LinkedList<>();
+        stack.addFirst(root);
+        while(!stack.isEmpty()){
+            TreeNode top = stack.pollFirst();
+            while(top != null){
+                data.append(Integer.toString(top.val) + ",");
+                stack.addFirst(top.right);
+                top = top.left;
+            }
+            data.append("null,");
+        }
+        return data.toString();
     }
 
     // Decodes your encoded data to tree.
