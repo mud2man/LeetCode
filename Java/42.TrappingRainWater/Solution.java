@@ -1,4 +1,4 @@
-/* Monotonous stack: Time:O(n), Space:O(n)
+/* Monotonic stack: Time:O(n), Space:O(n)
  * 1. Virtual stack is {stack, top, nextTop}, where node = {height, index}, and maintain a decreasing order in terms of height
  * 2. If the next height is lower than previous one, push it into stack
  * 3. If the next height is equals to  previous one, update its index with top[1] = nextTop[1];
