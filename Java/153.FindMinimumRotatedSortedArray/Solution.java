@@ -2,18 +2,14 @@
  * 1. If nums[mid] < left && nums[mid] < right, return the current number
  * 2. Otherwise, shift right if nums[mid] > nums[hb]
  * 3. The formula works under three cases
- * case1:
- *        *  
- *       /|
- *        |/ 
- * case2:
+ *
+ *          *  
+ * case1:  /| /
+ *          |/ 
+ *
  *          /  
- *         /
+ * case2:  /
  *        /
- * case3:
- *        \
- *         \
- *          \
  */
 
 import java.util.*;
@@ -26,7 +22,7 @@ public class Solution {
             int mid = (lb + hb) / 2;
             int left = (mid > 0)? nums[mid - 1]: Integer.MAX_VALUE;
             int right = (mid < nums.length - 1)? nums[mid + 1]: Integer.MAX_VALUE;
-            if(nums[mid] < left && nums[mid] < right){
+            if(nums[mid] <= left && nums[mid] <= right){
                 return nums[mid];
             }
             else if(nums[mid] > nums[hb]){
@@ -40,6 +36,7 @@ public class Solution {
         //unreachale
         return 0;
     } 
+
     public static void main(String[] args){
         Solution sol;
         int maximum;
