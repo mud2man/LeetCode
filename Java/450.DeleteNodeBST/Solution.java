@@ -1,4 +1,4 @@
-/* O(hight)
+/* Two Pointers: Time:O(h), Space:O(h)
  * 1. Search the node with key value
  * 2. Replace the value of the deleted node with its sucessor
  * 3. If the deleted has both right son and left son, the successor is the leftest node of the right sub-tree
@@ -15,66 +15,64 @@ class TreeNode {
 }
 
 public class Solution {
-    private void find(TreeNode[] fartherAndSon, int key){
-        TreeNode son = fartherAndSon[1];
-        
-        if(son == null){
+        private void search(TreeNode[] fartherSon, int key){
+        if(fartherSon[1] == null || fartherSon[1].val == key){
             return;
         }
-        
-        if(son.val == key){
-            return;
-        }
-        else if(son.val > key){
-            fartherAndSon[0] = son;
-            fartherAndSon[1] = son.left;
-            find(fartherAndSon, key);
+        else if(fartherSon[1].val > key){
+            fartherSon[0] = fartherSon[1];
+            fartherSon[1] = fartherSon[1].left;
+            search(fartherSon, key);
         }
         else{
-            fartherAndSon[0] = son;
-            fartherAndSon[1] = son.right;
-            find(fartherAndSon, key);
+            fartherSon[0] = fartherSon[1];
+            fartherSon[1] = fartherSon[1].right;
+            search(fartherSon, key);
         }
     }
     
-    private void delete(TreeNode[] fartherAndSon){
-        TreeNode farther = fartherAndSon[0];
-        TreeNode son = fartherAndSon[1];
-
-        if(son.right == null){
-            if(farther.right == son){
-                farther.right = son.left;
+    private void delete(TreeNode[] fartherSon){
+        if(fartherSon[1] == null){
+            return;
+        }
+        
+        if(fartherSon[1].right == null){
+            if(fartherSon[0].left == fartherSon[1]){
+                fartherSon[0].left = fartherSon[1].left;
             }
             else{
-                farther.left = son.left;
+                fartherSon[0].right = fartherSon[1].left;
             }
-        }
-        else if(son.right.left == null){
-            son.val = son.right.val;
-            son.right = son.right.right;
         }
         else{
-            farther = son;
-            son = son.right;
-            while(son.left != null){
-                farther = son;
-                son = son.left;
+            if(fartherSon[1].right.left == null){
+                if(fartherSon[1] == fartherSon[0].left){
+                    fartherSon[0].left = fartherSon[1].right;
+                }
+                else{
+                    fartherSon[0].right = fartherSon[1].right;
+                }
+                fartherSon[1].right.left = fartherSon[1].left;
             }
-            fartherAndSon[1].val = son.val;
-            farther.left = son.right;
+            else{
+                TreeNode ptr0 = fartherSon[1].right;
+                TreeNode ptr1 = ptr0.left;
+                while(ptr1.left != null){
+                    ptr0 = ptr1;
+                    ptr1 = ptr1.left;
+                }
+                fartherSon[1].val = ptr1.val;
+                ptr0.left = ptr1.right;
+            }
         }
     }
     
     public TreeNode deleteNode(TreeNode root, int key) {
         TreeNode dummy = new TreeNode(0);
         dummy.left = root;
-        TreeNode[] fartherAndSon = new TreeNode[]{dummy, root};
-        find(fartherAndSon, key);
-        
-        if(fartherAndSon[1] != null){
-            delete(fartherAndSon);
-        }
-        
+        TreeNode[] fartherSon = {dummy, root};
+        search(fartherSon, key);
+        delete(fartherSon);
         return dummy.left;
     }
  
