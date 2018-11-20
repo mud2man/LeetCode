@@ -1,57 +1,49 @@
 /* Devide and counquer: O(2^n), while O(n!) without memory
  * 1. Record all the taken steps into an array, and caculate the identifier by 2's weight
- * 2. Keep records of loseSet and winSet to save avoid duplicated searching
- * 3. Any one of step can make me force a win, then I win
+ * 2. Keep records of lose set "lose" and win set "win" to  avoid duplicated searching
+ * 3. Any one of step can make opponant cannot win, then I win
  */
 
 import java.util.*; // Stack
 
 public class Solution {
-    private int getRemainStepsId(boolean[] remainSteps, int max){
-        int remainStepsId = 0;
-        int weight = 1;
-        for(int i = 1; i <= max; ++i){
+   private int getHashCode(boolean[] used){
+        int hashCode = 0;
+        for(int i = 1, weight = 1; i < used.length; ++i){
+            hashCode += used[i]? weight: 0;
             weight = weight << 1;
-            if(remainSteps[i] == true){
-                remainStepsId |= weight;
-            }
         }
-        return remainStepsId;
+        return hashCode;
     }
     
-    private boolean helper(boolean[] remainSteps, Set<Integer> loseSet, Set<Integer> winSet, int desiredTotal, int max){
-        int remainStepsId = getRemainStepsId(remainSteps, max);
-
-        if(loseSet.contains(remainStepsId)){
+    private boolean helper(boolean[] used, int remain, Set<Integer> win, Set<Integer> lose){
+        int hashCode = getHashCode(used);
+        if(remain <= 0){
+            lose.add(hashCode);
             return false;
         }
-        
-        if(winSet.contains(remainStepsId)){
+        if(win.contains(hashCode)){
             return true;
         }
-        
-        if(desiredTotal <= 0){
-            loseSet.add(remainStepsId);
+        if(lose.contains(hashCode)){
             return false;
         }
         
-        for(int i = 1; i <= max; ++i){
-            if(remainSteps[i] == false){
-                continue;
+        for(int i = 1; i < used.length; ++i){
+            if(used[i] == false){
+                // my move
+                used[i] = true;
+                int nextRemain = remain - i;
+                // opponant's move
+                if(!helper(used, nextRemain, win, lose)){
+                    win.add(hashCode);
+                    used[i] = false;
+                    return true;
+                }
+                used[i] = false;
             }
-            
-            //push
-            remainSteps[i] = false;
-            if(!helper(remainSteps, loseSet, winSet, desiredTotal - i, max)){
-                remainSteps[i] = true;
-                winSet.add(remainStepsId);
-                return true;
-            }
-            //pop
-            remainSteps[i] = true;
         }
-        
-        loseSet.add(remainStepsId);
+        lose.add(hashCode);
         return false;
     }
     
@@ -59,30 +51,20 @@ public class Solution {
         if(desiredTotal == 0){
             return true;
         }
-        
-        double lb = (double)maxChoosableInteger;
-        if((((lb + 1) / 2) * lb) < (double)desiredTotal){
+        int sum = (maxChoosableInteger + 1) * maxChoosableInteger / 2;
+        if(sum < desiredTotal){
             return false;
         }
-        
-        boolean[] remainSteps = new boolean[maxChoosableInteger + 1];
-        Set<Integer> loseSet = new HashSet<Integer>();
-        Set<Integer> winSet = new HashSet<Integer>();
-        for(int i = 1; i <= maxChoosableInteger; ++i){
-            remainSteps[i] = true;
-        }
-        
-        return helper(remainSteps, loseSet, winSet, desiredTotal, maxChoosableInteger);
+        boolean[] used = new boolean[maxChoosableInteger + 1];
+        Set<Integer> win = new HashSet<>();
+        Set<Integer> lose = new HashSet<>();
+        return helper(used, desiredTotal, win, lose);
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        int maxChoosableInteger, desiredTotal; 
-
-        sol = new Solution();
-        maxChoosableInteger = 20;
-        desiredTotal = 300; 
-        
+        Solution sol = new Solution();
+        int maxChoosableInteger = 10;
+        int desiredTotal = 11; 
         System.out.println("maxChoosableInteger: " + maxChoosableInteger + ", desiredTotal: " + desiredTotal);
         System.out.println("canIwin: " + sol.canIWin(maxChoosableInteger, desiredTotal));
     }
