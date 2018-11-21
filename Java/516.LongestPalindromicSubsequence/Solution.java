@@ -7,31 +7,21 @@
 import java.util.*;
 
 public class Solution{
-    public int longestPalindromeSubseq(String s) {
-        int size = s.length();
-        int[][] dp = new int[size][size];
-        int maxLength = (size == 0)? 0: 1;
-        
-        for(int tailIdx = 0; tailIdx < size; ++tailIdx){
-            dp[tailIdx][tailIdx] = 1;
-            char tailChar = s.charAt(tailIdx);
-            for(int headIdx = tailIdx - 1; headIdx >= 0; headIdx--){
-                char headChar = s.charAt(headIdx);
-                int currLength = 0;
-                if(headChar == tailChar){
-                    int middlelLength = ((tailIdx - 1) >= (headIdx + 1))? dp[tailIdx - 1][headIdx + 1]: 0;
-                    currLength = middlelLength + 2;
+   public int longestPalindromeSubseq(String s) {
+        int[][] dp = new int[s.length()][s.length()];
+        for(int tail = 0; tail < s.length(); ++tail){
+            dp[tail][tail] = 1;
+            for(int head = tail - 1; head >= 0; head--){
+                if(s.charAt(tail) == s.charAt(head)){
+                    dp[tail][head] = (tail - 1 >= head + 1)? 2 + dp[tail - 1][head + 1]: 2; 
                 }
-                currLength = Math.max(currLength, dp[tailIdx][headIdx + 1]);
-                currLength = Math.max(currLength, dp[tailIdx - 1][headIdx]);
-                dp[tailIdx][headIdx] = currLength;
-                maxLength = Math.max(maxLength, dp[tailIdx][headIdx]);
+                dp[tail][head] = Math.max(dp[tail][head], dp[tail - 1][head]);
+                dp[tail][head] = Math.max(dp[tail][head], dp[tail][head + 1]);
             }
         }
-        
-        return maxLength;
+        return dp[s.length() - 1][0];
     }
-
+ 
     public static void main(String[] args){
         Solution sol;
         String s = "bbbab";
