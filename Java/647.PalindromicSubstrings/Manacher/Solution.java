@@ -3,7 +3,7 @@
  * 2. Keep record the palindrome's most right bound "right", and its center "c"
  * 3. Traverse s from left, and update radius r[i]
  * 4. If i is not over right, radius = min(right - i, r[2 * c - i]). Otherwise radius = 0. Then expend radius as long as possible
- * 5. Get the length of the palindrome, then accumulate count with (len + 1) / 2
+ * 5. Get the length of the palindrome, then accumulate count with (len + 2) / 2
  * 6. If i + radis > right, update "right" and center "c"
  *
  * ex: *a#b#b#
@@ -20,34 +20,36 @@ public class Solution {
     public int countSubstrings(String s) {
         StringBuilder sb = new StringBuilder("");
         sb.append('*');
-        for(char c: s.toCharArray()){
+        for(char c : s.toCharArray()){
             sb.append(c);
             sb.append('#');
         }
-        char[] chars = sb.toString().toCharArray();
-        int right = 1;
+        
         int c = 1;
-        int[] r = new int[chars.length];
-        r[1] = 1;
+        int rb = 1;
+        int[] r = new int[sb.length()];
         int count = 1;
-        for(int i = 2; i < chars.length; ++i){
-            int radius = (right > i)? Math.min(right - i, r[2 * c - i]): 0;
-            while(i + radius + 1 < chars.length && i - radius - 1 >= 0 && chars[i + radius + 1] == chars[i - radius - 1]){
+        for(int i = 2; i < sb.length(); ++i){
+            int radius = (i <= rb)? Math.min(rb - i, r[2 * c - i]): 0;
+            while(i - radius - 1 >= 0 && i + radius + 1 < sb.length() && sb.charAt(i - radius - 1) == sb.charAt(i + radius + 1)){
                 radius++;
             }
             r[i] = radius;
             
-            int len = (i - radius - 1 == 0)?  radius + 1: radius;
-            count += (len + 1) / 2;
-            
-            if(i + radius > right){
-                right = i + radius;
+            if(i + radius > rb){
                 c = i;
+                rb = i + radius;
             }
+            
+            //retrieve string with two ends not equal to '#'
+            radius = (sb.charAt(i - radius) == '#')? radius - 1: radius;
+            //len("a#a#a") = (2 + 2) / 2 = 2, len("a#a#a#a") = (3 + 2) / 2 = 2
+            int len = (radius + 2) / 2;
+            count += len;
         }
         return count;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         String s = "aaa";
