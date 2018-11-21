@@ -28,7 +28,6 @@ public class Codec {
     public String serialize(TreeNode root) {
         StringBuilder path = new StringBuilder("");
         preOrderEncode(path, root);
-        path.deleteCharAt(path.length() - 1);
         return path.toString();
     }
     
@@ -38,8 +37,7 @@ public class Codec {
             return null;
         }
         
-        int val = Integer.valueOf(datas[idx[0]]);
-        idx[0]++;
+        int val = Integer.valueOf(datas[idx[0]++]);
         TreeNode node = new TreeNode(val);
         node.left = preOrderDecode(datas, idx);
         node.right = preOrderDecode(datas, idx);
@@ -51,7 +49,7 @@ public class Codec {
         String[] datas = data.split("_");
         int[] idx = {0};
         return preOrderDecode(datas, idx);
-    }
+    }  
 
     public static void main(String[] args){
         TreeNode root;
