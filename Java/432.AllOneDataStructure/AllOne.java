@@ -12,93 +12,87 @@ import java.util.*;
 
 public class AllOne {
     private class Node{
-        int val;
+        int freq;
         Set<String> keys;
         Node next;
         Node prev;
-        Node(int v){val = v; keys = new HashSet<>(); next = this; prev = this;} 
+        Node(int f){freq = f; keys = new HashSet<>(); next = this; prev = this;}
     }
-    Map<String, Integer> key2Val;
-    Map<Integer, Node> val2Node;
     Node head;
+    Map<String, Integer> key2Freq;
+    Map<Integer, Node> freq2Node;
     
     /** Initialize your data structure here. */
     public AllOne() {
-        key2Val = new HashMap<>();
-        val2Node = new HashMap<>();
         head = new Node(0);
-        val2Node.put(0, head);
+        key2Freq = new HashMap<>();
+        freq2Node = new HashMap<>();
+        freq2Node.put(0, head);
     }
     
-    private void addNode(Node prev, String key, int val){
-        if(!val2Node.containsKey(val)){
-            Node node = new Node(val);
-            node.keys.add(key);
+    private void add(Node prev, int freq, String key){
+        if(!freq2Node.containsKey(freq)){
+            Node newNode = new Node(freq);
+            newNode.keys.add(key);
             Node next = prev.next;
-            prev.next = node;
-            next.prev = node;
-            node.next = next;
-            node.prev = prev;
-            val2Node.put(val, node);
+            newNode.prev = prev;
+            newNode.next = next;
+            prev.next = newNode;
+            next.prev = newNode;
+            freq2Node.put(freq, newNode);
         }
-        else{
-            val2Node.get(val).keys.add(key);
-        }
+        freq2Node.get(freq).keys.add(key);
     }
     
-    private void deleteNode(int val){
-        if(val != 0 && val2Node.get(val).keys.isEmpty()){
-            Node node = val2Node.get(val);
-            node.next.prev = node.prev;
+    private void delete(Node node, String key){
+        node.keys.remove(key);
+        if(node.keys.isEmpty()){
             node.prev.next = node.next;
-            val2Node.remove(val);
+            node.next.prev = node.prev;
+            freq2Node.remove(node.freq);
         }
     }
     
     /** Inserts a new key <Key> with value 1. Or increments an existing key by 1. */
     public void inc(String key) {
-        if(key2Val.containsKey(key)){
-            int val = key2Val.get(key);
-            key2Val.put(key, val + 1);
-            val2Node.get(val).keys.remove(key);
-            addNode(val2Node.get(val), key, val + 1);
-            deleteNode(val);
+        if(!key2Freq.containsKey(key)){
+            key2Freq.put(key, 1);
+            add(head, 1, key);
         }
         else{
-            key2Val.put(key, 1);
-            addNode(val2Node.get(0), key, 1);
+            key2Freq.put(key, key2Freq.get(key) + 1);
+            int freq = key2Freq.get(key);
+            add(freq2Node.get(freq - 1), freq, key);
+            delete(freq2Node.get(freq - 1), key);
         }
     }
     
     /** Decrements an existing key by 1. If Key's value is 1, remove it from the data structure. */
     public void dec(String key) {
-        if(!key2Val.containsKey(key)){
+        if(!key2Freq.containsKey(key)){
             return;
         }
+    
+        if(key2Freq.get(key) == 1){
+            key2Freq.remove(key);
+            delete(freq2Node.get(1), key);
+        }
         else{
-            int val = key2Val.get(key);
-            if(val == 1){
-                key2Val.remove(key);
-                val2Node.get(1).keys.remove(key);
-                deleteNode(1);
-            }
-            else{
-                key2Val.put(key, val - 1);
-                val2Node.get(val).keys.remove(key);
-                addNode(val2Node.get(val).prev, key, val - 1);
-                deleteNode(val);
-            }
+            key2Freq.put(key, key2Freq.get(key) - 1);
+            int freq = key2Freq.get(key);
+            add(freq2Node.get(freq + 1).prev, freq, key);
+            delete(freq2Node.get(freq + 1), key);
         }
     }
     
     /** Returns one of the keys with maximal value. */
     public String getMaxKey() {
-        return (head.next == head)? "": head.prev.keys.iterator().next();
+        return (head.prev != head)? head.prev.keys.iterator().next(): "";
     }
     
     /** Returns one of the keys with Minimal value. */
     public String getMinKey() {
-        return (head.next == head)? "": head.next.keys.iterator().next();
+        return (head.next != head)? head.next.keys.iterator().next(): "";
     }
   
     public static void main(String[] args){
