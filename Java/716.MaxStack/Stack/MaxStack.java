@@ -8,21 +8,17 @@ import java.util.*;
 public class MaxStack {
     Deque<Integer> stack;
     Deque<Integer> maxStack;
-    
     /** initialize your data structure here. */
-    public MaxStack() { 
+    public MaxStack() {
         stack = new LinkedList<>();
+        stack.addLast(Integer.MIN_VALUE);
         maxStack = new LinkedList<>();
+        maxStack.addLast(Integer.MIN_VALUE);
     }
     
     public void push(int x) {
-        stack.add(x);
-        if(maxStack.isEmpty() || maxStack.peekLast() < x){
-            maxStack.add(x);
-        }
-        else{
-            maxStack.add(maxStack.peekLast());
-        }
+        stack.addLast(x);
+        maxStack.addLast(Math.max(x, maxStack.peekLast()));
     }
     
     public int pop() {
@@ -39,29 +35,20 @@ public class MaxStack {
     }
     
     public int popMax() {
-        Deque<Integer> tempStack = new LinkedList<>();
         int max = peekMax();
-        while(max != stack.peekLast()){
-            tempStack.add(stack.pollLast());
-            maxStack.pollLast();
+        Deque<Integer> tempStack = new LinkedList<>();
+        while(stack.peekLast() != max){
+            tempStack.addLast(pop());
         }
         
         stack.pollLast();
         maxStack.pollLast();
-        
         while(!tempStack.isEmpty()){
-            int top = tempStack.pollLast();
-            stack.add(top);
-            if(maxStack.isEmpty() || maxStack.peekLast() < top){
-                maxStack.add(top);
-            }
-            else{
-                maxStack.add(maxStack.peekLast());
-            }
+            push(tempStack.pollLast());
         }
         return max;
     }
- 
+  
     public static void main(String[] args){
         MaxStack stack = new MaxStack();
         int val;
