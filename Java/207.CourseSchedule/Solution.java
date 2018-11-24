@@ -1,57 +1,49 @@
 /* Use DFS: O(e + n)
  * 1. Create colors[], where white: 0, gray: 1, black: 2
- * 2. If the outgoing node is black, don NOT invoke dfs
+ * 2. If the out going node is black, don NOT invoke dfs
  * 3. If the current node is gray, cycle found return false
  */
 
 import java.util.*; // Stack
 
 public class Solution {
-    private boolean dfs(int[] colors, List<List<Integer>> adjacentList, int root){
-        if(colors[root] == 1){
+    private boolean dfs(int start, int[] colors, Map<Integer, Set<Integer>> adjacencyList){
+        if(colors[start] == 2){
+            return true;
+        }
+        else if(colors[start] == 1){
+            // cycle found
             return false;
         }
-        
-        colors[root] = 1;
-        for(Integer v: adjacentList.get(root)){
-            if(colors[Integer.valueOf(v)] == 2){
-                continue;
-            }
-            else{
-                if(!dfs(colors, adjacentList, Integer.valueOf(v))){
+        else{
+            colors[start] = 1;
+            Set<Integer> neighbors = (adjacencyList.containsKey(start))? adjacencyList.get(start): new HashSet<>();
+            for(int neighbor: neighbors){
+                if(!dfs(neighbor, colors, adjacencyList)){
                     return false;
                 }
             }
+            colors[start] = 2;
+            return true;
         }
-        colors[root] = 2;
-        return true;
     }
     
     public boolean canFinish(int numCourses, int[][] prerequisites) {
-        // white: 0, gray: 1, black: 2
-        int[] colors = new int[numCourses];
-        Set<Integer> roots = new HashSet<Integer>();
-        List<List<Integer>> adjacentList = new ArrayList<List<Integer>>();
-        
-        for(int i = 0; i < numCourses; ++i){
-            adjacentList.add(new ArrayList<Integer>());
-        }
-        
+        Map<Integer, Set<Integer>> adjacencyList = new HashMap<>();
         for(int[] prerequisite: prerequisites){
-            int source = prerequisite[1];
-            int target = prerequisite[0];
-            adjacentList.get(source).add(target);
+            adjacencyList.putIfAbsent(prerequisite[0], new HashSet<>());
+            adjacencyList.get(prerequisite[0]).add(prerequisite[1]);
         }
-        
-        for(int i= 0; i < numCourses; ++i){
-            if(!dfs(colors, adjacentList, i)){
+        //0:white, 1:gray, 2:black
+        int[] colors = new int[numCourses];
+        for(int i = 0; i < numCourses; ++i){
+            if(!dfs(i, colors, adjacencyList)){
                 return false;
-            } 
+            }
         }
-        
         return true;
     }
-    
+  
     public static void main(String[] args){
         final int numCourses = 5;
         Solution sol;
