@@ -17,11 +17,11 @@ public class Solution {
             }
             
             //left slope
-            if(nums[mid] > nums[lb] && target >= nums[lb] && target < nums[mid]){
+            if(nums[mid] >= nums[lb] && target >= nums[lb] && target < nums[mid]){
                 hb = mid - 1;
             }
             // right slope
-            else if(nums[mid] < nums[hb] && target > nums[mid] && target <= nums[hb]){
+            else if(nums[mid] <= nums[hb] && target > nums[mid] && target <= nums[hb]){
                 lb = mid + 1;
             }
             else{
