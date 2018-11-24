@@ -43,11 +43,8 @@ public class Solution{
     }
  
     public static void main(String[] args){
-        Solution sol;
-        List<List<Integer>> subsets;
+        Solution sol = new Solution();
         int[] nums = {1,2,2};
-        
-        sol = new Solution();
         System.out.println("nums[]: " + Arrays.toString(nums));
         System.out.println("subsets: " + sol.subsetsWithDup(nums));
     }
