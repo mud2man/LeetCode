@@ -52,13 +52,9 @@ public class Solution{
                     }
                 }
                 else{
-                    if(word1.charAt(y) == word2.charAt(x)){
-                        dp[y][x] = dp[y - 1][x - 1];
-                    }
-                    else{
-                        dp[y][x] = Math.min(dp[y - 1][x] + 1, dp[y][x - 1] + 1);
-                        dp[y][x] = Math.min(dp[y][x], dp[y - 1][x - 1] + 1);
-                    }
+                    dp[y][x] = (word1.charAt(y) == word2.charAt(x))? dp[y - 1][x - 1]: dp[y - 1][x - 1] + 1;
+                    dp[y][x] = Math.min(dp[y][x], dp[y][x - 1] + 1);
+                    dp[y][x] = Math.min(dp[y][x], dp[y - 1][x] + 1); 
                 }
             }
         }
