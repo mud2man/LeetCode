@@ -27,7 +27,7 @@ public class Solution{
         for(int i = 0; i < points.length; ++i){
             HashMap<Integer, HashMap<Integer,Integer>> countMap = new HashMap<Integer, HashMap<Integer,Integer>>();
             Point source = points[i];
-            int duplicateCount = 0;
+            int duplicateCount = 1;
             int localMaxCount = 1;
             for(int j = i + 1; j < points.length; ++j){
                 Point target = points[j];
@@ -57,7 +57,7 @@ public class Solution{
                 HashMap<Integer,Integer> innerMap = countMap.get(denominator);
                 innerMap.putIfAbsent(numerator, 0);
                 innerMap.put(numerator, innerMap.get(numerator) + 1);
-                localMaxCount = Math.max(localMaxCount, duplicateCount + innerMap.get(numerator) + 1);
+                localMaxCount = Math.max(localMaxCount, duplicateCount + innerMap.get(numerator));
             }
             globalMaxCount = Math.max(globalMaxCount, localMaxCount);
         }
