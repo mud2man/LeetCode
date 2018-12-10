@@ -1,5 +1,8 @@
 /* TreeSet: Time:O(n*m^2*logn), Space:O(n*m^2)
- * 1. 
+ * 1. Transform matrix to the sum of leftTop corner (0, 0), and the rightBottom corner (y, x)
+ * 2. sums[start][end] stands for the treeSet of all sums of rectangles with leftTop = (0, start), and rightBottom = (y, end)
+ * 3. In the loop, find the least greater value from sums[start][end] with target = rightArea - k
+ * 4. Update golbalMax
  */
 
 import java.util.*;
