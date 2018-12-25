@@ -1,4 +1,7 @@
-/* BFS: Time:O(n), Space:O(n), where n is number of stopss
+/* BFS: Time:O(n), Space:O(n), where n is number of stops
+ * 1. Have a reversed index "stop2Bus"
+ * 2. Apply BFS to find the least number of bus reaching "T"
+ * 3. Have "takenBus" and "vistedStops" to prevent repeating
  */
 
 import java.util.*;
@@ -18,42 +21,42 @@ public class Solution {
             }
         }
         
-        Set<Integer> visited = new HashSet<>();
-        visited.add(S);
-        Set<Integer> unVisited = new HashSet<>();
         if(!stop2Bus.containsKey(S)){
             return -1;
         }
-        //the first stops, which can be reached by 1 bus
-        for(int bus: stop2Bus.get(S)){
-            for(int stop: routes[bus]){
-                unVisited.add(stop);
-            }
-        }
         
         //BFS
-        int dis = 1;
-        while(!unVisited.isEmpty()){
-            Set<Integer> nexts = new HashSet<>();
-            for(int stop: unVisited){
+        Set<Integer> takenBus = new HashSet<>();
+        Set<Integer> vistedStops = new HashSet<>();
+        Deque<Integer> queue = new LinkedList<>();
+        queue.add(S);
+        int dis = 0;
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i = 0; i < size; ++i){
+                int stop = queue.pollFirst();
                 if(stop == T){
                     return dis;
                 }
-                visited.add(stop);
+                if(vistedStops.contains(stop)){
+                    continue;
+                }
+                vistedStops.add(stop);
                 for(int bus: stop2Bus.get(stop)){
+                    if(takenBus.contains(bus)){
+                        continue;
+                    }
+                    takenBus.add(bus);
                     for(int nextStop: routes[bus]){
-                        if(!visited.contains(nextStop)){
-                            nexts.add(nextStop);
-                        }
+                        queue.add(nextStop);
                     }
                 }
             }
-            unVisited = nexts;
             dis++;
         }
         return -1;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int S = 1;
