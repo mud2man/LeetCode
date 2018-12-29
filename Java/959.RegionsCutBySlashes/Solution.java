@@ -1,4 +1,4 @@
-/* Union Find: Time:O(n^2 * alpha(n^2)), Space:O(n^2)
+/* Union Find: Time:O(n^2 * alpha(n^2)), Space:O(n^2). LeetCode has simpler solution
  * 1. Have a 2D array "root" to identify the root of each element
  * 2. Set the root of boundry as depth * width, and store it in root[depth][0]
  * 3. Traverse the grid from left and top
