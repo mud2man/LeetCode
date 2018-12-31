@@ -1,15 +1,14 @@
-/* Dynamic Progamming: Time:O(nlogn), Space:O(n). LeetCode has simpler solution
+/* Dynamic Progamming: Time:O(nlogn), Space:O(n)
  * 1. Sort envelopes with envelope[0](width) with higher priority, ex: {5, 4}, {6, 4}, {6, 7}, {2, 3} => {2, 3}, {5, 4}, {6, 4}, {6, 7}
- * 2. Have a map "height2Depth" to record the mapping from height(envelope[1]) to depth, which keeps the depth are strickly accending
+ * 2. Have a array dp, where dp[i] = the smallest height of doll sequence with size = (i + 1)
  * 3. In the loop, first, get the "heights" with the same width
- * 4. Get the depth by getting the gratest hight which among all smaller height and plus 1
- * 5. Remove the right height of "height" from height2Depth if its depth is bigger than or equal to that of right height
- * 6. Step 5 can guarantee strickly accending of depths of "height2Depth"
+ * 4. Traverse the hights from right, and use binary search to update dp
+ * 5. The size of "dp" is the answer
  *
- * ex: envelopes = {2, 3}, {2, 4}, {2, 7}, {5, 5}, {5, 7}, {6, 5}
- *     loop[0]: height2Depth = {3: 1}
- *     loop[1]: height2Depth = {3: 1, 5: 2}
- *     loop[2]: height2Depth = {3: 1, 5: 2}
+ * ex: envelopes = {2, 3}, {2, 4}, {2, 7}, {5, 5}, {5, 7}, {6, 7}, {6 ,8}
+ *     loop[0]: dp = {1}
+ *     loop[1]: dp = {1, 5}
+ *     loop[2]: dp = {1, 5, 7}
  */
 
 import java.util.*;
@@ -29,49 +28,31 @@ public class Solution {
     
     public int maxEnvelopes(int[][] envelopes) {
         Arrays.sort(envelopes, new DollComparator());
-        TreeMap<Integer, Integer> height2Depth = new TreeMap<>();
-        int max = 0;
+        int[] dp = new int[envelopes.length];
+        int size = 0;
         for(int i = 0; i < envelopes.length; ++i){
             int width = envelopes[i][0];
-            List<Integer> heights = new ArrayList<>();
+            int start = i;
             while(i < envelopes.length && width == envelopes[i][0]){
-                heights.add(envelopes[i++][1]);
+                i++;
             }
             i--;
             
-            Map<Integer, Integer> nextHeight2Depth = new HashMap<>();
-            for(int height: heights){
-                Integer lowerKey = height2Depth.lowerKey(height);
-                if(lowerKey != null){
-                    if(!nextHeight2Depth.containsKey(height)){
-                        nextHeight2Depth.put(height, height2Depth.get(lowerKey) + 1);
-                    }
-                    else{
-                        nextHeight2Depth.put(height, Math.max(nextHeight2Depth.get(height), height2Depth.get(lowerKey) + 1));
-                    }
+            for(int j = i; j >= start; --j){
+                int height = envelopes[j][1];
+                int insetrtIdx = Arrays.binarySearch(dp, 0, size, height);
+                insetrtIdx = (insetrtIdx < 0)? -(insetrtIdx + 1): insetrtIdx;
+                if(insetrtIdx == size){
+                    dp[size++] = height;
                 }
                 else{
-                    nextHeight2Depth.put(height, 1);
-                }
-                max = Math.max(max, nextHeight2Depth.get(height));
-            }
-
-            for(Map.Entry<Integer, Integer> entry: nextHeight2Depth.entrySet()){
-                height2Depth.put(entry.getKey(), entry.getValue());
-            }
-            
-            for(int j = heights.size() - 1; j >= 0; --j){
-                if(height2Depth.higherKey(heights.get(j)) != null){
-                    int higherKey = height2Depth.higherKey(heights.get(j));
-                    if(height2Depth.get(heights.get(j)) >= height2Depth.get(higherKey)){
-                        height2Depth.remove(higherKey);
-                    }
+                    dp[insetrtIdx] = height;
                 }
             }
         }
-        return max;
+        return size;
     }
-    
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int[][] envelopes = {{5, 4},{6, 4},{6, 7},{2, 3}};
