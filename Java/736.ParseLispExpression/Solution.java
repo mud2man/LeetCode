@@ -1,4 +1,4 @@
-/*Stack: Time:O(n^2), Space:O(n)
+/*Stack: Time:O(n), Space:O(n)
  * 1. Have a "variableMap" to store the assigned variables, with key is variable name, value is the list of assigned value
  * 2. Hvae a another polymorphism "evaluate" to evaluate the 5 types of expression, incldsing integer, variable, let, add, and mult 
  * 3. In let, do assign new value to "variableMap", and remove them when in the end of let
@@ -53,7 +53,6 @@ public class Solution {
                     variableMap.get(variable).pollLast();
                 }
                 break;
-                            
             case "mult":
             case "add":
                 int expr0 = evaluate(expr, idx, variableMap);
@@ -62,7 +61,6 @@ public class Solution {
                 idx[0] ++;
                 ret = operator.equals("mult")? expr0 * expr1: expr0 + expr1;
                 break;
-                            
             default:
                 if(Character.isDigit(operator.charAt(0)) || operator.charAt(0) == '-'){
                     ret = Integer.valueOf(operator);
