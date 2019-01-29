@@ -2,35 +2,33 @@
  * 1. Have an circular queue with "head" to record all the pritity for each key
  * 2. The element of queue is composed of prev(older), next(newer)
  * 3. Have a map "key2Node" to index key and its associated node
- * 4. Also, we have a key value map key2Val to record the key-value pair
- * 5. In put, when we need to update the priority, we just shift head to its next, and update it
- * 6. In get, we take the new head, and connect its neighbors. Then insert the new head 
+ * 4. In put, when we need to update the priority, we just shift head to its next, and update it
+ * 5. In get, we take the new head, and connect its neighbors. Then insert the new head 
  */
 
 import java.util.*;
 
 public class LRUCache {
-    private class Node{
+        private class Node{
         int key;
+        int val;
         Node prev;
         Node next;
-        Node(int k){key = k; prev = this; next = this;}
+        Node(int k, int v){key = k; val = v; prev = this; next = this;}
     }
     
-    Map<Integer, Integer> key2Val;
     Map<Integer, Node> key2Node;
     int remain;
     Node head;
     
     public LRUCache(int capacity) {
-        key2Val = new HashMap<>();
         key2Node = new HashMap<>();
         remain = capacity;
         head = null;
     }
     
     public int get(int key) {
-        if(!key2Val.containsKey(key)){
+        if(!key2Node.containsKey(key)){
             return -1;
         }
         else{
@@ -47,20 +45,19 @@ public class LRUCache {
                 head.prev.next = node;
                 head.prev = node;
             }
-            return key2Val.get(key);
+            return node.val;
         }
     }
     
     public void put(int key, int value) {
-        if(key2Val.containsKey(key)){
-            key2Val.put(key, value);
+        if(key2Node.containsKey(key)){
+            key2Node.get(key).val = value;
             get(key);
         }
         else{
             remain--;
             if(remain >= 0){
-                key2Val.put(key, value);
-                Node node = new Node(key);
+                Node node = new Node(key, value);
                 key2Node.put(key, node);
                 
                 if(head == null){
@@ -78,17 +75,16 @@ public class LRUCache {
                     return;
                 }
                 else{
-                    key2Val.remove(head.key);
                     key2Node.remove(head.key);
-                    key2Val.put(key, value);
                     key2Node.put(key, head);
+                    head.val = value;
                     head.key = key;
                     head = head.next;
                 }
             }
         }
     }
-
+ 
     public static void main(String[] args){
         LRUCache cache;
         int n = 6;
