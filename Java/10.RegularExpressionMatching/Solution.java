@@ -3,7 +3,7 @@
  * 2. Initialize dp[0][x], and dp[y][0]
  * 3. If charP == '.' or charP == charS, dp[y][x] = dp[y - 1][x - 1]
  * 4. If charP == '*', and (charP != charS and charP != '.'), dp[y][x] = dp[y - 2][x] 
- * 5. If charP == '*', and (charP == charS or charP != '.'), dp[y][x] = dp[y - 1][x] | dp[y][x - 1] | dp[y - 1][x - 1] | dp[y - 2][x]
+ * 5. If charP == '*', and (charP == charS or charP != '.'), dp[y][x] = dp[y][x - 1](map more than once) | dp[y - 1][x - 1](map once) | dp[y - 2][x](map zero)
  * 6. Otherwise, dp[y][x] = false
  * 
  * ex: s = "aab", p = "c*a*b"
