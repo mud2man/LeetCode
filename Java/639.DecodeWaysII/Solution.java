@@ -12,15 +12,7 @@ import java.util.*;
 
 public class Solution {
     private long getOneDigitCount(char c){
-        if(c == '*'){
-            return 9;
-        }
-        else if(c == '0'){
-            return 0;
-        }
-        else{
-            return 1;
-        }
+        return (c == '*')? 9: (c == '0')? 0: 1;
     }
     
     private long getTwoDigitCount(char[] chars){
@@ -28,15 +20,7 @@ public class Solution {
             return 0;
         }
         else if(chars[0] == '*'){
-            if(chars[1] == '*'){
-                return 15;
-            }
-            else if(('9' - chars[1]) >= 3){
-                return 2;
-            }
-            else{
-                return 1;
-            }
+            return (chars[1] == '*')? 15: (('9' - chars[1]) >= 3)? 2: 1;
         }
         else{
             if((chars[0] != '1') && (chars[0] != '2')){
@@ -47,17 +31,29 @@ public class Solution {
                     return (chars[1] == '*')? 9: 1;
                 }
                 else{
-                    if(chars[1] == '*'){
-                        return 6;
-                    }
-                    else{
-                        return (('9' - chars[1]) >= 3)? 1: 0;
-                    }
+                    return (chars[1] == '*')? 6: (('9' - chars[1]) >= 3)? 1: 0;
                 }
             }
         }
     }
     
+    public int numDecodings(String s) {
+        s = "3" + s;
+        long[] dp = new long[s.length() + 1];
+        dp[0] = 1;
+        long constant = 1000000007;
+        
+        for(int i = 1; i < s.length(); ++i){
+            long count = dp[i - 1] * getOneDigitCount(s.charAt(i));
+            count = count % constant;
+            count += (i > 1)? dp[i - 2] * getTwoDigitCount(new char[]{s.charAt(i - 1), s.charAt(i)}): 0;
+            count = count % constant;
+            dp[i] = count;
+        }
+        
+        return (int)dp[s.length() - 1];
+    }
+  
     public int numDecodings(String s) {
         s = "3" + s;
         long[] dp = new long[s.length() + 1];
