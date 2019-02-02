@@ -20,13 +20,11 @@ public class Solution{
             word = "";
             size = 0;
             farther = f; 
-            children = new TrieNode[26];
-            Arrays.fill(children, null);}
+            children = new TrieNode[26];}
     }
-    
+
     public void dfs(char[][] board, int y, int x, TrieNode farther, List<String> qualifiedWords){
         char c = board[y][x];
-        
         if(farther.children[c - 'a'] == null){
             return;
         }
@@ -39,25 +37,14 @@ public class Solution{
             qualifiedWords.add(child.word);
             deleteWord(child, child.word, child.word.length() - 1);
         }
-
-        //search up
-        if(y > 0 && board[y - 1][x] != '*' ){
-            dfs(board, y - 1, x, child, qualifiedWords);
-        }
         
-        //search down
-        if(y < board.length - 1 && board[y + 1][x] != '*'){
-            dfs(board, y + 1, x, child, qualifiedWords);
-        }
-        
-        //search left
-        if(x > 0 && board[y][x - 1] != '*'){
-            dfs(board, y, x - 1, child, qualifiedWords);
-        }
-        
-        //search right
-        if(x < board[0].length - 1 && board[y][x + 1] != '*'){
-            dfs(board, y, x + 1, child, qualifiedWords);
+        int[][] shifts = {{-1, 0}, {1, 0}, {0 , -1}, {0, 1}};
+        for(int[] shift: shifts){
+            int nextY = y + shift[0];
+            int nextX = x + shift[1];
+            if(nextY >= 0 && nextY < board.length && nextX >= 0 && nextX < board[0].length && board[nextY][nextX] != '*'){
+                dfs(board, nextY, nextX, child, qualifiedWords);
+            }
         }
         
         //pop
@@ -97,7 +84,7 @@ public class Solution{
         List<String> qualifiedWords = new LinkedList<String>();
         TrieNode root = new TrieNode(null);
         
-        //construct trie
+        //construct trie tree
         for(String word: words){
             insertWord(root, word);
         }
@@ -109,7 +96,7 @@ public class Solution{
         }
         return qualifiedWords;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         String[] words = {"oath", "pea", "eat", "rain"} ; 
