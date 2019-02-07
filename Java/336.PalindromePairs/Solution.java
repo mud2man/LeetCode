@@ -1,8 +1,9 @@
-/* Hash: O(n*k^2), where n is the length of words, k is the longest length or word
+/* Hash: O(n*k^2), where n is the length of words, k is the longest length or word. Need to check a shorter solution in LeetCode
  * 1. Have leftMap to store the needed left partner and its associate right partner's index
  * 2. Have rightMap to store the needed right partner and its associate left partner's index
  * 3. In every iteration, check if the current word can match other's left or right partner
  * 4. In updateMap, check if other can match its own left or right partner
+ * 5. The adding part will not repeat, because we are always looking for a shorter partner in updateMap, and shorter-or-equal-length partner in palindromePairs
  */
 
 import java.util.*;
