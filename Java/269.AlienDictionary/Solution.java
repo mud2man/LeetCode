@@ -24,7 +24,6 @@ public class Solution {
                 indegree[source] = (indegree[source] == -1)? 0: indegree[source];
             }
         }
-        
         for(int j = i; j < child.length(); ++j){
             indegree[child.charAt(j) - 'a'] = (indegree[child.charAt(j) - 'a'] == -1)? 0: indegree[child.charAt(j) - 'a'];
         }
@@ -37,11 +36,8 @@ public class Solution {
         if(words.length == 1){
             return words[0];
         }
-        
-        for(int i = 0; i < indegree.length; ++i){
-            indegree[i] = -1;
-        }
-        
+
+        Arrays.fill(indegree, -1); 
         for(int i = 0; i < words[0].length(); ++i){
             indegree[words[0].charAt(i) - 'a'] = 0;
         }
@@ -75,7 +71,6 @@ public class Solution {
                 }
             }
         }
-        
         return (visitedCount == nodeCount)? order.toString(): "";
     }
 
