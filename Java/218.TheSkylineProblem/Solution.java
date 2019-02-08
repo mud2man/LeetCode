@@ -48,10 +48,7 @@ public class Solution{
         PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(new HeapComparator());
         int prevX = -1;
         for(int x: xPositions){
-            if(x == prevX){
-                continue;
-            }
-            else{
+            if(x != prevX){
                 if(addHeightMap.containsKey(x)){
                     for(int height: addHeightMap.get(x)){
                         maxHeap.add(height);
@@ -63,13 +60,7 @@ public class Solution{
                         maxHeap.remove(height);
                     }
                 }
-                
-                if(!maxHeap.isEmpty()){
-                    skyline.add(new int[]{x, maxHeap.peek()});
-                }
-                else{
-                    skyline.add(new int[]{x, 0});
-                }
+                skyline.add(new int[]{x, !maxHeap.isEmpty()? maxHeap.peek(): 0});
             }
             prevX = x;
         }
@@ -84,7 +75,6 @@ public class Solution{
             }
             prevPoint = currentPoint;
         }
-        
         return skyline;
     }
 
