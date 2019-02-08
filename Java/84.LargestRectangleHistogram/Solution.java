@@ -1,7 +1,7 @@
 /* Stack: Time:O(n), SpaceO:(n)
- * 1. Have a stack, where the node is a pair{heightm index} 
+ * 1. Have a stack, where the node is a pair{height, index} 
  * 2. If the current node is lower than the top's, pop the top and update the current's index
- * 3. SO the stack is a monotonic stack, with increasing height
+ * 3. So the stack is a monotonic stack, with increasing height
  * 3. Later, caculate the area, and update "max"
  *
  * ex: heights = {2, 1, 5, 6, 2, 3}
