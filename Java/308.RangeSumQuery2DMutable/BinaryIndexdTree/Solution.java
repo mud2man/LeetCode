@@ -1,66 +1,62 @@
 /* Binary Indexd Tree: Time:O(logn*logm), Space:O(n*m).
  * 1. When update, call getNext in x direction and y direction to update tree[][]
  * 2. When sum, call getParent in x direction and y direction to accumulate the answer
- * 3. In region sum, answer = sum(row2, col2) - sum(row2, col1 - 1) - sum(row1 - 1, col2) + sum(row1 - 1, col1 - 1)
+ * 3. In region sum, answer = sum - topSum - leftSum + leftTopSum
  */
 
 import java.util.*;
 
 public class Solution{
-    int[][] tree;
-    int depth;
-    int width;
+    int[][] binaryIndexTree;
     int[][] matrix;
-    
-    public Solution(int[][] matrix) {
-        depth = matrix.length + 1;
-        width = (matrix.length > 0) ?matrix[0].length + 1: 1;
-        tree = new int[depth][width];
-        this.matrix = new int[depth - 1][width - 1];
-        for(int y = 0; y < (depth - 1); ++y){
-            for(int x = 0; x < (width - 1); ++x){
+    public NumMatrix(int[][] matrix) {
+        int depth = matrix.length;
+        int width = (matrix.length > 0)? matrix[0].length: 0;
+        this.matrix = new int[depth][width];
+        binaryIndexTree = new int[depth + 1][width + 1];
+        for(int y = 0; y < depth; ++y){
+            for(int x = 0; x < width; ++x){
                 update(y, x, matrix[y][x]);
             }
         }
     }
     
-    private int getNext(int x){
+    private int next(int x){
         return x + (x & (-x));
     }
+    
+    private int prev(int x){
+        return x - (x & (-x));
+    } 
     
     public void update(int row, int col, int val) {
         int diff = val - matrix[row][col];
         matrix[row][col] = val;
-    
-        for(int y = row + 1; y < depth; y = getNext(y)){
-            for(int x = col + 1; x < width; x = getNext(x)){
-                tree[y][x] += diff;
+        for(int y = row + 1; y < binaryIndexTree.length; y = next(y)){
+            for(int x = col + 1; x < binaryIndexTree[0].length; x = next(x)){
+                binaryIndexTree[y][x] += diff; 
             }
         }
     }
     
-    private int getParent(int x){
-        return x - (x & (-x));
-    }
-    
-    private int sum(int row, int col){
-        if(row < 0 || col < 0){
-            return 0;
-        }
-        
+    private int getSumFromLeftTop(int y, int x){
         int sum = 0;
-        for(int y = row + 1; y > 0; y = getParent(y)){
-            for(int x = col + 1; x > 0; x = getParent(x)){
-                sum += tree[y][x];
+        for(int i = y + 1; i > 0; i = prev(i)){
+            for(int j = x + 1; j > 0; j = prev(j)){
+                sum += binaryIndexTree[i][j];
             }
         }
         return sum;
     }
     
     public int sumRegion(int row1, int col1, int row2, int col2) {
-        return sum(row2, col2) - sum(row2, col1 - 1) - sum(row1 - 1, col2) + sum(row1 - 1, col1 - 1);
+        int leftTopSum = (row1 > 0 && col1 > 0)? getSumFromLeftTop(row1 - 1, col1 - 1): 0;
+        int leftSum = (col1 > 0)? getSumFromLeftTop(row2, col1 - 1): 0;
+        int topSum = (row1 > 0)? getSumFromLeftTop(row1 - 1, col2): 0;
+        int sum = getSumFromLeftTop(row2, col2);
+        return sum - leftSum - topSum + leftTopSum; 
     }
- 
+  
     public static void main(String[] args){
         Solution sol;
         int[][] matrix = {{3, 0, 1, 4, 2},
