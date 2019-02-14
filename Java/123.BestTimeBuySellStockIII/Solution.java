@@ -27,7 +27,7 @@ public class Solution{
         
         for(int i = 0; i < prices.length; ++i){
             saving[3] = Math.max(saving[3], saving[2] + prices[i]);
-            saving[2] = (saving[1] == 0)? saving[2]: Math.max(saving[2], saving[1] - prices[i]);
+            saving[2] = Math.max(saving[2], saving[1] - prices[i]);
             saving[1] = Math.max(saving[1], saving[0] + prices[i]);
             saving[0] = Math.max(saving[0], -prices[i]);
             maxProfit = Math.max(maxProfit, saving[1]);

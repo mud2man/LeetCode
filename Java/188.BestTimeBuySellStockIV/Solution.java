@@ -1,7 +1,7 @@
 /* Dynamic Programming: Time:O(n*k), Space:O(n)
  * 1. Have a 2D array dp, where dp[y][x] = the pair (max saving with stock, max saving without stock) considering at most y transaction and prices[0 - x]
  * 2. If k >= (prices.length + 1) / 2, we can call getMaxProfit
- * 3. If not, we update dp[y][x][0] = max(dp[y - 1][x][0], dp[y][x - 1][0], dp[y][x - 1][1] - prices[x])
+ * 3. If not, we update dp[y][x][0] = max(dp[y - 1][x][0], dp[y][x - 1][0], dp[y - 1][x - 1][1] - prices[x])
  * 4. And we update dp[y][x][1] = max(dp[y - 1][x][1], dp[y][x - 1][1], dp[y - 1][x - 1][0] + prices[x])
  *
  * ex: prices = {3, 2, 6, 0, 5, 3}
