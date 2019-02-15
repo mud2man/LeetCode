@@ -1,10 +1,12 @@
 /* Heap: O(logn)
  * 1. Have a maxHeap to store the smaller half
  * 2. Have a minHeap to store the bigger half
- * 3. When insert, if num <= maxHeapTop, put num into minHeap, and do balance between two heaps
- * 4. Otherwise, put num into minHeap, and do balance between two heaps
+ * 3. When insert, if maxHeap.size() <= minHeap.size(), take top of minHeap, and put small to maxHeap, big to minheap
+ * 4. Otherwise, take top of maxHeap, and put small to maxHeap, big to minheap
  * 5. When get median, find if maxHeap.size() == minHeap.size(), return (maxHeapTop + minHeapTop) / 2
  * 6. Otherwise, return the top of heap, which has the bigger size
+ *
+ * For follow up, use bucket, where bucket[i] is the count of number i. We can iterate from i = 0 to 100 to accumulatet the count. It's O(1) solution
  */
 
 import java.util.*;
@@ -15,49 +17,45 @@ public class MedianFinder{
     static private class HeapComparator implements Comparator<Integer>{
         @Override
         public int compare(Integer x, Integer y){
-            return y - x;
+            return (x > y)? -1: (x < y)? 1 : 0;
         }
     }
         
     /** initialize your data structure here. */
     public MedianFinder() {
         maxHeap = new PriorityQueue<Integer>(new HeapComparator());
+        maxHeap.add(Integer.MIN_VALUE);
         minHeap = new PriorityQueue<Integer>();
+        minHeap.add(Integer.MAX_VALUE);
     }
     
     public void addNum(int num) {
-        int maxHeapTop = (!maxHeap.isEmpty())? maxHeap.peek(): Integer.MAX_VALUE;
-        int minHeapTop;
-        
-        if(num <= maxHeapTop){
-            maxHeap.add(num);
-            if((maxHeap.size() - 2) >= minHeap.size()){
-                maxHeapTop = maxHeap.poll();
-                minHeap.add(maxHeapTop);
-            }
+        if(maxHeap.size() <= minHeap.size()){
+            int small = Math.min(num, minHeap.peek());
+            int big = Math.max(num, minHeap.poll());
+            maxHeap.add(small);
+            minHeap.add(big);
         }
-        else{
-            minHeap.add(num);
-            if((minHeap.size() - 2) >= maxHeap.size()){
-                minHeapTop = minHeap.poll();
-                maxHeap.add(minHeapTop);
-            }
+        else if(maxHeap.size() > minHeap.size()){
+            int small = Math.min(num, maxHeap.peek());
+            int big = Math.max(num, maxHeap.poll());
+            maxHeap.add(small);
+            minHeap.add(big);
         }
     }
     
     public double findMedian() {
-        if(maxHeap.size() > minHeap.size()){
+        if(maxHeap.size() == minHeap.size()){
+            return ((double)maxHeap.peek() + (double)minHeap.peek()) / 2.0;
+        }
+        else if(maxHeap.size() > minHeap.size()){
             return (double)maxHeap.peek();
         }
-        else if(maxHeap.size() < minHeap.size()){
+        else{
             return (double)minHeap.peek();
         }
-        else{
-            double maxHeapTop = (double)maxHeap.peek();
-            double minHeapTop = (double)minHeap.peek();
-            return (maxHeapTop + minHeapTop) / 2.0;
-        }
     }
+ 
     public static void main(String[] args){
         MedianFinder sol = new MedianFinder() ;
         int num;
