@@ -1,4 +1,4 @@
-/* Backtrack: Time:O(n!), Space:O(n)
+/* Backtrack: Time:O(n!), Space:O(n). LeetCode O(n*2^n) solution
  * 1. Sort input array A, and put it into queue
  * 2. In the backtrack, accumulate count if queue is empty
  * 3. Then, pick the front of queue and call backtrack if (permutation.isEmpty() || isSquare(permutation.peekLast(), curr))
