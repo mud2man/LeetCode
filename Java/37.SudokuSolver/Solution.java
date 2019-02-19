@@ -1,6 +1,6 @@
-/* Backtrace: Time:O(9^n), where n is the number of blank. However, leetcode has a shorter answer
- * 1. Have candidate sets for every row, column, and block
- * 2. Have a list of blank node, and link the associated candidate sets to the node
+/* Backtrack: Time:O(9^n), where n is the number of empty cells
+ * 1. Have candidate sets for every row, column, and box
+ * 2. Have a list of empty cells, and link the associated candidate sets to the node
  * 3. Use "backtrack" method to visit the list
  * 4. During backtrack, select the intersection of the three candidates set, and traverse the intersection
  * 5. Remove the intersect candidate from the three candidates set, and put it back when the recursive backtrack return
@@ -11,107 +11,63 @@ import java.util.*;
 
 //Definition for singly-linked list.
 public class Solution{
-    private class Node{
-        int[] pos;
-        Set<Character> rowCandidate;
-        Set<Character> colCandidate;
-        Set<Character> blkCandidate;
-        char c; 
-        Node(int[] p, Set<Character> row, Set<Character> col, Set<Character> blk){
-            pos = p; 
-            rowCandidate = row; 
-            colCandidate = col; 
-            blkCandidate = blk;
-            c = '.';
-        }
-    }
-    
-    private void reverse(Set<Character> candidate){
-        Set<Character> newSet = new HashSet<Character>();
-        char base = '1';
-        for(int i = 0; i < 9; ++i){
-            if(!candidate.contains((char)((int)base + i))){
-                newSet.add((char)((int)base + i));
-            }   
-        }
-        candidate.clear();
-        candidate.addAll(newSet);
-    }
-    
-    private boolean backtrack(List<Node> list, int index){
-        if(index == list.size()){
+    private boolean backtrack(List<int[]> emptyCells, int idx, List<List<Set<Integer>>> candidates, char[][] board){
+        if(idx == emptyCells.size()){
             return true;
         }
         
-        List<Character> intersect = new ArrayList<Character>();
-        for(Character candidate: list.get(index).rowCandidate){
-            if(list.get(index).colCandidate.contains(candidate) && list.get(index).blkCandidate.contains(candidate)){
-                intersect.add(candidate);
+        int y = emptyCells.get(idx)[0];
+        int x = emptyCells.get(idx)[1];
+        int boxIdx = (y / 3) * 3 + (x / 3);
+        for(int i = 1; i < 10; ++i){
+            if(candidates.get(0).get(y).contains(i) && 
+               candidates.get(1).get(x).contains(i) && 
+               candidates.get(2).get(boxIdx).contains(i)){
+                candidates.get(0).get(y).remove(i);
+                candidates.get(1).get(x).remove(i);
+                candidates.get(2).get(boxIdx).remove(i);
+                board[y][x] = (char)(i + '0');
+                if(backtrack(emptyCells, idx + 1, candidates, board)){
+                    return true;
+                }
+                candidates.get(0).get(y).add(i);
+                candidates.get(1).get(x).add(i);
+                candidates.get(2).get(boxIdx).add(i);
             }
-        }
-        
-        for(Character candidate: intersect){
-            list.get(index).rowCandidate.remove(candidate);
-            list.get(index).colCandidate.remove(candidate);
-            list.get(index).blkCandidate.remove(candidate);
-            list.get(index).c = candidate;
-            if(backtrack(list, index + 1)){
-                return true; 
-            }
-            list.get(index).rowCandidate.add(candidate);
-            list.get(index).colCandidate.add(candidate);
-            list.get(index).blkCandidate.add(candidate);
         }
         return false;
     }
     
     public void solveSudoku(char[][] board) {
-        List<Set<Character>> rowCandidates = new ArrayList<Set<Character>>();
-        List<Set<Character>> colCandidates = new ArrayList<Set<Character>>();
-        List<Set<Character>> blkCandidates = new ArrayList<Set<Character>>();
-        
-        for(int i = 0; i < 9; ++i){
-            rowCandidates.add(new HashSet<Character>());
-            colCandidates.add(new HashSet<Character>());
-            blkCandidates.add(new HashSet<Character>());
+        List<List<Set<Integer>>> candidates = new ArrayList<>(); //row, column, box
+        Set<Integer> one2Nine = new HashSet<>();
+        for(int i = 1; i < 10; ++i){
+            one2Nine.add(i);
         }
         
-        for(int y = 0; y < board.length; ++y){
-            for(int x = 0; x < board[0].length; ++x){
-                char c = board[y][x];
-                if(c != '.'){
-                    rowCandidates.get(y).add(c);
-                    colCandidates.get(x).add(c);
-                    blkCandidates.get((y / 3) * 3 + (x / 3)).add(c);
+        for(int i = 0; i < 3; ++i){
+            candidates.add(new ArrayList<>());
+            for(int j = 0; j < 9; ++j){
+                candidates.get(i).add(new HashSet<>(one2Nine));
+            }  
+        }
+        
+        List<int[]> emptyCells = new ArrayList<>();
+        for(int y = 0; y < 9; ++y){
+            for(int x = 0; x < 9; ++x){
+                if(board[y][x] == '.'){
+                    emptyCells.add(new int[]{y, x});
+                }
+                else{
+                    candidates.get(0).get(y).remove(board[y][x] - '0');
+                    candidates.get(1).get(x).remove(board[y][x] - '0');
+                    candidates.get(2).get((y / 3) * 3 + (x / 3)).remove(board[y][x] - '0');
                 }
             }
         }
-         
-        for(int i = 0; i < 9; ++i){
-            reverse(rowCandidates.get(i));
-            reverse(colCandidates.get(i));
-            reverse(blkCandidates.get(i));
-        }
-        
-        //build grapgh
-        List<Node> list = new ArrayList<Node>();
-        for(int y = 0; y < board.length; ++y){
-            for(int x = 0; x < board[0].length; ++x){
-                char c = board[y][x];
-                if(c == '.'){
-                    list.add(new Node(new int[]{y, x}, rowCandidates.get(y), colCandidates.get(x), 
-                                      blkCandidates.get((y / 3) * 3 + (x / 3))));
-                }
-            }
-        }
-        
-        backtrack(list, 0);
-        
-        for(Node node: list){
-            board[node.pos[0]][node.pos[1]] = node.c;
-        }
+        backtrack(emptyCells, 0, candidates, board);
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         char[][] board = {{'5','3','.','.','7','.','.','.','.'},
