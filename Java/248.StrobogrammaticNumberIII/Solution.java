@@ -7,222 +7,84 @@
 import java.util.*;
 import java.math.*;
 
-//Definition for singly-linked list.
 public class Solution{
-    private int[] lowerMap = {0, 1, 2, 2, 2, 2, 2, 3, 3, 4};
-    private int[] higherMap = {4, 3, 3, 3, 3, 3, 2, 2, 1, 0};
-    private int[] translation ={0, 1, -1, -1, -1, -1, 9, -1, 8, 6};
-    private int[] lowerMiddleMap = {0, 1, 2, 2, 2, 2, 2, 2, 2, 3};
-    private int[] higherMiddleMap = {2, 1, 1, 1, 1, 1, 1, 1, 0, 0};
-    
-    public int evenAllStrobogrammaticCount(int m, int n){
-        if(n < m){
-            return 0;
+    private String fill(String left, int endIdx){
+        char[] map = {'0', '1', ' ', ' ', ' ', ' ', '9', ' ', '8', '6'};
+        StringBuilder right = new StringBuilder("");
+        for(int i = endIdx; i >= 0; --i){
+            char c = left.charAt(i);
+            right.append(map[c - '0']);
         }
-        
-        if(n % 2 == 1){
-            return evenAllStrobogrammaticCount(m, n - 1);
-        }
-        
-        int base = 4 * (int)Math.pow(5, (m / 2) - 1);
-        int count = 0;
-        for(int i = m; i <= n; i+=2){
-            count = count + base;
-            base = base * 5;
-        }
-        return count;
+        return left + right.toString();
     }
     
-    public int oddAllStrobogrammaticCount(int m, int n){
-        if(n < m){
-            return 0;
-        }
-        
-        if(n % 2 == 0){
-            return oddAllStrobogrammaticCount(m, n - 1);
-        }
-        
+    private int getBeyondLimit(String boundry, Set<Integer> ends, Set<Integer> middles, Set<Integer> centers, boolean isLower){
+        int[][] middleCount = {{0, 1, 2, 2, 2, 2, 2, 3, 3, 4, 5}, {4, 3, 3, 3, 3, 3, 2, 2, 1, 0}};
+        int[][] endCount = {{0, 0, 1, 1, 1, 1, 1, 2, 2, 3, 4}, {4, 3, 3, 3, 3, 3, 2, 2, 1, 0}};
+        int[][] cneterCount = {{0, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3}, {2, 1, 1, 1, 1, 1, 1, 1, 0, 0}};
         int count = 0;
-        if(m == 1){
-            count += 3;
-            m = 3;
-        }
-        
-        int base = 4 * (int)Math.pow(5, m / 2 - 1) * 3;
-        for(int i = m; i <= n; i+=2){
-            count = count + base;
-            base = base * 5;
-        }
-        return count;
-    }
-    
-    public int evenStrobogrammaticCount(int n, String edge, boolean lower){
-        StringBuilder boundry = new StringBuilder("");
-        char c;
-        int count = 0;
-        
-        c = edge.charAt(0);
-        int[] map = (lower == true)? lowerMap: higherMap;
-        
-        if(c == '1' || c == '6' || c == '8' || c == '9'){
-            if(lower == true)
-                count = (map[c - '0'] - 1) * (int)Math.pow(5, (n / 2)  - 1);
-            else
-                count = map[c - '0']* (int)Math.pow(5, (n / 2)  - 1);
-            boundry.append(c);
-        }
-        else{
-            if(lower == true)
-                return (map[c - '0'] - 1) * (int)Math.pow(5, (n / 2)  - 1);
-            else
-                return map[c - '0'] * (int)Math.pow(5, (n / 2)  - 1);
-        }
-        System.out.println("count:" + count);
-        for(int i = 1; i*2 < edge.length(); i++){
-            c = edge.charAt(i);
-            if(c == '0' || c == '1' || c == '6' || c == '8' || c == '9'){
-                count = count + map[c - '0'] * (int)Math.pow(5, ((n - 2 * i) / 2)  - 1);
-                System.out.println("count:" + count);
-                boundry.append(c);
+        int base = (boundry.length() % 2 == 1)? 3: 5;
+        int len = boundry.length();
+        int y = isLower? 0: 1;
+        for(int i = 0; i < (len + 1) / 2 ; ++i){
+            int digit = boundry.charAt(i) - '0';
+            int remain = (len - (i + 1) * 2 + 1) / 2 - 1;
+            if(i == 0){
+                count += (remain >= 0)? endCount[y][digit] * (int)Math.pow(5, remain) * base: endCount[y][digit];
+                if(!ends.contains(digit)){
+                    return count;
+                }
             }
-            else{
-                return count + map[c - '0'] * (int)Math.pow(5, ((n - 2 * i) / 2)  - 1);
-            }
-        }
-        
-        int end = boundry.length() - 1;
-        int start = boundry.length();
-        int i, j;
-        for(i = end, j = start; i >= 0; --i, ++j){
-            if(lower == true){
-                if(translation[boundry.charAt(i) - '0'] < edge.charAt(j) - '0'){
-                    return count + 1;
-                } 
-                if(translation[boundry.charAt(i) - '0'] > edge.charAt(j) - '0'){
+            else if(len % 2 == 0 || i < (len / 2)){
+                count += (remain >= 0)?middleCount[y][digit]*(int)Math.pow(5, remain)*base: middleCount[y][digit];
+                if(!middles.contains(digit)){
                     return count;
                 }
             }
             else{
-                if(translation[boundry.charAt(i) - '0'] > edge.charAt(j) - '0'){
-                    return count + 1;
-                }
-                if(translation[boundry.charAt(i) - '0'] < edge.charAt(j) - '0'){
-                    return count;
-                } 
-            }
-        }
-        return count;
-    }
-    
-    public int oddStrobogrammaticCount(int n, String edge, boolean lower){
-        StringBuilder boundry = new StringBuilder("");
-        char c;
-        int count = 0;
-        
-        c = edge.charAt(0);
-        int[] map = (lower == true)? lowerMap: higherMap;
-        
-        if(edge.length() == 1){
-            if(lower == true){
-                return lowerMiddleMap[c - '0'];
-            }
-            else{
-                return higherMiddleMap[c - '0'];
-            }
-        }
-        
-        if(c == '1' || c == '6' || c == '8' || c == '9'){
-            if(lower == true)
-                count = (map[c - '0'] - 1) * (int)Math.pow(5, (n / 2)  - 1) * 3;
-            else
-                count = map[c - '0'] * (int)Math.pow(5, (n / 2)  - 1) * 3;
-            boundry.append(c);
-        }
-        else{
-            if(lower == true)
-                return (map[c - '0'] - 1) * (int)Math.pow(5, (n / 2)  - 1) * 3;
-            else
-                return map[c - '0'] * (int)Math.pow(5, (n / 2)  - 1) * 3;
-        }
-        
-        for(int i = 1; i*2 < (edge.length() - 2); i++){
-            c = edge.charAt(i);
-            if(c == '0' || c == '1' || c == '6' || c == '8' || c == '9'){
-                count = count + map[c - '0'] * (int)Math.pow(5, ((n - 2 * i) / 2)  - 1) * 3;
-                boundry.append(c);
-            }
-            else{
-                return count + map[c - '0'] * (int)Math.pow(5, ((n - 2 * i) / 2)  - 1) * 3;
-            }
-        }
-        
-        c = edge.charAt(edge.length() / 2);
-        boundry.append(c);
-        int[] middleMap = (lower == true)? lowerMiddleMap: higherMiddleMap;
-        count = count + middleMap[c - '0'];
-        
-        int end = boundry.length() - 2;
-        int start = boundry.length();
-        int i, j;
-        for(i = end, j = start; i >= 0; --i, ++j){
-            if(lower == true){
-                if(translation[boundry.charAt(i) - '0'] < edge.charAt(j) - '0'){
-                    return count + 1;
-                }
-                if(translation[boundry.charAt(i) - '0'] > edge.charAt(j) - '0'){
+                count += cneterCount[y][digit];
+                if(!centers.contains(digit)){
                     return count;
                 }
             }
-            else{
-                if(translation[boundry.charAt(i) - '0'] > edge.charAt(j) - '0'){
-                    return count + 1;
-                }
-                if(translation[boundry.charAt(i) - '0'] < edge.charAt(j) - '0'){
-                    return count;
-                } 
-            }
         }
-        return count;
+        String s = (len%2 == 0)? fill(boundry.substring(0, len/2), len/2 - 1): fill(boundry.substring(0, len/2 + 1), len/2 - 1);
+        return (isLower)? (s.compareTo(boundry) < 0)? count + 1: count: (s.compareTo(boundry) > 0)? count + 1: count;
     }
     
     public int strobogrammaticInRange(String low, String high) {
-        int lowLen = low.length();
-        int highLen = high.length();
-        int count = 0;  
-        BigInteger lowBig = new BigInteger(low);
-        BigInteger highBig = new BigInteger(high);
-        
-        if(lowBig.compareTo(highBig) == 1)
+        int[] middleCount = {1, 2, 2, 2, 2, 2, 2, 2, 3, 3};
+        int count = 0;
+        if(low.length() > high.length() || (low.length() == high.length() && low.compareTo(high) > 0)){
             return 0;
+        }
+        if(low.length() == 1 && high.length() == 1){
+            count += middleCount[Integer.valueOf(high)];
+            count -= (Integer.valueOf(low) == 0)? 0: middleCount[Integer.valueOf(low) - 1];
+            return count;
+        }
+        else if(low.length() == 1){
+            count += middleCount[9];
+            count -= (Integer.valueOf(low) == 0)? 0: middleCount[Integer.valueOf(low) - 1];
+            low = "10";
+        }
         
-        if(lowLen % 2 == 1){
-            count += evenAllStrobogrammaticCount(lowLen + 1, highLen);
-            count += oddAllStrobogrammaticCount(lowLen, highLen);
-            count -= oddStrobogrammaticCount(lowLen, low, true);
+        for(int i = low.length(); i <= high.length(); ++i){
+            count += (i % 2 == 1)? 4 * (int)Math.pow(5, i / 2 - 1) * 3: 4 * (int)Math.pow(5, i / 2 - 1);
         }
-        else{
-            count += evenAllStrobogrammaticCount(lowLen, highLen);
-            count += oddAllStrobogrammaticCount(lowLen + 1, highLen);
-            count -= evenStrobogrammaticCount(lowLen, low, true);
-        }
-        
-        if(highLen % 2 == 1){
-            count -= oddStrobogrammaticCount(highLen, high, false);
-        }
-        else{
-            count -= evenStrobogrammaticCount(highLen, high, false);
-        }
+        Set<Integer> ends = new HashSet<>(Arrays.asList(new Integer[]{1, 6, 8, 9}));
+        Set<Integer> middles = new HashSet<>(Arrays.asList(new Integer[]{0, 1, 6, 8, 9}));
+        Set<Integer> centers = new HashSet<>(Arrays.asList(new Integer[]{0, 1, 8}));
+        count -= getBeyondLimit(low, ends, middles, centers, true);
+        count -= getBeyondLimit(high, ends, middles, centers, false);
         return count;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         String low = "50";
         String high = "100";
-        int count; 
-
-        count = sol.strobogrammaticInRange(low, high);
-
+        int count = sol.strobogrammaticInRange(low, high);
         System.out.println("low: " + low);
         System.out.println("high: " + high);
         System.out.println("strobogrammaticWords#: " + count);
