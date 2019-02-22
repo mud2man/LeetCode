@@ -36,7 +36,6 @@ public class Solution {
     }
     
     TrieNode trieTree;
-    
     private void insert(TrieNode root, String sentence, int hotDegree){
         List<TrieNode> path = new ArrayList<TrieNode>();
         for(int i = 0; i < sentence.length(); ++i){
@@ -55,11 +54,9 @@ public class Solution {
                 HeapNode n = node.minHeap.poll();
                 heapNodeMap.putIfAbsent(n.sentence, n);
             }
-            
             for(Map.Entry<String, HeapNode> entry: heapNodeMap.entrySet()){
                 node.minHeap.add(entry.getValue());
             }
-            
             if(node.minHeap.size() > 3){
                node.minHeap.poll(); 
             }
@@ -80,7 +77,6 @@ public class Solution {
     
     StringBuilder newSentence;
     TrieNode currentNode;
-    
     public List<String> input(char c) {
         if(c == '#'){
             String s = newSentence.toString();
