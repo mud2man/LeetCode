@@ -1,4 +1,4 @@
-/* Math: Time:O(n^2*k), Space:O(k)
+/* Math: Time:O(n^2*k), Space:O(n)
  * 1. dp[y][x] = the maximum vacation days on y-th week staying city x
  * 2. dp[y][x] = max(dp[y - 1][from] + days[x][y], ...), where 0 <= from < n
  * 3. Memorize the maximum vacation days "max" during update of dp
