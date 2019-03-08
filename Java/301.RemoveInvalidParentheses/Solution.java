@@ -1,52 +1,83 @@
-/* Stack + DFS: Time: O(Valid Parentheses#), Space: O(Valid Parentheses#)
- * 1. Traverse the string with stack to record if the current substring is valid
- * 2. If not, delete the first pair[0] among the consecutive pair[0]s from the lastDeleteIndex to i
- *  2.1, It guarantees that the string have different lastDeleteIndex are not overlap, and they can contain all combinations
- * 3. If yes, reverse the string and call helper again
+/* DFS: Time: O(Valid Parentheses#), Space: O(Valid Parentheses#)
+ * 1. Get the boundry of left part from left end, which contains more ')', e.g., (a)())()(() => (a)())
+ * 2. Get the boundry of right part from right end, which contains more '(', e.g., (a)())()(() => (()
+ * 3. Get the middle part which has same '(' # and ')' #
+ * 4. Use backtrack to find all valid parentheses of left with minimum removing of ')'
+ * 5. Use backtrack to find all valid parentheses of right with minimum removing of '('
+ * 6. Concatenate all left, middle, and right and add them into parentheses
  */
 
 import java.util.*;
 
 public class Solution{
-    private char[] pair = {')', '('};
-    private char[] reversePair = {'(', ')'};
-    
-    private void helper(String s, int lastDeleteIndex, int startIndex, char[] pair, List<String> validParentheses){
-        int stack = 0;
-        for(int i = startIndex; i < s.length(); ++i){
-            char c = s.charAt(i);
-            if(c == pair[0]) {stack--;}
-            else if(c == pair[1]) {stack++;}
-            else{continue;}
-            
-            if(stack < 0){
-                for(int j = lastDeleteIndex; j <= i; ++j){
-                    if(s.charAt(j) == pair[0]){
-                        if(j == 0 || s.charAt(j - 1) != pair[0]){
-                            String deleteS = s.substring(0, j) + s.substring(j + 1);
-                            helper(deleteS, j, i, pair, validParentheses);
-                        }
-                    }
-                }
-                return;
-            }
+    private void backtrack(String path, List<String> ret, char[] pair, String s, int remain, int curr, int score){
+        if(remain == 0){
+            ret.add(path + s.substring(curr));
+            return;
         }
-        StringBuilder sb = new StringBuilder(s);
-        String reverS = sb.reverse().toString();
-        if(pair[0] == ')'){
-            helper(reverS, 0, 0, reversePair, validParentheses);
+        if(score > 0 || curr == s.length()){
+            return;
         }
-        else{
-            validParentheses.add(reverS);
+        
+        while(curr < s.length() && s.charAt(curr) != pair[1]){
+            score += (s.charAt(curr) == pair[0])? -1: 0;
+            path += String.valueOf(s.charAt(curr++));
+        }
+        int count = 0;
+        while(curr < s.length() && s.charAt(curr) == pair[1]){
+            count++;
+            curr++;
+        }
+        for(int i = 0; i <= count; ++i){
+            backtrack(path, ret, pair, s, remain - count + i, curr, score);
+            path += String.valueOf(pair[1]);
+            score++;
         }
     }
     
     public List<String> removeInvalidParentheses(String s) {
-        List<String> validParentheses = new ArrayList<String>();
-        helper(s, 0, 0, pair, validParentheses);
-        return validParentheses;
+        int[] ptr = {-1, s.length()};
+        int[] count = new int[2];
+        int[] max = new int[2];
+        for(int i = 0; i < s.length(); ++i){
+            char c = s.charAt(i);
+            count[0] = (c == '(')? count[0] - 1: (c == ')')? count[0] + 1: count[0];
+            if(count[0] > max[0]){
+                max[0] = count[0];
+                ptr[0] = i;
+            }
+            c = s.charAt(s.length() - 1 - i);
+            count[1] = (c == ')')? count[1] - 1: (c == '(')? count[1] + 1: count[1];
+            if(count[1] > max[1]){
+                max[1] = count[1];
+                ptr[1] = s.length() - 1 - i;
+            }
+        }
+        
+        String left = s.substring(0, ptr[0] + 1);
+        String middle = s.substring(ptr[0] + 1, ptr[1]);
+        String right = s.substring(ptr[1]);
+        right = new StringBuilder(right).reverse().toString();
+        List<String> lefts = new ArrayList<>();
+        List<String> rights = new ArrayList<>();
+        backtrack("", lefts, new char[]{'(', ')'}, left, max[0], 0, 0);
+        backtrack("", rights, new char[]{')', '('}, right, max[1], 0, 0);
+        List<String> parentheses = new ArrayList<>();
+        if(lefts.isEmpty()){
+            lefts.add("");
+        }
+        if(rights.isEmpty()){
+            rights.add("");
+        }
+        for(String l: lefts){
+            for(String r: rights){
+                StringBuilder tmp = new StringBuilder(r);
+                parentheses.add(l + middle + tmp.reverse().toString());
+            }
+        }
+        return parentheses;
     }
-
+ 
     public static void main(String[] args){
         String s = "(a)())()";
         Solution sol = new Solution();
