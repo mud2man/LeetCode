@@ -14,7 +14,6 @@ public class Solution{
         Map<Character, Integer> map = new HashMap<>();
         int l = 0;
         int maxLen = 0;
-        
         for(int r = 0; r < s.length(); ++r){
             char rc = s.charAt(r);
             map.putIfAbsent(rc, 0);
@@ -27,10 +26,8 @@ public class Solution{
                     map.remove(lc);
                 }
             }
-            
             maxLen = Math.max(maxLen, r - l + 1);
         }
-        
         return maxLen;
     }
  
