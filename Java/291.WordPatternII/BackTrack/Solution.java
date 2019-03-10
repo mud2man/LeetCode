@@ -1,11 +1,11 @@
-/* Backtrack:
- * 1. Use charToStringMap to store the char to string mapping
- * 2. Use used to store the used mapped string
+/* Backtrack: Time:O(n!), Space;O(n)
+ * 1. Use "map" to store the char to string mapping
+ * 2. Use "used" to store the used mapped string
  * 3. Call backtracker with the parameter patternIdx and strIdx
- * If patternIdx == pattern.length() and strIdx == str.length() return true
+ * 4. If patternIdx == pattern.length() and strIdx == str.length() return true
  * 
  * ex: pattern = "abab", str = "redblueredblue"
- * Assume patternIdx = 2, strIdx = 7 => charToStringMap = {"red", "blue", ...}, used = {"red", "blue"}
+ * Assume patternIdx = 2, strIdx = 7 => map = {"red", "blue", ...}, used = {"red", "blue"}
  * idx = 7: lastSubString = r => fail
  * idx = 8: lastSubString = re => fail
  * idx = 9: lastSubString = red => success, call backtracker(pattern, str, 3, 10, charToStringMap, used)
@@ -18,52 +18,56 @@ import java.util.*;
 
 /* Definition for binary tree */
 public class Solution {
-    public boolean backTracker(String pattern, String str, int patternIdx, int strIdx, String[] charToStringMap, Set<String> used){
-        if(patternIdx == pattern.length() && strIdx == str.length()){
+        private boolean backtrack(int pIdx, String pattern, int strIdx, String str, String[] map, Set<String> used){
+        if(pIdx == pattern.length() && strIdx == str.length()){
             return true;
         }
-        
-        if(patternIdx >= pattern.length() || strIdx >= str.length() || 
-           (str.length() - strIdx) < (pattern.length() - patternIdx)){
+        else if(pIdx >= pattern.length() || strIdx >= str.length()){
             return false;
         }
-        
-        char patternChar = pattern.charAt(patternIdx);
-        for(int idx = strIdx; idx < str.length(); ++idx){
-            String lastSubString = str.substring(strIdx, idx + 1);
-            if(lastSubString.equals(charToStringMap[patternChar - 'a'])){
-                if(backTracker(pattern, str, patternIdx + 1, idx + 1, charToStringMap, used)){
-                    return true;
+        else{
+            char patternChar = pattern.charAt(pIdx);
+            if(map[patternChar - 'a'] != null){
+                if(strIdx + map[patternChar - 'a'].length() > str.length()){
+                    return false;
+                }
+                else{
+                    String strSubstring = str.substring(strIdx, strIdx + map[patternChar - 'a'].length());
+                    if(map[patternChar - 'a'].equals(strSubstring)){
+                        return backtrack(pIdx + 1, pattern, strIdx + map[patternChar - 'a'].length(), str, map, used);
+                    }
+                    else{
+                        return false;
+                    }
                 }
             }
-            else if(charToStringMap[patternChar - 'a'].equals("")){
-                if(!used.contains(lastSubString)){
-                    //push
-                    charToStringMap[patternChar - 'a'] = lastSubString;
-                    used.add(lastSubString);
-                    
-                    if(backTracker(pattern, str, patternIdx + 1, idx + 1, charToStringMap, used)){
-                        return true;
+            else{
+                for(int l = 1; l <= str.length() - strIdx; ++l){
+                    String strSubstring = str.substring(strIdx, strIdx + l);
+                    if(used.contains(strSubstring)){
+                        continue;
                     }
-                    
-                    //pop
-                    charToStringMap[patternChar - 'a'] = "";
-                    used.remove(lastSubString);
+                    else{
+                        map[patternChar - 'a'] = strSubstring;
+                        used.add(strSubstring);
+                        if(backtrack(pIdx + 1, pattern, strIdx + l, str, map, used)){
+                            return true;
+                        }
+                        used.remove(strSubstring);
+                        map[patternChar - 'a'] = null;
+                    }
                 }
+                return false;
             }
         }
-        return false;
     }
     
     public boolean wordPatternMatch(String pattern, String str) {
-        String[] charToStringMap = new String[26];
-        for(int i = 0; i < 26; ++i){
-            charToStringMap[i] = new String("");
-        }
-        Set<String> used = new HashSet<String>();
-
-        return backTracker(pattern, str, 0, 0, charToStringMap, used);
+        String[] map = new String[26];
+        Set<String> used = new HashSet<>();
+        return backtrack(0, pattern, 0, str, map, used);
     }
+ 
     public static void main(String[] args){
         String str = "redblueredblue";
         String pattern = "abab";
