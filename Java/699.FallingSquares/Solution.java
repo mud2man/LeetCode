@@ -1,64 +1,61 @@
-/* O(n^2)
- * 1. Have a tuple(left, right, height) to present a square 
- * 2. Pick up a square from positions[i] form left to right
- * 3. Check if the picked squrae overlap with all the square from 0-th to (i - 1)-th
- * 4. If overlapped, uupdate the height with "newSquare[2] = Math.max(oldSquare[2] + height, newSquare[2])"
- * 5. Append the square into squares, and upadte maxHeight = Math.max(maxHeight, newSquare[2])
+/* TreeMap:Time:O(nlogn), Space:O(n). LeetCode has an official segment tree
+ * 1. Have a tree map to store all non-overlap segment 
+ * 2. Take the biggest lower entry and put it to the segment set with is overlapped with the current cube (position[i][0], position[i][0] + position[i][1])
+ * 3. Find the highest height among these overlapped segment
+ * 4. Update or remove the segment which is in the overlapped subMap
+ * 5. Append height to the returned "hights"
  */          
 
-import java.util.*; // Stack
-
+import java.util.*; 
 public class Solution {
-    private boolean isOverlap(int[] square1, int[] square2){
-        int[] left;
-        int[] right;
-        
-        if(square1[0] < square2[0]){
-            left = square1;
-            right = square2;
-        }
-        else{
-            left = square2;
-            right = square1;
-        }
-        
-        return (left[1] > right[0]);
-    }
-    
     public List<Integer> fallingSquares(int[][] positions) {
-        List<Integer> heights = new ArrayList<Integer>();
-        List<int[]> squares = new ArrayList<int[]>();
-        
-        int maxHeight = 0;
+        List<Integer> hights = new ArrayList<>();
+        TreeMap<Integer, int[]> map = new TreeMap<>();
+        int max = 0;
         for(int[] position: positions){
+            int start = position[0];
+            int end = position[0] + position[1];
+            Map.Entry<Integer, int[]> lowerEntry = map.lowerEntry(start);
+            TreeMap<Integer, int[]> subMap = new TreeMap<>(map.subMap(start, true, end, false));
+            if(lowerEntry != null && lowerEntry.getValue()[0] > start){
+                subMap.put(lowerEntry.getKey(), lowerEntry.getValue());
+            }
             int height = position[1];
-            int[] newSquare = new int[]{position[0], position[0] + position[1], height};
-
-            for(int[] oldSquare: squares){
-                if(isOverlap(oldSquare, newSquare)){
-                    newSquare[2] = Math.max(oldSquare[2] + height, newSquare[2]);
+            for(Map.Entry<Integer, int[]>entry: subMap.entrySet()){
+                height = Math.max(height, position[1] + entry.getValue()[1]);
+            }
+            for(Map.Entry<Integer, int[]>entry: subMap.entrySet()){
+                int key = entry.getKey();
+                int[] value = entry.getValue();
+                if(start <= key && end >= value[0]){
+                    map.remove(key);
+                }
+                else if(start > key && end >= value[0]){
+                    map.get(key)[0] = start;
+                }
+                else if(start < key && end < value[0]){
+                    map.put(end, value.clone());
+                    map.remove(key);
+                }
+                else{
+                    map.put(end, value.clone());
+                    map.get(key)[0] = start;
                 }
             }
-            maxHeight = Math.max(maxHeight, newSquare[2]);
-            squares.add(newSquare);
-            heights.add(maxHeight);
+            map.put(start, new int[]{end, height});
+            max = Math.max(max, height);
+            hights.add(max);
         }
-        
-        return heights;
+        return hights;
     }
-  
+ 
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         int[][] positions = {{1, 2}, {2, 3}, {6, 1}};
-
-        sol = new Solution();
-        
         System.out.println("positions: ");
         for(int[] row: positions){
             System.out.println(Arrays.toString(row));
         }
-
-        List<Integer> heights = sol.fallingSquares(positions);
-        System.out.println("heights: " + heights);
+        System.out.println("heights: " + sol.fallingSquares(positions));
     }
 }
