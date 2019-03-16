@@ -6,12 +6,11 @@
 import java.util.*;
 
 public class Solution{
-    private int find(Map<Integer, Integer> child2Parent, int child){
+        private int find(Map<Integer, Integer> child2Parent, int child){
         int parent = child2Parent.get(child);
         if(parent == child){
             return child;
         }
-        
         //compression
         int grandParent = child2Parent.get(parent);
         child2Parent.put(child, grandParent);
@@ -22,7 +21,7 @@ public class Solution{
         Set<Integer> islands = new HashSet<>();
         Map<Integer, Integer> child2Parent = new HashMap<>();
         Map<Integer, Integer> child2rank = new HashMap<>();
-        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int[][] dirs = {{0, 0}, {0, 1}, {0, -1}, {1, 0}, {-1, 0}};
         int number = 0;
         List<Integer> ret = new ArrayList<>();
         
@@ -31,6 +30,8 @@ public class Solution{
             int x = position[1];
             int pos = y * n + x;
             islands.add(pos);
+            child2Parent.put(pos, pos);
+            child2rank.put(pos, 1);
             Set<Integer> roots = new HashSet<>();
             int root = -1;
             int maxRank = -1;
@@ -55,7 +56,6 @@ public class Solution{
                 if(r == root){
                     continue;
                 }
-            
                 if(maxRank > child2rank.get(r)){
                     child2Parent.put(r, root);
                 }
@@ -64,23 +64,12 @@ public class Solution{
                     child2rank.put(root, ++maxRank);
                 }
             }
-            
-            if(root != -1){
-                child2Parent.put(pos, root);
-                if(maxRank == 0){
-                    child2rank.put(root, ++maxRank);
-                }
-            }
-            else{
-                child2Parent.put(pos, pos);
-                child2rank.put(pos, 0);
-            }
-            number -= (roots.size() - 1);
+            number -= (roots.size() - 2);
             ret.add(number);
         }
         return ret;
     }
- 
+
     public static void main(String[] args){
         Solution sol = new Solution();;
         int[][] positions = {{0, 0}, {0, 1}, {1, 2}, {2, 1}};
