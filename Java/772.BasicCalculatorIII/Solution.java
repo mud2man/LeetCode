@@ -1,84 +1,56 @@
-/* Time:O(n^2), Space:O(n), However, LeetCode has O(n) 2-stack approach
- * 1. Use stack to store the numbers with operator '+' and '-', and use variable 'optr' to store the previous operator
- * 2. When hitting '(', call getNextExpression to get the expresstion blocked by '(' and ')', and call 'eval' to get the number
- * 3. When hiiting operators, call 'push' to do operation and push the number into stack
- * 4. When hitting digit, update num
+/* Time:O(n), Space:O(n),
+ * 1. Use the similar idea of LeetCode#282 to express the expression by {sum, multiply}
+ * 2. Remove spaces and wrap s with '(' and ')', then call eval
+ * 3. In eval, update nums given the 5 cases of operator +,-,*,/,)
+ * 4. +, - are separator, we update sumAndMultiplys[0], and reset sumAndMultiply[1] to 1 or -1
+ * 5. *, / are not separator, we only update sumAndMultiplys[1]
+ * 6. When operator is ')', we return the result
  */
 
 import java.util.*;
 
 public class Solution{
-    private void push(Stack<Integer> stack, char optr, int num){
-        switch (optr){
-            case '+':
-                stack.push(num);
-                break;
-            case '-':
-                stack.push(-num);
-                break;
-            case '*':
-                stack.push(stack.pop() * num);
-                break;
-            case '/':
-                stack.push(stack.pop() / num);
-                break;
+    private int getNextNum(String s, int[] idx){
+        int nextNum = 0;
+        while(idx[0] < s.length() && Character.isDigit(s.charAt(idx[0]))){
+            nextNum = nextNum * 10 + (s.charAt(idx[0]++) - '0');
         }
+        return nextNum;
     }
     
-    private String getNextExpression(String s, int start){
-        int count = 0;
-        int end = start;
-        while(end < s.length()){
-            char c = s.charAt(end++);
-            if(c == '('){
-                count++;
-            }
-            else if(c == ')'){
-                count--;
-                if(count == 0){
-                    return s.substring(start, end);
-                }
-            }
-        }
-        return s;
-    }
-    
-    private int eval(String s){
-        Stack<Integer> stack = new Stack<Integer>();
-        char optr = '+';
-        int idx = 0;
-        int num = 0;
-        while(idx < s.length()){
-            char c = s.charAt(idx++);
-            if(Character.isDigit(c)){
-                num = num * 10 + (c - '0');
-            }
-            else if(c == '+' || c == '-' || c == '*' || c == '/'){
-                push(stack, optr, num);
-                optr = c;
-                num = 0;
-            }
-            else{
-                String expr = getNextExpression(s, --idx);
-                idx += expr.length();
-                num = eval(expr.substring(1, expr.length() - 1));
-            }
-            
-            if(idx == s.length()){
-                push(stack, optr, num);
+    private int eval(String s, int[] idx){
+        idx[0] += (s.charAt(idx[0]) == '(')? 1: 0;
+        int[] sumAndMultiply = {0, 1}; //{sum, multiply}
+        boolean isDivide = false;
+        while(idx[0] < s.length()){
+            int nextNum = (s.charAt(idx[0]) == '(')? eval(s, idx): getNextNum(s, idx);
+            char operator = s.charAt(idx[0]++);
+            switch (operator){
+                case '+':
+                case '-':
+                    sumAndMultiply[1] = (isDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
+                    sumAndMultiply[0] = sumAndMultiply[0] + sumAndMultiply[1];
+                    sumAndMultiply[1] = (operator == '-')? -1: 1;
+                    isDivide = false;
+                    break;
+                case '*':
+                case '/':
+                    sumAndMultiply[1] = (isDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
+                    isDivide = (operator == '*')? false: true;
+                    break;
+                case ')':
+                    sumAndMultiply[1] = (isDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
+                    return sumAndMultiply[0] + sumAndMultiply[1];
             }
         }
-        
-        int ret = 0;
-        while(!stack.isEmpty()){
-            ret += stack.pop();
-        }
-        return ret;
+        return 0;
     }
     
     public int calculate(String s) {
-        s = s.replaceAll("\\s+","");
-        return eval(s);
+        s = s.replaceAll("\\s","");
+        s = "(" + s + ")";
+        int[] idx = new int[1];
+        return eval(s, idx);
     }
 
     public static void main(String[] args){
