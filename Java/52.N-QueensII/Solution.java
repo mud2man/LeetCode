@@ -9,23 +9,23 @@ import java.util.*;
 
 
 public class Solution{
-    private void backtrace(int n, int y, int num[], boolean[] down, boolean[] diagnoal, boolean[] antiDiagnoal){
+    private void backtrace(int n, int y, int num[], boolean[] column, boolean[] diagnoal, boolean[] antiDiagnoal){
         if(y == n){
             num[0]++;
             return;
         }
         
         for(int x = 0; x < n; ++x){
-            int donwId = x;
+            int columnId = x;
             int diagnolId = x - y + n;
             int antiDiagnolId = x + y;
             
-            if(!down[donwId] && !diagnoal[diagnolId] && !antiDiagnoal[antiDiagnolId]){
-                down[donwId] = true;
+            if(!column[columnId] && !diagnoal[diagnolId] && !antiDiagnoal[antiDiagnolId]){
+                column[columnId] = true;
                 diagnoal[diagnolId] = true;
                 antiDiagnoal[antiDiagnolId] = true;
-                backtrace(n, y + 1, num, down, diagnoal, antiDiagnoal);
-                down[donwId] = false;
+                backtrace(n, y + 1, num, column, diagnoal, antiDiagnoal);
+                column[columnId] = false;
                 diagnoal[diagnolId] = false;
                 antiDiagnoal[antiDiagnolId] = false;
             }
@@ -34,13 +34,13 @@ public class Solution{
     
     public int totalNQueens(int n) {
         int[] num = new int[1];
-        boolean[] down = new boolean[n];
+        boolean[] column = new boolean[n];
         boolean[] diagnoal = new boolean[2*n];
         boolean[] antiDiagnoal = new boolean[2*n];
-        backtrace(n, 0, num, down, diagnoal, antiDiagnoal);
+        backtrace(n, 0, num, column, diagnoal, antiDiagnoal);
         return num[0];
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int n = 4;
