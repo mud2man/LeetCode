@@ -1,81 +1,58 @@
-/* Stack + HashSet: O(n), where n is the number of nodes
- * 1. Use stack the store nodes along the traversed path
- * 2. Only push the nodes which not in the hashset traversedTreeNodes
- * 3. After go down the tree, pop the top and put it in postOrder
- * 4. Repeat step#3, until stack is empty
+/* Stack: Time:O(n), Space:O(h)
+ * 1. Use stack the store nodes along the traversed path, and push its left child to it untill hitting null
+ * 2. If top is the right child of the second top, we can put second top's val to "postorder", because it means we traversed left and right branch
+ * 3. After repeating #2, we do push again
+ * 4. Repeat step#2 and #3, until stack is empty
  *
  * ex:tree => 3
  *           / \
  *          9   20
  *              / \
  *             15  7
- * time[0]: stack={3}, traversedTreeNodes={3}, postOrder={}
- * time[1]: stack={3, 20, 9}, traversedTreeNodes={3, 20, 9}, postOrder={} (goDown)
- * time[2]: stack={3, 20}, traversedTreeNodes={3, 20, 9}, postOrder={9} (pop)
- * time[3]: stack={3, 20, 7, 15}, traversedTreeNodes={3, 20, 9, 7, 15}, postOrder={} (goDown)
- * time[4]: stack={3, 20, 7}, traversedTreeNodes={3, 20, 9, 7, 15}, postOrder={9, 15} (pop)
- * time[5]: stack={3, 20}, traversedTreeNodes={3, 20, 9, 7, 15}, postOrder={9, 15, 7} (pop)
- * time[6]: stack={3}, traversedTreeNodes={3, 20, 9, 7, 15}, postOrder={9, 15, 7, 20} (pop)
- * time[7]: stack={}, traversedTreeNodes={3, 20, 9, 7, 15}, postOrder={9, 15, 7, 20, 3} (pop)
+ * time[0]: stack={3, 9, null}, postOrder={9}
+ * time[0.5]: stack={3, 20, 15, null}, postOrder={9}
+ * time[1]: stack={3, 20}, postOrder={9, 15}
+ * time[1.5]: stack={3, 20, 7, null}. postOrder={9, 15}
+ * time[2]: stack={}, postOrder={9, 15, 7, 20, 3}
  */
 
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeNode 
-{
-    int val;
-    TreeNode left;
-    TreeNode right;
-    TreeNode(int x) { val = x; }
+
+class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode(int x) { val = x; }
 }
 
 public class Solution {
-    public void goDown(Stack<TreeNode> stack, HashSet<TreeNode> traversedTreeNodes){
-        TreeNode parent, left, right;
-        
-        do{
-            parent = stack.peek();
-            if(parent.right != null && !traversedTreeNodes.contains(parent.right)){
-                right = parent.right;
-                stack.push(right);
-                traversedTreeNodes.add(right);
-            }
-            else{
-                right = null;
-            }
-            
-            if(parent.left != null && !traversedTreeNodes.contains(parent.left)){
-                left = parent.left;
-                stack.push(left);
-                traversedTreeNodes.add(left);
-            }
-            else{
-                left = null;
-            }
-        }while(left != null || right != null );
+    private void push(Deque<TreeNode> stack, TreeNode node) {
+        while(node != null){
+            stack.add(node);
+            node = node.left;
+        }
+        stack.add(null);
     }
     
     public List<Integer> postorderTraversal(TreeNode root) {
-        List<Integer> postOrder = new ArrayList<Integer>();
-        HashSet<TreeNode> traversedTreeNodes = new HashSet<TreeNode>();
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        TreeNode node;
-        
-        if(root != null){
-            stack.push(root);
-            traversedTreeNodes.add(root);
+        List<Integer> postorder = new ArrayList<>();
+        Deque<TreeNode> stack = new LinkedList<>();
+        push(stack, root);
+        while(!stack.isEmpty()){
+            TreeNode top = stack.pollLast();
+            while(!stack.isEmpty() && stack.peekLast().right == top){
+                top = stack.pollLast();
+                postorder.add(top.val);
+            }
+            if(!stack.isEmpty()){
+                push(stack, stack.peekLast().right);
+            }
         }
-        
-        while(!stack.empty()){
-            goDown(stack, traversedTreeNodes);
-            node = stack.pop();
-            postOrder.add(node.val);
-        }
-        
-        return postOrder;
+        return postorder;
     }
-
+ 
     public void inorder(TreeNode root){
         if(root == null){
             return;
