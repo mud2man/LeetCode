@@ -24,11 +24,7 @@ public class Solution{
         else{
             fraction.append('0');
         }
-        
-        if(longNumerator > 0){
-            fraction.append('.');
-        }
-        
+        fraction.append((longNumerator > 0)? ".": "");
         int offset = fraction.length();
         HashMap<Long, Integer> numeratorToIndex = new HashMap<Long, Integer>();
         longNumerator = longNumerator * 10;
@@ -53,9 +49,9 @@ public class Solution{
             }
             offset++;
         }
-        
-        return (isNegative)? "-" + fraction.toString(): fraction.toString();
+        return (isNegative)? "-" + fraction.toString(): fraction.toString(); 
     }
+
     public static void main(String[] args){
         Solution sol;
         int numerator = 2;
