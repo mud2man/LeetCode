@@ -12,17 +12,8 @@ import java.util.*; // Stack
 public class Solution{
     public int divide(int dividend, int divisor) {
         long ans = 0;
-        boolean isNegative = false;
+        boolean isNegative = ((long)dividend * (long)divisor < 0)? true: false;
         long longDividend, longDivisor;
-        
-        if(divisor == 0){
-            return Integer.MAX_VALUE;
-        }
-        
-        if((dividend > 0 && divisor < 0) || (dividend < 0 && divisor > 0)){
-            isNegative = true;
-        }
-
         longDividend = Math.abs((long)dividend);
         longDivisor = Math.abs((long)divisor);
         while(longDividend >= longDivisor){
@@ -43,22 +34,18 @@ public class Solution{
                     return Integer.MAX_VALUE;
                 }       
             }
-            
             temp = temp >> 1;
             subAns = subAns >> 1;
             ans += subAns;
             longDividend -= temp;
         }
-        
-        return (isNegative)? -(int)ans: (int)ans; 
+        return (isNegative)? -(int)ans: (int)ans;    
     }
  
     public static void main(String[] args){
         int dividend = 10;
         int divisor = 2;
-        Solution sol;
-
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println(dividend + "/" + divisor + ": " + sol.divide(dividend, divisor));
     }
 }
