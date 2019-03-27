@@ -9,11 +9,10 @@ import java.util.*;
 
 //Definition for singly-linked list.
 public class Solution{
-        private List<String> getNeighbors(Set<String> wordSet, String currNode){
+    private List<String> getNeighbors(Set<String> wordSet, String currNode){
         StringBuilder sb = new StringBuilder(currNode);
         int length = currNode.length();
         List<String> neighbors = new LinkedList<String>();
-        
         for(int i = 0; i < length; ++i){
             for(char c = 'a'; c <= 'z'; c++){
                 char tmp =  sb.charAt(i);
@@ -34,26 +33,25 @@ public class Solution{
     
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
         Set<String> wordSet = new HashSet<String>(wordList);
-        LinkedList<String> queue = new LinkedList<String>();
-        queue.add(beginWord);
-        
         if(!wordSet.contains(endWord)){
             return 0;
         }
         
+        Deque<String> queue = new LinkedList<String>();
+        queue.add(beginWord);
         int distance = 1;
         while(!queue.isEmpty()){
-            int size = queue.size();
-            for(int i = 0; i < size; ++i){
+            Deque<String> nextQueue = new LinkedList<>();
+            while(!queue.isEmpty()){
                 String currNode = queue.pollFirst();
                 if(currNode.equals(endWord)){
                     return distance;
                 }
-                queue.addAll(getNeighbors(wordSet, currNode));
+                nextQueue.addAll(getNeighbors(wordSet, currNode));
             }
+            queue = nextQueue;
             distance++;
         }
-        
         return 0;
     }
 
