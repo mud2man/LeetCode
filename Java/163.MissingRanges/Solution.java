@@ -1,46 +1,32 @@
 /* Two pointer: Time:O(n), Space:O(1)
- * 1. Traverse imput array nums with two pointer marked the lower bound and upper boundi, and invoke getRange
- * 2. If range existed, getRange will return a non-null string
+ * 1. Traverse input array nums with two pointer "prev" and "num" 
+ * 2. If prev != (long)num - 1 && prev < num, getRange will return a range
  */
 
 import java.util.*;
 
 public class Solution{
-        private String getRange(long lower, long upper){
-        if(lower > upper){
-            return null;
-        }
-        
-        if(lower == upper){
-            return Long.toString(lower);
-        }
-        else{
-            return Long.toString(lower) + "->" + Long.toString(upper);
-        }
+    private String getRange(long lower, long upper){
+        return (lower == upper)? Long.toString(lower): Long.toString(lower) + "->" + Long.toString(upper);
     }
     
     public List<String> findMissingRanges(int[] nums, int lower, int upper) {
         List<String> ranges  = new ArrayList<String>();
-        
-        long lb = (long)lower;
+        long prev = (long)lower - 1;
         long ub = (long)upper;
         for(int num: nums){
-            String range = getRange(lb, (long)num - 1);
-            if(range != null){
-                ranges.add(range);
+            if(prev != (long)num - 1 && prev < num){
+                ranges.add(getRange(prev + 1, (long)num - 1));
             }
-            lb = (long)num + 1;
+            prev = (long)num;
         }
         
-        
-        String range = getRange(lb, ub);
-        if(range != null){
-            ranges.add(range);
+        if(prev != (long)upper){
+            ranges.add(getRange(prev + 1, (long)upper));
         }
-        
         return ranges;
     }
-
+ 
     public static void main(String[] args){
         Solution sol;
         int[] nums = {0, 1, 3, 50, 75};
