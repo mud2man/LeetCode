@@ -9,22 +9,24 @@ import java.util.*;
 public class Solution {
     public boolean checkSubarraySum(int[] nums, int k) {
         k = Math.abs(k);
-        Map<Integer, Integer> visited = new HashMap<>();
-        visited.put(0, -1);
-        int sum = 0;
-        for(int i = 0; i < nums.length; ++i){
-            sum += nums[i];
-            if(k > 0){
+        if(k == 0){
+           for(int i = 1; i < nums.length; ++i){
+                if(nums[i] == 0 && nums[i - 1] == 0){
+                    return true;
+                }
+           }
+        }
+        else{
+            Map<Integer, Integer> visited = new HashMap<>();
+            visited.put(0, -1);
+            int sum = 0;
+            for(int i = 0; i < nums.length; ++i){
+                sum += nums[i];
                 int remain = sum % k;
                 if(visited.containsKey(remain) && i - visited.get(remain) >= 2){
                     return true; 
                 }
                 visited.putIfAbsent(remain, i);
-            }
-            
-            // 0 = k * 0
-            if(i > 0 && nums[i] == 0 && nums[i - 1] == 0){
-                return true;
             }
         }
         return false;
