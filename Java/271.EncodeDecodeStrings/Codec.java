@@ -31,30 +31,16 @@ public class Codec {
         return strs;
     }
  
-    public static void main(String[] args)
-    {
-        Codec codec;
-        List<String> strs;    
-        String encodeStr;
-        
-        strs = new ArrayList<String>();    
+    public static void main(String[] args) {
+        Codec codec = new Codec();;
+        List<String> strs = new ArrayList<String>();    
         strs.add("0123");
         strs.add("01#!");
         strs.add("!##!");
-        codec = new Codec();
         
-        System.out.println("before encode: ");
-        for(String str: strs){
-            System.out.println(str);
-        }
-
-        encodeStr = codec.encode(strs);    
+        System.out.println("before encode: " + strs);
+        String encodeStr = codec.encode(strs);    
         System.out.println("after encode: " + encodeStr);
-        
-        System.out.println("after decode: ");
-        strs = codec.decode(encodeStr);
-        for(String str: strs){
-            System.out.println(str);
-        }
+        System.out.println("after decode: " + codec.decode(encodeStr));
     }
 }
