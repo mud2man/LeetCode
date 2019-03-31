@@ -19,38 +19,30 @@ import java.util.*;
 
 public class Solution{
     public String simplifyPath(String path) {
-        Stack<String> pathStack;
-        String shortPath;
+        String shortPath = "";
+        Deque<String> stack = new LinkedList<>();
         
-        pathStack = new Stack<String>();
-        shortPath = "";
-        for (String folder: path.split("/")) {
-            switch (folder){
-                case "..":
-                    if(!pathStack.isEmpty()){
-                       pathStack.pop(); 
-                    }
-                    break;
-                case ".":
-                case "":
-                    break;
-                default:
-                    pathStack.push("/" + folder); 
-                    break;
+        for (String folder: path.split("/")){
+            if(folder.equals(".")){
+                continue;
+            }
+            else if(folder.equals("..")){
+                if(!stack.isEmpty()){
+                    stack.pollLast();
+                }                    
+            }
+            else if(folder.length() > 0){
+                stack.addLast(folder);
             }
         }
         
-        if(pathStack.isEmpty()){
-            return "/";
+        while(!stack.isEmpty()){
+            shortPath = stack.pollLast() + shortPath;
+            shortPath = "/" + shortPath;
         }
-        
-        while(!pathStack.isEmpty()){
-            shortPath = pathStack.pop() + shortPath;
-        }
-        
-        return shortPath;
+        return (shortPath.length() == 0)? "/": shortPath;
     }
-
+ 
 	public static void main(String[] args){
         String path;
         Solution sol;
