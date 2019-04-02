@@ -1,4 +1,4 @@
-/* Triex: O(height)
+/* Trie Tree: Time:O(height), Space:O(n), where n is character#
  */         
 
 import java.util.*;
