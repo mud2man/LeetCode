@@ -1,4 +1,4 @@
-/* Binary search: Time:O(n), Space:O(1)
+/* Two pointers: Time:O(n), Space:O(1)
  * 1. Traverse the linklist, and insert the new node into correct position
  */
 
@@ -16,47 +16,36 @@ class Node {
 
 public class Solution{
     public Node insert(Node head, int insertVal) {
+        Node newNode = new Node();
+        newNode.val = insertVal;
         if(head == null){
-            Node node = new Node();
-            node.next = node;
-            node.val = insertVal;
-            return node;
-        }
-        
-        Node itr;
-        Set<Node> visited = new HashSet<>();
-        if(head.val > insertVal){
-            itr = head;
-            //get tail
-            while(itr.next.val >= itr.val && !visited.contains(itr)){
-                visited.add(itr);
-                itr = itr.next;
-            }
-            
-            while(itr.next.val < insertVal && !visited.contains(itr)){
-                visited.add(itr);
-                itr = itr.next;
-            }
-            Node newNode = new Node(insertVal, itr.next);
-            itr.next = newNode;
-        }
-        else if(head.val == insertVal){
-            Node newNode = new Node(insertVal, head.next);
+            newNode.next = newNode;
+            return newNode;
+        } 
+        else if(head.next == head){
+            newNode.next = head;
             head.next = newNode;
-        }
+            return head;
+        } 
         else{
-            itr = head;
-            while(itr.next.val < insertVal && itr.next.val >= itr.val && !visited.contains(itr)){
-                visited.add(itr);
-                itr = itr.next;
+            Node prev = head;
+            Node curr = head.next;
+            while(curr != head){
+                if(prev.val < curr.val && prev.val <= insertVal && curr.val >= insertVal){
+                    break;
+                }
+                if(prev.val > curr.val && (prev.val <= insertVal || curr.val >= insertVal)){
+                    break;
+                }
+                prev = curr;
+                curr = curr.next;
             }
-            Node newNode = new Node(insertVal, itr.next);
-            itr.next = newNode;
+            newNode.next = curr;
+            prev.next = newNode;
+            return head;
         }
-        
-        return head;
     }
-    
+  
     private void traverse(Node head){
         Set<Node> visited = new HashSet<>();
         while(!visited.contains(head)){
