@@ -1,4 +1,4 @@
-/* Sort: O(n^3)
+/* Sort: Time:O(n^3), Space:O(1)
  * 1. Sort 
  * 2. Pick up the least two numbers
  * 3. Use two-pointer search to fine the rest two element
