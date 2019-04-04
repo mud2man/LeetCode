@@ -1,4 +1,4 @@
-/* Revese list: O(n)
+/* Revese list: Time:O(n), Space:O(1)
  * 1. Find the head of the second half list
  * 2. Reverse the second half
  * 3. Intersect the reversed second helf into the first half list
@@ -20,16 +20,14 @@ class ListNode {
  
 public class Solution{
     public void reorderList(ListNode head) {
-        ListNode next, secondNext, temp0, temp1;
-        int halfLen = 0;
-        
         if(head == null){
             return;
         }
         
         // find the middle node
-        next = head;
-        secondNext = head;
+        int halfLen = 0;
+        ListNode next = head;
+        ListNode secondNext = head;
         while(secondNext.next != null && secondNext.next.next != null){
             next = next.next;
             secondNext = secondNext.next.next;
@@ -52,8 +50,8 @@ public class Solution{
         ListNode tail = curr;
         curr = head;
         for(int i = 0; i < halfLen; ++i){
-            temp0 = curr.next;
-            temp1 = tail.next;
+            ListNode temp0 = curr.next;
+            ListNode temp1 = tail.next;
             curr.next = tail;
             tail.next = temp0;
             curr = temp0;
