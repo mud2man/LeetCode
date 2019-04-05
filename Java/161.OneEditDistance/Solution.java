@@ -9,7 +9,6 @@ import java.util.*;
 public class Solution{
     public boolean isOneEditDistance(String s, String t) {
         int diffCount = 0;
-        
         if(s.length() == t.length()){
             for(int ptr = 0; ptr < s.length(); ++ptr){
                 if(s.charAt(ptr) != t.charAt(ptr)){
@@ -18,17 +17,8 @@ public class Solution{
             }
         }
         else{
-            String longString;
-            String shortString;
-            if(s.length() > t.length()){
-                longString = s;
-                shortString = t;
-            }
-            else{
-                longString = t;
-                shortString = s;
-            }
-            
+            String longString = (s.length() >= t.length())? s: t;
+            String shortString = (s.length() >= t.length())? t: s;
             int ptrLong = 0;
             int ptrShort = 0;
             while(ptrLong < longString.length() && ptrShort < shortString.length()){
@@ -43,16 +33,13 @@ public class Solution{
             }
             diffCount += longString.length() - ptrLong;
         }
-        
-        return (diffCount == 1);
+        return (diffCount == 1); 
     }
 
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         String s = "abc";
         String t = "abcd";
-        sol = new Solution();
-
         System.out.println("s: " + s);
         System.out.println("t: " + t);
         System.out.println("isOneEditDistance: " + sol.isOneEditDistance(s, t));
