@@ -1,4 +1,4 @@
-/* Recursive: O(ln2*lgn)
+/* Recursive: O(lgn*lgn)
  * 1. If left height == right height, return (1 << leftHeight) - 1
  * 2. Otherwise, return 1 + countNodes(root.left) + countNodes(root.right)
  * 3. One of root.left root.right must be complete tree. Therefore, the complexity is O(lgn*lgn)
@@ -15,36 +15,33 @@ class TreeNode {
 }
 
 public class Solution {
-     private int getHeight(TreeNode root, int h, boolean isLeft){
-        if(root == null){
-            return h;
-        }
-        else{
-            TreeNode nextNode = (isLeft)? root.left: root.right;
-            return getHeight(nextNode, h + 1, isLeft);
-        }
+    private int getLeftHeight(TreeNode root){
+        return (root == null)? 0: 1 + getLeftHeight(root.left);
     }
     
     public int countNodes(TreeNode root) {
-        int leftHeight = getHeight(root, 0, true);
-        int rightHeight = getHeight(root, 0, false);
-        
-        if(leftHeight < 0){
+        if(root == null){
             return 0;
         }
-        
-        if(leftHeight == rightHeight){
-            return (1 << leftHeight) - 1;
+        int count = 0;
+        TreeNode node = root;
+        while(node != null && node.left != null){
+            int leftHeight = getLeftHeight(node.left);
+            int rightHeight = getLeftHeight(node.right);
+            if(leftHeight == rightHeight){
+                count += (1 << leftHeight);
+                node = node.right;
+            }
+            else{
+                count += (1 << rightHeight);
+                node = node.left;
+            }
         }
-        else{
-            return 1 + countNodes(root.left) + countNodes(root.right);
-        }
+        return count + 1;
     }
  
     public static void main(String[] args){
         TreeNode root;
-        Solution sol;
-        
         /* Generate a input tree
          *     8
          *    / \
@@ -57,7 +54,7 @@ public class Solution {
         root.right = new TreeNode(10);
         root.left.left = new TreeNode(1);
         root.left.right = new TreeNode(6);
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("node#: " + sol.countNodes(root));
     }
 }
