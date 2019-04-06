@@ -1,5 +1,5 @@
 /* Time:O(n), Space:O(1). LeetCodes has one shot solution
- * 1. The string must be composed of {')'# > '('#} + {')'# == '('#} + {'('# > ')'}
+ * 1. The string must be composed of {unpaired ')'} + {')' paired '('} + {unpaired '('}
  * 2. Check if ')' valid by traversing from left, if count < 0, we can use startCount to shift the error
  * 3. Check if '(' valid by traversing from right, if count < 0, we can use startCount to shift the error
  */         
