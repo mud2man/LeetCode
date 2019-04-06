@@ -1,6 +1,7 @@
 /* Time:O(n), Space:O(1). LeetCodes has one shot solution
- * 1. Check if ')' valid by traversing from left, if count < 0, we can use startCount to shift the error
- * 2. Check if '(' valid by traversing from right, if count < 0, we can use startCount to shift the error
+ * 1. The string must be composed of {')'# > '('#} + {')'# == '('#} + {'('# > ')'}
+ * 2. Check if ')' valid by traversing from left, if count < 0, we can use startCount to shift the error
+ * 3. Check if '(' valid by traversing from right, if count < 0, we can use startCount to shift the error
  */         
 
 import java.util.*;
@@ -59,10 +60,8 @@ public class Solution {
     }
 
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         String s = "(*))";
-        sol = new Solution();
-
         System.out.println("s: " + s);
         System.out.println("is valid ?: " + sol.checkValidString(s));
     }
