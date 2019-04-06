@@ -1,73 +1,46 @@
-/* Time:O(n), Space:O(n), where n is the length of string. However, LeetCode has a one-shot stack approach
- * 1. Parse string and have 2 lists "operators" and "operands"
- * 2. Caculate '*' and '/' first, then '+' and '-' later
- * 3. When caculating '*' and '/', update the operand of index "lastIndex"
- * 4. When caculating '+' and '-', update leftOperand
+/* Time:O(n), Space:O(1), where n is the length of string
+ * 1. Remove all empty spaces, and represent the intermedia caculation result as (sum, multiply) pair. e.g., 2+3*2=(2, 6), 2+1=(2, 1)
+ * 2. When operator is '+' or '-', update sum by (sum + multiply), multiply = (+/-)number
+ * 3. When operator is '*' or '/', update multiply by (multiply * number) or (multiply / number)
  */
 
 import java.util.*;
 
 public class Solution{
-        public int calculate(String s) {
-        List<Character> operators = new ArrayList<Character>();
-        List<Integer> operands = new ArrayList<Integer>();
-        int num = 0;
-        boolean hasNum = false;
-        for(int i = 0; i < s.length(); ++i){
-            char c = s.charAt(i);
-            if(c == ' '){
-                if(hasNum){
-                    operands.add(num);
-                    num = 0;
-                }
-                hasNum = false;
-            }
-            else if (c == '+' || c == '-' || c == '*' || c == '/'){
-                operators.add(c);
-                if(hasNum){
-                    operands.add(num);
-                    num = 0;
-                }
-                hasNum = false;
-            }
-            else{
-                hasNum = true;
-                num = num * 10 + (c - '0');
+    private int getNextNumber(String s, int[] idx){
+        int number = 0;
+        while(idx[0] < s.length() && Character.isDigit(s.charAt(idx[0]))){
+            number = number * 10 + (s.charAt(idx[0]++) - '0');
+        }
+        return number;
+    }
+    
+    public int calculate(String s) {
+        s = s.replaceAll("\\s","");
+        int[] idx = {0};
+        int sum = 0;
+        int multiply = getNextNumber(s, idx);
+        while(idx[0] < s.length()){
+            char operator = s.charAt(idx[0]++);
+            int number = getNextNumber(s, idx);
+            switch(operator){
+                case '+':
+                    sum = sum + multiply;
+                    multiply = number;
+                    break;
+                case '-':
+                    sum = sum + multiply;
+                    multiply = -number;
+                    break;
+                case '*':
+                    multiply = multiply * number;
+                    break;
+                case '/':
+                    multiply = multiply / number;
+                    break;
             }
         }
-        
-        if(hasNum){
-            operands.add(num);
-        }
-        
-        int lastIndex = 0;
-        for(int i = 0; i < operators.size(); ++i){
-            char operator = operators.get(i);
-            if(operator == '*' || operator == '/'){
-                int result = (operator == '*')? (operands.get(i) * operands.get(i + 1)): (operands.get(i) / operands.get(i + 1));
-                operands.set(lastIndex, result);
-                operands.set(i + 1, result);
-                operators.set(i, '.');
-            }
-            else{
-                lastIndex = i + 1;
-            }
-        }
-        
-        boolean noPlusSubtract = true;
-        int leftOperand = 0;
-        for(int i = 0; i < operators.size(); ++i){
-            char operator = operators.get(i);
-            if(operator == '+' || operator == '-'){
-                if(noPlusSubtract){
-                    leftOperand = operands.get(i);
-                    noPlusSubtract = false;
-                }
-                leftOperand = (operator == '+')? (leftOperand + operands.get(i + 1)): (leftOperand - operands.get(i + 1));
-            }
-        }
-        
-        return (noPlusSubtract)? operands.get(0): leftOperand;
+        return (sum + multiply);
     }
   
     public static void main(String[] args){
