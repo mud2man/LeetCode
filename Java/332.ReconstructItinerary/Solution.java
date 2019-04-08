@@ -1,8 +1,9 @@
-/* Eulerian Path + DFS: Time:O(nlogn) Space:O(n)
+/* Eulerian Path + DFS: Time:O(nlogn), Space:O(n)
  * 1. Have an adjacency list adjList for every airport, and store its successors into a minHeap
  * 2. Always take the smallest sucessor first
  * 3. If the path stucks, put it into the tail
  * 4. Otherwise, it success
+ * 5. Reference: https://en.wikipedia.org/wiki/Eulerian_path
  */
 
 import java.util.*;
