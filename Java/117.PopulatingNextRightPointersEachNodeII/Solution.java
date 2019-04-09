@@ -1,77 +1,54 @@
-/* BFS: O(n)
- * 1. Call connect level by level, and classify the following cases
- * 2. case0: the node has both left and right, link left and right, and let "lowePrev.next"="curr.left", "lowePrev"="curr.right"
- * 3. case1: the node has only left, let "lowePrev.next"="curr.left", "lowePrev"="curr.left"
- * 2. case2: the node has only right, let "lowePrev.next"="curr.right", "lowePrev"="curr.right"
+/* BFS: Time:O(n), Space:O(1)
+ * 1. Connect next level by traversing current level, and move nextLevelPtr by 3 cases
+ * 2. case0: the node has both left and right, link left and right, and update nextLevelPtr with ptr.right
+ * 3. case1: the node has only left, update nextLevelPtr with ptr.left
+ * 4. case2: the node has only right, update nextLevelPtr with ptr.right
  */
 
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeLinkNode  
-{
+class TreeLinkNode  {
 	int val;
 	TreeLinkNode left, right, next;
 	TreeLinkNode(int x) { val = x; }
 }
 
 public class Solution {
-    public void connect(TreeLinkNode root) {
-        TreeLinkNode curr, lowePrev, nextRoot;
-        
-        if(root == null){
-            return;
+    public Node connect(Node root) {
+        Node front = root;
+        while(front != null){
+            Node nextLevelPtr = new Node();
+            Node ptr = front;
+            Node nextLevelFront = null;
+            while(ptr != null){
+                if(ptr.left != null || ptr.right != null){
+                    if(ptr.left != null && ptr.right != null){
+                        ptr.left.next = ptr.right;
+                        nextLevelFront = (nextLevelFront == null)? ptr.left: nextLevelFront;
+                        nextLevelPtr.next = ptr.left;
+                        nextLevelPtr = ptr.right;
+                    }
+                    else if(ptr.left != null){
+                        nextLevelFront = (nextLevelFront == null)? ptr.left: nextLevelFront;
+                        nextLevelPtr.next = ptr.left;
+                        nextLevelPtr = ptr.left;
+                    }
+                    else{
+                        nextLevelFront = (nextLevelFront == null)? ptr.right: nextLevelFront;
+                        nextLevelPtr.next = ptr.right;
+                        nextLevelPtr = ptr.right;
+                    }
+                }
+                ptr = ptr.next;
+            }
+            front = nextLevelFront;
         }
-        
-        curr = root;
-        lowePrev = null;
-        nextRoot = null;
-        while(curr != null){
-            // case 0: having left and right
-            if(curr.left != null && curr.right != null){
-                if(lowePrev != null){
-                    lowePrev.next = curr.left;
-                }
-                
-                curr.left.next = curr.right;
-                lowePrev = curr.right;
-                
-                if(nextRoot == null){
-                    nextRoot = curr.left;
-                }
-            }
-            // case 1: only having left
-            else if(curr.left != null && curr.right == null){
-                if(lowePrev != null){
-                    lowePrev.next = curr.left;
-                }
-                
-                lowePrev = curr.left;
-                
-                if(nextRoot == null){
-                    nextRoot = curr.left;
-                }
-            }
-            // case 2: only having right
-            else if(curr.left == null && curr.right != null){
-                if(lowePrev != null){
-                    lowePrev.next = curr.right;
-                }
-                
-                lowePrev = curr.right;
-                
-                if(nextRoot == null){
-                    nextRoot = curr.right;
-                }
-            }
-            curr = curr.next;
-        }
-        connect(nextRoot);
+        return root;
     }
-     
+
     public void dumpByLevel(TreeLinkNode root) {
         TreeLinkNode curr;
-
         if(root == null){
             return;
         }
@@ -81,17 +58,11 @@ public class Solution {
             System.out.print(curr.val + "->");
             curr = curr.next;
         }
-        
         System.out.println("");
-        
         dumpByLevel(root.left);
     }
 
-    public static void main(String[] args)
-    {
-        TreeLinkNode root;
-        Solution sol;
- 
+    public static void main(String[] args) {
         /* Generate a input tree
          *     1
          *    / \
@@ -99,15 +70,13 @@ public class Solution {
          *  / \   \
          * 4   5   7
          */
-        root = new TreeLinkNode(1);
+        TreeLinkNode root = new TreeLinkNode(1);
         root.left = new TreeLinkNode(2);
         root.right = new TreeLinkNode(3);
         root.left.left = new TreeLinkNode(4);
         root.left.right = new TreeLinkNode(5);
         root.right.right = new TreeLinkNode(7);
-
-        sol = new Solution();
-
+        Solution sol = new Solution();
         sol.connect(root);
         sol.dumpByLevel(root);
 	}
