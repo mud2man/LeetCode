@@ -1,7 +1,6 @@
-/* Stack: O(h)
- * 1. Have a stack to track the visted node
- * 2. If p has right, return the leftest node of the sub-tree has root p
- * 3. Otherwise, return the first farther has the left child equals to the top of the stack
+/* DFS: Time:O(n), Space:O(h)
+ * 1. Have "prev" to record the previous visited node
+ * 2. Traverse tree inorderly, return root if prev[0] == p
  */
 
 import java.util.*; // Stack
@@ -15,49 +14,30 @@ class TreeNode {
 }
 
 public class Solution {
-    private void find(TreeNode root, TreeNode p, LinkedList<TreeNode> stack){
-        if(root == null || root.val == p.val){
-            return;
+    private TreeNode inorderSuccessor(TreeNode root, TreeNode p, TreeNode[] prev){
+        if(root == null){
+            return null;
         }
         
-        stack.add(root);
-        if(root.val > p.val){
-            find(root.left, p, stack);
+        TreeNode leftRet = inorderSuccessor(root.left, p, prev);
+        if(leftRet != null){
+            return leftRet;
+        }
+        else if(prev[0] == p){
+            return root;
         }
         else{
-            find(root.right, p, stack);
+            prev[0] = root;
+            return inorderSuccessor(root.right, p, prev);
         }
     }
     
     public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
-        LinkedList<TreeNode> stack = new LinkedList<TreeNode>();
-        find(root, p, stack);
-        
-        if(p.right != null){
-            TreeNode itr = p.right;
-            while(itr.left != null){itr = itr.left;}
-            return itr;
-        }
-        else{
-            TreeNode son = p;
-            TreeNode farther = (!stack.isEmpty())? stack.pollLast(): null;
-            while(farther != null && farther.left != son){
-                son = farther;
-                farther = (!stack.isEmpty())? stack.pollLast(): null;
-            }
-            
-            if(farther != null){
-                return farther;
-            }
-        }
-        
-        return null;
+        TreeNode[] prev = {null};
+        return inorderSuccessor(root, p, prev);
     }
-
+ 
     public static void main(String[] args){
-        TreeNode root;
-        Solution sol;
-        
         /* Generate a input tree
          *     4
          *    / \
@@ -65,15 +45,14 @@ public class Solution {
          *  / \ 
          * 1   3
          */
-        root = new TreeNode(4);
+        TreeNode root = new TreeNode(4);
         root.left = new TreeNode(2);
         root.right = new TreeNode(5);
         root.left.left = new TreeNode(1);
         root.left.right = new TreeNode(3);
-
         TreeNode p = root.left.right;
-        sol = new Solution();
 
+        Solution sol = new Solution();
         System.out.println("p:" + p.val);
         System.out.println("The successor of p:" + sol.inorderSuccessor(root, p).val);
     }
