@@ -40,12 +40,11 @@ public class Solution{
     }
 
     public static void main(String[] args){
-        Solution sol;
         List<List<Integer>> subsets;
         int[] A = {1, 3, 5, 4};
         int[] B = {1, 2, 3, 7};
         
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("A[]: " + Arrays.toString(A));
         System.out.println("B[]: " + Arrays.toString(B));
         System.out.println("minimum swaps: " + sol.minSwap(A, B));
