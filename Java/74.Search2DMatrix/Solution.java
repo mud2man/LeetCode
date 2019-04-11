@@ -1,4 +1,4 @@
-/* Binary search: O(log(n*m)), where n = row#, m = column#
+/* Binary search: Time:O(log(n*m)), Space:O(1)
  * 1. Treat the 2D matrix as a sorted list
  * 2. Use binary search to find the target
  */
@@ -18,17 +18,16 @@ public class Solution{
         int hb = len - 1;
         while(lb <= hb){
             int mid = (lb + hb) / 2;
-            if(matrix[mid / colNum][ mid % colNum] > target){
+            if(matrix[mid / colNum][mid % colNum] > target){
                 hb = mid - 1;
             }
-            else if(matrix[mid / colNum][ mid % colNum] < target){
+            else if(matrix[mid / colNum][mid % colNum] < target){
                 lb = mid + 1;
             }
             else{
                 return true;
             }
         }
-        
         return false;
     }
  
