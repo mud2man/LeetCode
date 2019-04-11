@@ -19,18 +19,15 @@ public class Solution{
             }
         }
         
-        int h = size;
-        int count = 0;
-        while(h >= 0){
+        for(int h = size, count = 0; h >= 0; --h){
             count += buckets[h];
             if(count >= h){
-                break;
+                return h;
             }
-            --h;
         }
-        return h;
+        return 0;
     }
-
+ 
     public static void main(String[] args){
         
         Solution sol;
