@@ -1,6 +1,6 @@
-/* Merge sort: O(n)
- * 1. Merge lists with the length of 1*1, 2*2, 4*4, 8*8, ..., in 
- * 2. Modify the pointer in every node when doing merge
+/* Quick sort: O(nlogn)
+ * 1. Picj the first element as pivot, and do quick sort to split list as first half and second half
+ * 2. Swap the value of head and firstHalfLastNode, and do quick sort on both halves
  */
 
 import java.util.*;
@@ -14,91 +14,44 @@ class ListNode {
 }
  
 public class Solution{
-    public ListNode getMid(ListNode prev, int window){
-        ListNode mid = prev;
-        for(int i = 0; i <= window; ++i){
-            if(mid != null)
-                mid = mid.next;
-            else
-                return null;
+    private void quickSort(ListNode head, int len){
+        if(head == null || len <= 1){
+            return;
         }
-        return mid;
+        
+        int pivot = head.val;
+        ListNode firstHalfLastNode = head;
+        ListNode itr = head.next;
+        int firstHalfLen = 1;
+        for(int i = 0; i < (len - 1); ++i){
+            if(itr.val <= pivot){
+                firstHalfLen++;
+                int temp = firstHalfLastNode.next.val;
+                firstHalfLastNode.next.val = itr.val;
+                itr.val = temp;
+                firstHalfLastNode = firstHalfLastNode.next;
+            }
+            itr = itr.next;
+        }
+        int temp = firstHalfLastNode.val;
+        firstHalfLastNode.val = pivot;
+        head.val = temp;
+        quickSort(head, firstHalfLen - 1);
+        quickSort(firstHalfLastNode.next, len - firstHalfLen);
     }
     
-    //merge and return the tail of the merged list
-    public ListNode merge(ListNode prev, ListNode mid, int window){
-        ListNode head0 = prev.next;
-        ListNode tail = prev;
-        ListNode head1 = mid;
-        int len0 = 0;
-        int len1 = 0;
-        
-        ListNode nextHead = head1;
-        for(int i = 0; i < window && nextHead != null; ++i)
-            nextHead = nextHead.next;
-        
-        while(head1 != null && len0 < window && len1 < window){
-            if(head0.val < head1.val){
-                tail.next = head0;
-                head0 = head0.next;
-                len0++;
-            }
-            else{
-                tail.next = head1;
-                head1 = head1.next;
-                len1++;
-            }
-            tail = tail.next;
-        }
-        
-        if(len1 == window || head1 == null){
-            tail.next = head0;
-            for(int i = len0; i < window && tail.next != null; i++)
-                tail = tail.next;
-        }
-        
-        if(len0 == window){
-            tail.next = head1;
-            for(int i = len1; i < window && tail.next != null; i++)
-                tail = tail.next;
-        }
-        
-        tail.next = nextHead;
-        return tail;
-    }
-
     public ListNode sortList(ListNode head) {
-        ListNode dummy = new ListNode(0);
-        dummy.next = head;
-        ListNode mid, prev;
-        
-        //get the lenth of the list
-        ListNode curr = head;
         int len = 0;
-        while(curr != null){
+        for(ListNode itr = head; itr != null; itr = itr.next){
             len++;
-            curr = curr.next;
         }
-        
-        int window = 1;
-        while(window < len){
-            prev = dummy;
-            do{
-                mid = getMid(prev, window);
-                prev = merge(prev, mid, window);
-            }while(prev != null && prev.next != null);
-            window = window * 2;
-        }
-        return dummy.next;
+        quickSort(head, len);
+        return head;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        ListNode head;
-        ListNode node;
-
-        sol = new Solution();
-        head = new ListNode(1);
+        Solution sol = new Solution();
+        ListNode head = new ListNode(1);
         head.next = new ListNode(4);
         head.next.next = new ListNode(3);
         head.next.next.next = new ListNode(2);
@@ -106,8 +59,7 @@ public class Solution{
         head.next.next.next.next.next = new ListNode(2);
         
         System.out.println("before sort ");
-        node = head;
-        while(node != null){    
+        for(ListNode node = head; node != null; node = node.next){
             System.out.print(node.val + "->");
             node = node.next;
         }
@@ -115,8 +67,7 @@ public class Solution{
         head = sol.sortList(head);
 
         System.out.println("\nafter sort");
-        node = head;
-        while(node != null){
+        for(ListNode node = head; node != null; node = node.next){
             System.out.print(node.val + "->");
             node = node.next;
         }
