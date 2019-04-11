@@ -1,4 +1,4 @@
-/* Binary search: Time:O(log(n*m)), Space:O(1)
+/* Binary search: Time:O(log(n*m)), Space:O(1) 
  * 1. Treat the 2D matrix as a sorted list
  * 2. Use binary search to find the target
  */
