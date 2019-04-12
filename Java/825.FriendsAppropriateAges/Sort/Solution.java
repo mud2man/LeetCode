@@ -1,4 +1,4 @@
-/* Time:O(n), Space:O(1)
+/* Sort: Time:O(nlogn), Space:O(1)
  * 1. Retrieve input "ages", and get "ageMap", and "ageList"
  * 2. Sort "ageList", and traverse from left
  * 3. Use binary search to find the lower bound, and accumulate the qulified count
@@ -40,15 +40,12 @@ public class Solution{
                 count += (peopleCount[i]- ageMap.get(age) - tooYoungCount) * ageMap.get(age);
             }
         }
-        
         return count;
     }
 
     public static void main(String[] args){
-        Solution sol;
         int[] ages = {20, 30, 100, 100, 120};
-
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("ages: " + Arrays.toString(ages));
         System.out.println("friend requests#: " + sol.numFriendRequests(ages));
     }
