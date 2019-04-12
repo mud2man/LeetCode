@@ -1,4 +1,4 @@
-/* Binary search: O(logn)
+/* Binary search: Time:O(logn), Space:O(1)
  * 1. If citations[mid] == (size - mid), set lb = mid, hb = lb - 1, and break
  * 2. If citations[mid] < (size - mid), set lb = (mid + 1)
  * 3. Otherwise, set hb = mid - 1;
@@ -14,12 +14,7 @@ public class Solution{
         
         while(lb <= hb){
             int mid = (lb + hb) / 2;
-            
-            if(citations[mid] == (size - mid)){
-                lb = mid;
-                hb = lb - 1;
-            }
-            else if(citations[mid] < (size - mid)){
+            if(citations[mid] < (size - mid)){
                 lb = mid + 1;
             }
             else {
