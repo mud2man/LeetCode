@@ -19,43 +19,35 @@ public class Solution {
         Interval(int s, int e) { start = s; end = e; }
     }
 
+    private class StartComparator implements Comparator<Interval>{
+        @Override
+        public int compare(Interval i0, Interval i1){
+            return i0.start - i1.start;
+        }
+    }
+    
     public List<Interval> merge(List<Interval> intervals) {
-        ArrayList<Interval> mergedIntervals;
+        LinkedList<Interval> mergedIntervals = new LinkedList<Interval>();
+        if(intervals.isEmpty()){
+            return mergedIntervals;
+        }
         
-        Collections.sort(intervals, new Comparator<Interval>() {
-            @Override
-            public int compare(Interval leftIntveral, Interval rightInterval) {
-                return Integer.compare(leftIntveral.start, rightInterval.start);
-            }
-        });
-        
-        mergedIntervals = new ArrayList<Interval>();
-        
+        Collections.sort(intervals, new StartComparator());
+        mergedIntervals.add(intervals.get(0));
         for(Interval interval: intervals){
-            if(mergedIntervals.isEmpty()){
-                mergedIntervals.add(interval);
-            }
-            else if(interval.start <= mergedIntervals.get(mergedIntervals.size() - 1).end){
-                if(interval.end > mergedIntervals.get(mergedIntervals.size() - 1).end){
-                    mergedIntervals.get(mergedIntervals.size() - 1).end = interval.end;
-                }
+            if(mergedIntervals.peekLast().end >= interval.start){
+                mergedIntervals.peekLast().end = Math.max(mergedIntervals.peekLast().end, interval.end);
             }
             else{
                 mergedIntervals.add(interval);
             }
         }
-        
-        return (List<Interval>) mergedIntervals;
+        return mergedIntervals;
     }
-
-    public static void main(String[] args)
-    {
-        List<Interval> intervals; 
-        Solution sol;
-        Interval intv;
-
-        sol = new Solution();
-        intervals = new ArrayList<Interval>();
+ 
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        List<Interval> intervals = new ArrayList<Interval>();
         intervals.add(sol.new Interval(1, 3));
         intervals.add(sol.new Interval(8, 10));
         intervals.add(sol.new Interval(2, 6));
