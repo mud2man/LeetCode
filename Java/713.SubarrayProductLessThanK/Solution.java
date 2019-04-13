@@ -1,43 +1,25 @@
-/* Two Pointer: Time:O(n), Space:O(1). Shift interval[1] is a cleaner solution in LeetCode
+/* Two Pointer: Time:O(n), Space:O(1)
  * 1. Keep an max-product-window less than K
- * 2. Shift interval[0] right every time, and shift interval[1] to reach max-product less than K
+ * 2. Shift "end" right every time, and shift "start" to reach max-product less than K
  */
 
 import java.util.*;
 
 public class Solution{
     public int numSubarrayProductLessThanK(int[] nums, int k) {
-        if(k == 0){
-            return 0;
-        }
-        
-        int[] interval = {0, -1};
-        int count = 0;
         int product = 1;
-        while(interval[0] < nums.length){
-            while(product < k && interval[1] < (nums.length - 1)){
-                product = product * nums[++interval[1]];
+        int count = 0;
+        int start = 0;
+        for(int end = 0; end < nums.length; ++end){
+            product *= nums[end];
+            while(product >= k && start <= end){
+                product /= nums[start++];
             }
-            
-            if(product >= k && interval[1] > 0){
-                product = product / nums[interval[1]--];
-            }
-            
-            count = count + (interval[1] - interval[0] + 1); 
-            if(product > 1){
-                product = product / nums[interval[0]]; 
-            }
-            interval[0]++;
-            if(interval[1] < interval[0]){
-                interval[1] = interval[0];
-                if(interval[1] < nums.length){
-                    product = product * nums[interval[1]]; 
-                }
-            }
+            count += (start <= end)? (end - start + 1): 0;
         }
         return count;
     }
-
+ 
     public static void main(String[] args){
         Solution sol;
         int K = 100;
