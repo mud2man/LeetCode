@@ -21,11 +21,10 @@ public class Solution{
     }
  
     public static void main(String[] args){
-        Solution sol;
         int K = 100;
         int[] nums = {10, 5, 2, 6};
         
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("K: " + K);
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("count: " + sol.numSubarrayProductLessThanK(nums, K));
