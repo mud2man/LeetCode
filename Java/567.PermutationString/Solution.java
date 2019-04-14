@@ -1,82 +1,50 @@
 /* Sliding window: O(n)
  * 1. Have a HashMap HashMap<Character, int[] pair> charCountMap to record the character occurance number
  * 2. pair[0] = the occurance of character in s1, pair[1] = the occurance of character in s2
- * 3. If pair[0] == pair[1], which means match, reduce the number of raminaing matchs remainMatch
- * 4. Otherwise, increase remainMatch when pair[0] + 1) == pair[1] when add directioni, or when pair[0] -1 1) == pair[1] when add direction
+ * 3. Have "diff" to record the number of difference, and return true if diff becomes 0
  */
 
 import java.util.*;
 
 
 public class Solution{
-    public boolean checkInclusion(String s1, String s2) {
-        int s1Length = s1.length();
-        int s2Length = s2.length();
-        if(s2Length < s1Length){
+        public boolean checkInclusion(String s1, String s2) {
+        if(s2.length() < s1.length()){
             return false;
         }
         
-        int[] pair;
         HashMap<Character, int[]> charCountMap = new HashMap<Character, int[]>();
-        HashSet<Character> s1CharSet = new HashSet<Character>();
-        for(int i = 0; i < s1Length; ++i){
+        for(int i = 0; i < s1.length(); ++i){
             char c = s1.charAt(i);
-            s1CharSet.add(c);
-            if(!charCountMap.containsKey(c)){
-                pair = new int[2];
-                charCountMap.put(c, pair);
-            }
-            pair = charCountMap.get(c);
-            pair[0]++;
+            charCountMap.putIfAbsent(c, new int[2]);
+            charCountMap.get(c)[0]++;
         }
         
-        int remainMatch = s1CharSet.size();
-            
-        for(int i = 0; i < s1Length; ++i){
+        int diff = s1.length();
+        for(int i = 0; i < s1.length(); ++i){
             char c = s2.charAt(i);
-            if(s1CharSet.contains(c)){
-                pair = charCountMap.get(c);
-                pair[1]++;
-                if(pair[0] == pair[1]){
-                    remainMatch--;
-                }
-                else if((pair[0] + 1) == pair[1]){
-                    remainMatch++;
+            if(charCountMap.containsKey(c)){
+                charCountMap.get(c)[1]++;
+                if(charCountMap.get(c)[0] >= charCountMap.get(c)[1]){
+                    diff--;
                 }
             }
         }
-        
+
         //sliding window
-        int index = s1Length;
-        while(remainMatch > 0 && index < s2Length){
-            char deleteChar = s2.charAt(index - s1Length);
-            if(s1CharSet.contains(deleteChar)){
-                pair = charCountMap.get(deleteChar);
-                pair[1]--;
-                if(pair[0] == pair[1]){
-                    remainMatch--;
-                }
-                else if((pair[0] - 1) == pair[1]){
-                    remainMatch++;
-                }
+        for(int i = s1.length(); i < s2.length() && diff != 0; ++i){
+            char addChar = s2.charAt(i);
+            if(charCountMap.containsKey(addChar)){
+                charCountMap.get(addChar)[1]++;
+                diff -= (charCountMap.get(addChar)[0] >= charCountMap.get(addChar)[1])? 1: 0;
             }
-            
-            char addChar = s2.charAt(index);
-            if(s1CharSet.contains(addChar)){
-                pair = charCountMap.get(addChar);
-                pair[1]++;
-                if(pair[0] == pair[1]){
-                    remainMatch--;
-                }
-                else if((pair[0] + 1) == pair[1]){
-                    remainMatch++;
-                }
+            char deleteChar = s2.charAt(i - s1.length());
+            if(charCountMap.containsKey(deleteChar)){
+                charCountMap.get(deleteChar)[1]--;
+                diff += (charCountMap.get(deleteChar)[0] > charCountMap.get(deleteChar)[1])? 1: 0;
             }
-            
-            index++;
         }
-        
-        return (remainMatch == 0);
+        return (diff == 0);
     }
 
     public static void main(String[] args){
