@@ -1,4 +1,4 @@
-/* Divide & Conquer: Time:O(26*n), Space:O(1)
+/* Divide & Conquer: Time:O(n^2), Space:O(n)
  * 1. Call helper recursivley
  * 2. In helper, get the "count" info, and seperate the string to substrings by separate char, where count[char] < k
  * 3. If there is no separate char, then return end - start + 1
