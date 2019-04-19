@@ -1,5 +1,5 @@
 /* Use Dynamic Programing: O(n*k*m), where n is the length of s, k is the size of wordDict, m is the length of longest word
- * 1. dp[i + 1] = trew, means s.substring(0, i + 1) can be seperated
+ * 1. dp[i + 1] = true, means s.substring(0, i + 1) can be seperated
  * 2. Only handle when dp[i] is true, 
  * 3. If dp[size] is true, means s.substring(0, size) can be seperated
  * ex: s: "leetcode", wordDict:["leet", "code"]
