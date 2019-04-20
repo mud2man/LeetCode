@@ -52,10 +52,9 @@ public class Solution {
     }
  
     public static void main(String[] args){
-        Solution sol;
         int num = 2736;
         
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("num before swap: " + num);
         System.out.println("nums after swap: " + sol.maximumSwap(num));
     }
