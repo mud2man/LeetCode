@@ -53,10 +53,6 @@ public class Solution {
  
     public static void main(String[] args){
         int num = 2736;
-<<<<<<< Updated upstream:Java/670.MaximumSwap/Solution.java
-        
-=======
->>>>>>> Stashed changes:Java/670.MaximumSwap/BucketSort/Solution.java
         Solution sol = new Solution();
         System.out.println("num before swap: " + num);
         System.out.println("nums after swap: " + sol.maximumSwap(num));
