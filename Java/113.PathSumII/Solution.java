@@ -6,8 +6,7 @@
 import java.util.*;
 
 /* Definition for binary tree */
-class TreeNode 
-{
+class TreeNode {
     int val;
     TreeNode left;
     TreeNode right;
@@ -15,46 +14,28 @@ class TreeNode
 }
 
 public class Solution {
-    public void dfs(TreeNode root, int residure, LinkedList<Integer> path,  LinkedList<List<Integer>> pathList){
+    public void helper(TreeNode root, int remain, LinkedList<Integer> path, List<List<Integer>> paths){
         if(root == null){
             return;
         }
-
+        
         path.add(root.val);
-        residure = residure - root.val;
-        
-        if(root.left == null && root.right == null){
-            if(residure == 0){
-                pathList.add(new LinkedList<Integer>(path));
-                path.pollLast();
-                return;
-            }
+        if(root.left == null && root.right == null && remain == root.val){
+            paths.add(new LinkedList<Integer>(path));
         }
-        
-        dfs(root.left, residure, path, pathList);
-        dfs(root.right, residure, path, pathList);
+        helper(root.left, remain - root.val, path, paths);
+        helper(root.right, remain - root.val, path, paths);
         path.pollLast();
     }
     
     public List<List<Integer>> pathSum(TreeNode root, int sum) {
-        LinkedList<Integer> path;
-        LinkedList<List<Integer>> pathList;
-        
-        path = new LinkedList<Integer>();
-        pathList = new LinkedList<List<Integer>>();
-        
-        dfs(root, sum, path, pathList);
-        
-        return pathList;
+        List<List<Integer>> paths = new LinkedList<List<Integer>>();
+        LinkedList<Integer> path = new LinkedList<Integer>();
+        helper(root, sum, path, paths);
+        return paths;
     }
 
-    public static void main(String[] args)
-    {
-        List<List<Integer>> list;
-        TreeNode root;
-        Solution sol;
-        int sum;
-
+    public static void main(String[] args){
         /* Generate a input tree
          *       5
          *      / \
@@ -64,8 +45,7 @@ public class Solution {
          *  /  \    / \
          * 7    2  5   1
          */
-        
-        root = new TreeNode(5);
+        TreeNode root = new TreeNode(5);
         root.left = new TreeNode(4);
         root.right = new TreeNode(8);
         root.left.left = new TreeNode(11);
@@ -75,14 +55,9 @@ public class Solution {
         root.left.left.right = new TreeNode(2);
         root.right.right.left = new TreeNode(5);
         root.right.right.right = new TreeNode(1);
-        sum = 22;
-        sol = new Solution();
-        
-        list = sol.pathSum(root, sum);
-        
-        System.out.println("list of path sum = " + sum);
-        for(List<Integer> path: list){
-            System.out.println(path);
-        }
+        int sum = 22;
+        Solution sol = new Solution();
+        System.out.println("sum:" + sum);
+        System.out.println("path:" + sol.pathSum(root, sum));
     }
 }
