@@ -21,38 +21,42 @@ class Node {
 
 public class Solution{
     private Node[] dfs(Node head){
+        if(head == null){
+            return new Node[2];
+        }
+        
         Node[] pair = new Node[2];
         pair[0] = head;
-        Node curr = head;
-        Node prev = null;
-        while(curr != null){
-            if(curr.child != null){
-                Node[] nextPair = dfs(curr.child);
-                Node next = curr.next;
-                curr.next = nextPair[0];
-                nextPair[0].prev = curr;
-                curr.child = null;
-                nextPair[1].next = next;
-                if(next != null){
-                    next.prev = nextPair[1];
-                }
-                curr = next;
-                prev = nextPair[1];
-            }
-            else{
-                prev = curr;
-                curr = curr.next;
-            }
+        Node[] childPair = dfs(head.child);
+        Node[] nextPair = dfs(head.next);
+        head.child = null;
+        if(childPair[0] != null && nextPair[0] != null){
+            childPair[1].next = nextPair[0];
+            nextPair[0].prev = childPair[1];
+            head.next = childPair[0];
+            childPair[0].prev = head;
+            pair[1] = nextPair[1];
         }
-        pair[1] = prev;
+        else if(childPair[0] != null){
+            head.next = childPair[0];
+            childPair[0].prev = head;
+            pair[1] = childPair[1];
+        }
+        else if(nextPair[0] != null){
+            head.next = nextPair[0];
+            nextPair[0].prev = head;
+            pair[1] = nextPair[1];
+        }
+        else{
+            pair[1] = head;
+        }
         return pair;
     }
     
     public Node flatten(Node head) {
-        dfs(head);
-        return head;
-    } 
-
+        return dfs(head)[0];
+    }
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         System.out.println("no test case: ");
