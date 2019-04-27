@@ -1,9 +1,13 @@
-/* Dynamic programming: O(2^n)
- * 1. Sort nums, and add num into the latest "subsets.size()" subset (j - i) times, where nums[i] = nums[i + 1] = ... nums[i + j - 1]
- * 1. Assume nums = [1, 2, 2]
- * 2. 1st: []
- * 3. 2nd: [], [1] => nums[0]
- * 4. 3rd: [], [1], [2], [1, 2], [2, 2], [1, 2, 2] => nums[1] ~ nums[2]
+/* Dynamic programming: Time:O(2^n), Space:O(2^n)
+ * 1. Sort nums, and use "queue" to stroe the previos subset, where the length of subset in the queue increase 1 after every loop
+ * 2. We put the starting index in the last position of subset
+ *
+ * ex:nums = {1, 2, 2}
+ * time[0], queue={{0}}, subsets={}
+ * time[1], queue={{1, 1}, {2, 2}}, subsets={{1}, {2}}
+ * time[2], queue={{1, 2, 2}, {2, 2, 3}}, subsets={{1}, {2}, {1, 2}, {2, 2}}
+ * time[3], queue={{1, 2, 2, 3}}, subsets={{1}, {2}, {1, 2}, {2, 2}, {1, 2, 2}}
+ * time[4], queue={}, subsets={{1}, {2}, {1, 2}, {2, 2}, {1, 2, 2}}
  */
 
 import java.util.*;
