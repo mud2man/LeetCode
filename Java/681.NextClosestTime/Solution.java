@@ -14,30 +14,21 @@ public class Solution{
     }
     
     private int getDiff(int currentMin, int nextMin){
-        if(nextMin == currentMin){
-            return 1440;
-        }
-        else if(nextMin > currentMin){
-            return nextMin - currentMin;
-        }
-        else{
-            return (1440 - (currentMin - nextMin));
-        }
+        return (nextMin == currentMin)? 1440: (nextMin > currentMin)? nextMin - currentMin: (1440 - (currentMin - nextMin));
     }
     
     public String nextClosestTime(String time) {
         String[] times = time.split(":");
         int[] currentTime = new int[4];
-        currentTime[0] = times[0].charAt(0) - '0';
-        currentTime[1] = times[0].charAt(1) - '0';
-        currentTime[2] = times[1].charAt(0) - '0';
-        currentTime[3] = times[1].charAt(1) - '0';
+        currentTime[0] = (int)(times[0].charAt(0) - '0');
+        currentTime[1] = (int)(times[0].charAt(1) - '0');
+        currentTime[2] = (int)(times[1].charAt(0) - '0');
+        currentTime[3] = (int)(times[1].charAt(1) - '0');
         
         int currentMin = currentTime[0]*10*60 + currentTime[1]*60 + currentTime[2]*10 + currentTime[3];
         int nextClosetMin = Integer.MAX_VALUE;
         int[] nextTime = new int[4];
         String nextClosestTime = "";
-        
         for(int x = 0; x < 4; ++x){
             for(int y = 0; y < 4; ++y){
                 for(int z = 0; z < 4; ++z){
@@ -61,10 +52,9 @@ public class Solution{
                 }
             }
         }
-        
         return nextClosestTime;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         String time = "19:34";
