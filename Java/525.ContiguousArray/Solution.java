@@ -1,4 +1,4 @@
-/* Hash: Time:O(n), Space:O(1)
+/* Hash: Time:O(n), Space:O(n)
  * 1. Accumulate sum with 1 if nums[i] = 1, -1 if nums[i] = 0
  * 2. Have "sum2Index" to record the minimum index with key = "sum"
  * 3. Because the sum of the subarray with equal number of 0 and 1 is 0, the length is (i - sum2Index.get(sum))
