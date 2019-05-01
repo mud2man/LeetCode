@@ -1,4 +1,4 @@
-/* HashSet: Time:O(n), Space:O(1)
+/* HashSet: Time:O(n^2), Space:O(n)
  * 1. Iterate j, and iterate i, then put the equal sums on left part into the set "lefts"
  * 2. Iterate k, if find equals sums, check if it in the lefts. If so return true
  */         
@@ -31,7 +31,6 @@ public class Solution {
                 }
             }
         }
-        
         return false;
     }
 
