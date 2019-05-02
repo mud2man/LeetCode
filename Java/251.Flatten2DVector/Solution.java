@@ -1,61 +1,58 @@
 /* Iterator: Time:O(1), Space:O(1)
- * 1. Have two iterators iteratorY and iteratorX
- * 2. Have helper "jumpNext" to set iteratorX to the next available position
- * 3. Determine if has next by (iteratorX != null && iteratorX.hasNext())
+ * 1. Have two pointer y and x
+ * 2. Have "cache" to store the next value
+ * 3. Determine if has next by (cache != null)
  */
 
 import java.util.*;
 
-public class Solution implements Iterator<Integer> {
-    Iterator<List<Integer>> iteratorY;
-    Iterator<Integer> iteratorX;
-    
-    private void jumpNext(){
-        if(iteratorX != null && iteratorX.hasNext()){
-            return;
-        }
-        
-        while(iteratorY.hasNext()){
-            List<Integer> innerList = iteratorY.next();
-            iteratorX = innerList.iterator();
-            if(iteratorX.hasNext()){
-                break;   
+public class Solution{
+    int y = 0;
+    int x = 0;
+    Integer cache;
+    int[][] v;
+
+    public Solution(int[][] v) {
+        this.y = 0;
+        this.x = 0;
+        this.v = v;
+        while(y < v.length && cache == null){
+            while(x < v[y].length && cache == null){
+                cache = v[y][x++];
+                break;
             }
+            x = (cache == null)? 0: x;
+            y += (cache == null)? 1: 0;
         }
     }
     
-    public Solution(List<List<Integer>> vec2d) {
-        iteratorY = vec2d.iterator();
-        iteratorX = (iteratorY.hasNext())? iteratorY.next().iterator(): null;
+    public int next() {
+        Integer temp = this.cache;
+        while(y < v.length){
+            while(x < v[y].length){
+                this.cache = this.v[y][x++];
+                return temp;
+            }
+            x = 0;
+            ++y;
+        }
+        this.cache = null;
+        return temp;
     }
-
-    @Override
-    public Integer next() {
-        return iteratorX.next();
-    }
-
-    @Override
+    
     public boolean hasNext() {
-        if(iteratorX != null && iteratorX.hasNext()){
-            return true;
-        }
-        else{
-            jumpNext();
-            return (iteratorX != null && iteratorX.hasNext());
-        }
-    }
-
+        return (cache != null);
+    } 
     public static void main(String[] args){
-        Solution sol;
-        List<List<Integer>> vec2d = new ArrayList<List<Integer>>();
-        vec2d.add(new ArrayList<Integer>(Arrays.asList(1, 2)));
-        vec2d.add(new ArrayList<Integer>(Arrays.asList(3)));
-        vec2d.add(new ArrayList<Integer>(Arrays.asList(4, 5, 6)));
-
-        sol = new Solution(vec2d);    
-        System.out.println("vec2d: " + vec2d);
-        while(sol.hasNext()){
-            System.out.println(sol.next());
+        int[][] vec2d = {{1, 2}, {3}, {4}};
+        Solution sol = new Solution(vec2d);    
+        System.out.println("vec2d: ");
+        for(int[] row: vec2d){
+            System.out.println(Arrays.toString(row));
         }
+        while(sol.hasNext()){
+            System.out.print(sol.next() + ",");
+        }
+        System.out.println("");
     }
 }
