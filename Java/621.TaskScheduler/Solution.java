@@ -1,4 +1,4 @@
-/* Greedy + MaxHeap: Time:O(n), Space:O(n), LeetCode has a tricky solution
+/* Greedy + MaxHeap: Time:O(nlogn), Space:O(n), LeetCode has a tricky solution
  * 1. Have a maximum heap "tasksQueue" to store the task which denoted as a pair = (taskId, count)
  * 2. Service tasks every period(n + 1), and update tasksQueue every loop
  * 3. In update, take the most frequency task for "period" time, and decrease the count of selected task 1 each time
@@ -9,7 +9,6 @@ import java.util.*;
 public class Solution {
     private void update(PriorityQueue<int[]> tasksQueue, int period){
         List<int[]> servicedTasks = new ArrayList<int[]>();
-        
         while(tasksQueue.size() > 0 && period > 0){
             int[] task = tasksQueue.poll();
             task[1]--;
@@ -18,7 +17,6 @@ public class Solution {
             }
             period--;
         }
-        
         for(int[] task: servicedTasks){
             tasksQueue.add(task);
         }
@@ -39,28 +37,23 @@ public class Solution {
         for(char task: tasks){
             counts[task - 'A']++;
         }
-        
         for(int i = 0; i < counts.length; ++i){
             if(counts[i] > 0){ 
                 tasksQueue.add(new int[]{i, counts[i]});
             }
         }
-        
         while(tasksQueue.peek()[1] > 1){
             cpuCycles += period;
             update(tasksQueue, period);
         }
-        
         cpuCycles += tasksQueue.size();
         return cpuCycles;
     }
 
     public static void main(String[] args){
-        Solution sol;
         char[] tasks = {'A', 'A', 'A', 'B', 'B', 'B'};
         int n = 2;
-        sol = new Solution();
-
+        Solution sol = new Solution();
         System.out.println("tasks: " + Arrays.toString(tasks));
         System.out.println("n: " + n);
         System.out.println("least intervals: " + sol.leastInterval(tasks, n));
