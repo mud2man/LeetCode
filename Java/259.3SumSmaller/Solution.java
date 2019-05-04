@@ -9,9 +9,7 @@ import java.util.*;
 public class Solution{
     public int threeSumSmaller(int[] nums, int target) {
         Arrays.sort(nums);
-        
         int count = 0;
-
         for(int i = 0; i < (nums.length - 2); ++i){
             int j = i + 1;
             int k = nums.length - 1;
@@ -20,13 +18,11 @@ public class Solution{
                 if((nums[j] + nums[k]) < subTarget){
                     count += (k - j);
                     ++j;
-                }
-                else{
+                }else{
                     --k;
                 }
             }
         }
-        
         return count;
     }
 
