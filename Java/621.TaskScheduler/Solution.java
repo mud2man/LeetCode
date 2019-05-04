@@ -1,4 +1,4 @@
-/* Greedy + MaxHeap: Time:O(n*log26), Space:O(n), LeetCode has a tricky solution
+/* Greedy + MaxHeap: Time:O(nlogn), Space:O(n), LeetCode has a tricky solution
  * 1. Have a maximum heap "tasksQueue" to store the task which denoted as a pair = (taskId, count)
  * 2. Service tasks every period(n + 1), and update tasksQueue every loop
  * 3. In update, take the most frequency task for "period" time, and decrease the count of selected task 1 each time
