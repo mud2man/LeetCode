@@ -16,32 +16,23 @@ public class Solution{
     public int maxSubArrayLen(int[] nums, int k) {
         int subSum = 0;
         HashMap<Integer, Integer> sumMap = new HashMap<Integer, Integer>();
-        
         sumMap.put(0, -1);
         int maxLen = 0;
         for(int i = 0; i < nums.length; ++i){
             subSum = subSum + nums[i];
-            if(!sumMap.containsKey(subSum)){
-                sumMap.put(subSum, i);
-            }
-            
+            sumMap.putIfAbsent(subSum, i);
             int diff = subSum - k;
             if(sumMap.containsKey(diff)){
                 maxLen = Math.max(maxLen, i - sumMap.get(diff));
             }
         }
-
         return maxLen;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
         int[] nums = {1, -1, 5, -2, 3};
-        int k;
-        
-        k = 3;
-        sol = new Solution();
-
+        int k = 3;
+        Solution sol = new Solution();
         System.out.println("nums:" + Arrays.toString(nums) + ", k:" + k);
         System.out.println("maxLen: " + sol.maxSubArrayLen(nums, k));
     }
