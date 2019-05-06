@@ -32,15 +32,14 @@ public class Solution {
         for(String deadend: deadends){
             if(deadend.equals("0000")){
                 return -1;
-            }
-            else{
+            }else{
                 visited.add(deadend); 
             }
             
         }
         visited.add("0000");
         int distance = 0;
-        LinkedList<String> queue = new LinkedList<String>();
+        Deque<String> queue = new LinkedList<String>();
         queue.add("0000");
         while(!queue.isEmpty()){
             int size = queue.size();
@@ -49,10 +48,8 @@ public class Solution {
                 visited.add(currentStatus);
                 if(currentStatus.equals(target)){
                     return distance;
-                }
-                else{
-                    List<String> nextStatus = getNextStatus(currentStatus, visited);
-                    queue.addAll(nextStatus);
+                }else{
+                    queue.addAll(getNextStatus(currentStatus, visited));
                 }
             }
             distance++;
@@ -61,11 +58,9 @@ public class Solution {
     }
 
     public static void main(String[] args){
-        Solution sol;
         String[] deadends = {"0201", "0101", "0102", "1212", "2002"};
         String target = "0202";
-
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("deadends: " + Arrays.toString(deadends));
         System.out.println("target: " + target);
         System.out.println("shortest distance: " + sol.openLock(deadends, target));
