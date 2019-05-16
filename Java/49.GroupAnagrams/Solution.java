@@ -1,16 +1,22 @@
-/* HashMap: Time:O(n*klogk), Space:O(n), where k = longest length of string. We can translate char count to string as key to reduce time complexity to O(n*k)
- * 1. Put the string with the same key into hashMap
+/* HashMap: Time:O(n*k), Space:O(n), where k = longest length of string.
+ * 1. Put the string with the same key into hashMap, where key is character count
  * 2. Convert hashmap to list
  */          
 
 import java.util.*;
-import java.math.*;
 
 public class Solution {
     public String getKey(String s){
-        char[] chars = s.toCharArray();
-        Arrays.sort(chars);
-        return new String(chars);
+        int[] count = new int[26];
+        for(char c: s.toCharArray()){
+            count[c - 'a']++;
+        }
+        StringBuilder sb = new StringBuilder("");
+        for(int i = 0; i < 26; ++i){
+            sb.append(count[i]);
+            sb.append("#");
+        }
+        return sb.toString();
     }
     
     public List<List<String>> groupAnagrams(String[] strs) {
@@ -19,37 +25,20 @@ public class Solution {
         
         for(String str: strs){
             String key = getKey(str);
-            if(anagramsHashMap.containsKey(key)){
-                anagramsHashMap.get(key).add(str);
-            }
-            else{
-                List<String> anagrams = new ArrayList<String>();
-                anagrams.add(str);
-                anagramsHashMap.put(key, anagrams);
-            }
+            anagramsHashMap.putIfAbsent(key, new ArrayList<String>());
+            anagramsHashMap.get(key).add(str);
         }
         
         for (Map.Entry<String, List<String>> entry : anagramsHashMap.entrySet()) {
             anagramsList.add(entry.getValue());
         }
-        
         return anagramsList;
     }
-  
+ 
     public static void main(String[] args){
-        Solution sol;
         String[] strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
-        List<List<String>> anagrams;
-
-        sol = new Solution();
-
+        Solution sol = new Solution();
         System.out.println("strs: " + Arrays.toString(strs));
-
-        anagrams = sol.groupAnagrams(strs);
-
-        System.out.println("anagrams: ");
-        for(List<String> anagram: anagrams){
-            System.out.println(anagram);
-        }
+        System.out.println("anagrams: " + sol.groupAnagrams(strs));
     }
 }
