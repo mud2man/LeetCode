@@ -1,5 +1,6 @@
 /* BFS: Time:O(n), Space:O(n)
- * 1. 
+ * 1. Scan tree level by level, detect the last level by the flag "sawNull"
+ * 2. In the last level, only allow "null" in the tail and we cannot see non-null child
  */
 
 import java.util.*; // Stack
@@ -17,43 +18,37 @@ public class Solution {
         Deque<TreeNode> queue = new LinkedList<>();
         queue.add(root);
         int count = 1;
-        
+        boolean sawNull = false;
         while(!queue.isEmpty()){
-            if(queue.peekFirst() == null){
-                while(!queue.isEmpty()){
-                    if(queue.pollFirst() != null){
-                        return false;
-                    }
-                }
-                return true;
-            }
-            
-            if(count != queue.size()){    
+            if(queue.size() != count){
                 return false;
             }
-            boolean seeNull = false;
-            for(int i = 0; i < count; ++i){
-                TreeNode node = queue.pollFirst();
-                if(node == null){
-                    seeNull = true;
-                }
-                else{
-                    if(seeNull){
-                        return false;
-                    }
+            if(!sawNull){
+                int size = queue.size();
+                for(int i = 0; i < size; ++i){
+                    TreeNode node = queue.pollFirst();
+                    sawNull = (node.left == null)? true: sawNull;
                     queue.add(node.left);
+                    sawNull = (node.right == null)? true: sawNull;
                     queue.add(node.right);
                 }
+            }else{
+                boolean sawLeave = false;
+                while(!queue.isEmpty() && queue.peekFirst() != null){
+                    TreeNode node = queue.pollFirst();
+                    sawLeave = (node.left != null || node.right != null)? true: sawLeave;
+                }
+                while(!queue.isEmpty() && queue.peekFirst() == null){
+                    queue.pollFirst();
+                }
+                return (!sawLeave && queue.isEmpty());
             }
-            count = count * 2;
+            count *= 2;
         }
-        return true;
+        return false;
     }
- 
+  
     public static void main(String[] args){
-        TreeNode root;
-        Solution sol = new Solution();
-        
         /* Generate a input tree
          *     4
          *    / \
@@ -61,11 +56,12 @@ public class Solution {
          *  / \   
          * 1   3  
          */
-        root = new TreeNode(4);
+        TreeNode root = new TreeNode(4);
         root.left = new TreeNode(2);
         root.right = new TreeNode(5);
         root.left.left = new TreeNode(1);
         root.left.right = new TreeNode(3);
+        Solution sol = new Solution();
         System.out.println("is complete tree: " + sol.isCompleteTree(root));
     }
 }
