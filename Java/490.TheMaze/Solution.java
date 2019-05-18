@@ -7,12 +7,6 @@
 import java.util.*; // Stack
 
 public class Solution {
-    private class Possition{
-        int yPos;
-        int xPos;
-        Possition(int y, int x){yPos = y; xPos = x;}
-    }
-    
     public boolean hasPath(int[][] maze, int[] start, int[] destination) {
         Set<Integer> walls = new HashSet<Integer>();
         Set<Integer> visited = new HashSet<Integer>();
@@ -32,14 +26,11 @@ public class Solution {
                 int currPos = queue.pollFirst();
                 if(currPos == destinationPos){
                     return true;
-                }
-                else{
+                }else{
                     for(int[] offset: offsets){
                         int nextY = currPos / width;
                         int nextX = currPos % width;
-                        while(nextX < width && nextX >= 0 &&
-                              nextY < depth && nextY >= 0 &&
-                              maze[nextY][nextX] == 0){
+                        while(nextX < width && nextX >= 0 && nextY < depth && nextY >= 0 && maze[nextY][nextX] == 0){
                             nextY = nextY + offset[0];
                             nextX = nextX + offset[1];
                         };
@@ -57,9 +48,8 @@ public class Solution {
         }
         return false;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
         int[][] maze = {{0, 0, 1, 0, 0},
                         {0, 0, 0, 0, 0},
                         {0, 0, 0, 1, 0},
@@ -67,9 +57,6 @@ public class Solution {
                         {0, 0, 0, 0, 0}};
         int[] start = {0, 4};
         int[] destination = {4, 4};
-        boolean hasPath;
-
-        sol = new Solution();
 
         System.out.println("maze: ");
         for(int[] row: maze){
@@ -77,8 +64,7 @@ public class Solution {
         }
         System.out.println("start: " + Arrays.toString(start));
         System.out.println("destination: " + Arrays.toString(destination));
-
-        hasPath = sol.hasPath(maze, start, destination);
-        System.out.println("hasPath: " + hasPath);
+        Solution sol = new Solution();
+        System.out.println("hasPath: " + sol.hasPath(maze, start, destination));
     }
 }
