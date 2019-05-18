@@ -1,7 +1,6 @@
-/* Two pointers: Time:O(n^2), Space:O(1)
- * 1. Have two pointers left and right
- * 2. If (a >= 0), put answer[i] from (size - 1), and compare quadratic value of left and right to determine shift which one. It's like merge sort
- * 3. Otherwise, put answer[i] from 0
+/* Dynamic programming: Time:O(n*m), Space:O(m)
+ * 1. dp[y][x] = the path# ending at (y, x)
+ * 2. In general, dp[y][x] = dp[y - 1][x] + dp[y][x - 1]
  */
 
 import java.util.*;
