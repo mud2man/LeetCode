@@ -1,9 +1,9 @@
 /* Use preorder: TimeO(n), SpaceO(n)
- * 1. Serialize with preorder traversal, and denote Null pointer with string "null"
+ * 1. Serialize with preorder traversal, and denote Null pointer with string "#"
  * 2. Have a variable" top" to store the actual top node, and the virtual stack is (stack + top)
- * 2. Retrieve tree node by visiting "data" from the 0-th position
- * 3. push null or newNode into virtual stack (stack + top)
- * 4. pop stack if the top 2 element of virtual stack are null
+ * 3. Retrieve tree node by visiting "data" from the 0-th position
+ * 4. push null or newNode into virtual stack (stack + top)
+ * 5. pop stack if the top 2 element of virtual stack are null
  */
 
 import java.util.*; // Stack
@@ -17,43 +17,43 @@ class TreeNode {
 }
 
 public class Codec {
-    private void preOrder(TreeNode root, StringBuilder preOrderStr){
-        if(root == null){
-            preOrderStr.append("null");
-            preOrderStr.append(',');
-            return;
-        }
-        preOrderStr.append(Integer.toString(root.val));
-        preOrderStr.append(',');
-        preOrder(root.left, preOrderStr);
-        preOrder(root.right, preOrderStr);
-    }
-    
     // Encodes a tree to a single string.
     public String serialize(TreeNode root) {
         StringBuilder preOrderStr = new StringBuilder("");
-        preOrder(root, preOrderStr);
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        TreeNode dummy = new TreeNode(0);
+        dummy.right = root;
+        stack.add(dummy);
+        while(!stack.isEmpty()){
+            TreeNode node = stack.pollLast();
+            if(node.right == null){
+                preOrderStr.append("#_");
+            }else{
+                node = node.right;
+                while(node != null){
+                    stack.add(node);
+                    preOrderStr.append(Integer.toString(node.val) + "_");
+                    node = node.left;
+                }
+                preOrderStr.append("#_");
+            }
+        }
         return preOrderStr.toString();
     }
 
     // Decodes your encoded data to tree.
     public TreeNode deserialize(String data) {
-        String[] preOrderValues = data.split(",");
-        if(preOrderValues[0].equals("null")){
-            return null;
-        }
-        
-        TreeNode root = new TreeNode(Integer.parseInt(preOrderValues[0]));
+        String[] preOrderValues = data.split("_");
+        TreeNode root = preOrderValues[0].equals("#")? null: new TreeNode(Integer.parseInt(preOrderValues[0]));
         TreeNode top = root;
         Deque<TreeNode> stack = new LinkedList<TreeNode>();
         for(int index = 1; index < preOrderValues.length; ++index){
             String nodeString = preOrderValues[index];
             //push null or newNode into virtual stack (stack + top)
-            if(nodeString.equals("null")){
+            if(nodeString.equals("#")){
                 if(top == null){
                     stack.pollLast();
-                }
-                else{
+                }else{
                     stack.add(top);
                     top = null;
                 }
@@ -63,8 +63,7 @@ public class Codec {
                 if(top == null){
                     stack.pollLast().right = newNode;
                     top = newNode;
-                }
-                else{
+                }else{
                     top.left = newNode;
                     stack.add(top);
                     top = newNode;
@@ -75,9 +74,6 @@ public class Codec {
     }
   
     public static void main(String[] args){
-        TreeNode root;
-        Codec codec;
-        
         /* Generate a input tree
          *     8
          *    / \
@@ -87,7 +83,7 @@ public class Codec {
          *    / \  /
          *   4   7 13 
          */
-        root = new TreeNode(8);
+        TreeNode root = new TreeNode(8);
         root.left = new TreeNode(3);
         root.right = new TreeNode(10);
         root.left.left = new TreeNode(1);
@@ -96,8 +92,7 @@ public class Codec {
         root.left.right.left = new TreeNode(4);
         root.left.right.right = new TreeNode(7);
         root.right.right.left = new TreeNode(13);
-
-        codec = new Codec();
+        Codec codec = new Codec();
         codec.deserialize(codec.serialize(root));    
     }
 }
