@@ -49,12 +49,9 @@ public class Solution {
     }
  
     public static void main(String[] args){
-        Solution sol;
         int[] nums = {3, 2, 1, 5, 6, 4};
         int k = 2;
-        
-        sol = new Solution();
-
+        Solution sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("k: " + k);
         System.out.println("Kth largest: " + sol.findKthLargest(nums, k));
