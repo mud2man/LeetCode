@@ -18,12 +18,12 @@ public class Solution {
         }
     }
     
-    public double[] calcEquation(String[][] equations, double[] values, String[][] queries) {
-        HashMap<String, Integer> indexMap = new HashMap<String, Integer>();
+    public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+        Map<String, Integer> indexMap = new HashMap<String, Integer>();
         int size = 0;
-        for(String[] equation: equations){
-            if(!indexMap.containsKey(equation[0])) {indexMap.put(equation[0], size++);}
-            if(!indexMap.containsKey(equation[1])) {indexMap.put(equation[1], size++);}
+        for(List<String> equation: equations){
+            indexMap.putIfAbsent(equation.get(0), size++);
+            indexMap.putIfAbsent(equation.get(1), size++);
         }
         
         double[][] paths = new double[size][size];
@@ -33,50 +33,36 @@ public class Solution {
             }
         }
         
-        for(int i = 0; i < equations.length; ++i){
-            int source = indexMap.get(equations[i][0]);
-            int destination = indexMap.get(equations[i][1]);
+        for(int i = 0; i < equations.size(); ++i){
+            int source = indexMap.get(equations.get(i).get(0));
+            int destination = indexMap.get(equations.get(i).get(1));
             paths[source][destination] = values[i];
             paths[destination][source] = 1 / values[i];
         }
         
         floydWarshall(paths);
-        
-        double[] results = new double[queries.length];
-        for(int i = 0; i < queries.length; ++i){
-            if(!indexMap.containsKey(queries[i][0]) || !indexMap.containsKey(queries[i][1])){
+        double[] results = new double[queries.size()];
+        for(int i = 0; i < queries.size(); ++i){
+            String source = queries.get(i).get(0);
+            String destination = queries.get(i).get(1);
+            if(!indexMap.containsKey(source) || !indexMap.containsKey(destination)){
                 results[i] = -1.0;
             }
             else{
-                int source = indexMap.get(queries[i][0]);
-                int destination = indexMap.get(queries[i][1]);
-                results[i] = paths[source][destination];
+                results[i] = paths[indexMap.get(source)][indexMap.get(destination)];
             }
         }
-        
         return results;
     }
-     
+ 
     public static void main(String[] args){
-        Solution sol;
-        String[][] equations = {{"a", "b"}, {"b", "c"}};
+        List<List<String>> equations = Arrays.asList(Arrays.asList("a", "b"), Arrays.asList("b", "c"));
         double[] values = {2.0, 3.0};
-        String[][] queries = {{"a", "c"}, {"b", "a"}, {"a", "e"}, {"a", "a"}, {"x", "x"}};
-        
-        sol = new Solution();
-
-        System.out.println("equations: ");
-        for(String[] equation: equations){
-            System.out.println(Arrays.toString(equation));
-        }
-
+        List<List<String>> queries = Arrays.asList(Arrays.asList("a", "c"), Arrays.asList("b", "a"), Arrays.asList("a", "e"), Arrays.asList("a", "a"));
+        Solution sol = new Solution();
+        System.out.println("equations: " + equations);
         System.out.println("values: " + Arrays.toString(values));
-
-        System.out.println("queries: ");
-        for(String[] query: queries){
-            System.out.println(Arrays.toString(query));
-        }
-
+        System.out.println("queries: " + queries);
         System.out.println("results: " + Arrays.toString(sol.calcEquation(equations, values, queries)));
     }
 }
