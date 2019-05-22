@@ -15,7 +15,6 @@ public class Solution{
         int maxCount = 0;
         HashMap<Integer, Integer> edgeMap = new HashMap<Integer, Integer>();
         int rowLength = 0;
-        
         for(Integer num: wall.get(0)){
             rowLength += num;
         }
@@ -31,12 +30,10 @@ public class Solution{
                 }
             }
         }
-        
         return wall.size() - maxCount;
     }
  
     public static void main(String[] args){
-        Solution sol;
         List<List<Integer>> wall = new ArrayList<List<Integer>>();
         wall.add(Arrays.asList(1, 2, 2, 1));
         wall.add(Arrays.asList(3, 1, 2));
@@ -44,8 +41,7 @@ public class Solution{
         wall.add(Arrays.asList(2, 4));
         wall.add(Arrays.asList(3, 1, 2));
         wall.add(Arrays.asList(1, 3, 1, 1));
-        
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("wall: " + wall);
         System.out.println("the least number of crossing bricks: " + sol.leastBricks(wall));
     }
