@@ -25,13 +25,14 @@ import java.util.*;
 public class NestedIterator implements Iterator<Integer> {
     Integer next;
     Deque<Iterator<NestedInteger>> stack;
+    Integer dummy;
     public NestedIterator(List<NestedInteger> nestedList) {
         stack = new LinkedList<>();
+        dummy = new Integer(0);
+        next = dummy;
         NestedInteger nestedInteger = null;
-        if(!nestedList.isEmpty()){
-            stack.add(nestedList.iterator());
-            nestedInteger = stack.peekLast().next();
-        }
+        stack.add(nestedList.iterator());
+        nestedInteger = stack.peekLast().hasNext()? stack.peekLast().next(): null;
         while(nestedInteger != null && !nestedInteger.isInteger() && !nestedInteger.getList().isEmpty()){
             stack.add(nestedInteger.getList().iterator());
             nestedInteger = stack.peekLast().next();
@@ -55,9 +56,9 @@ public class NestedIterator implements Iterator<Integer> {
                 nextNext = nestedInteger.isInteger()? nestedInteger.getInteger(): null;
             }
         }
-        Integer ret = next;
+        Integer prevNext = next;
         next = nextNext;
-        return (ret == null)? nextNext: ret;
+        return (prevNext == dummy)? nextNext: prevNext;
     }
 
     @Override
