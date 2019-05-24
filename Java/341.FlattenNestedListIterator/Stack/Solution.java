@@ -1,4 +1,4 @@
-/* stack: O(n)
+/* Stack: Time:O(n^2)
  * 1. Use stack to store the nestedList
  * 2. For hasNext(), check if top is an integer, otherwise, retrieve the nestedList and push then into stack
  * 3. For next(), just return top.getInteger()
@@ -53,9 +53,3 @@ public class NestedIterator implements Iterator<Integer> {
         return false;
     }
 }
-
-/**
- * Your NestedIterator object will be instantiated and called as such:
- * NestedIterator i = new NestedIterator(nestedList);
- * while (i.hasNext()) v[f()] = i.next();
- */

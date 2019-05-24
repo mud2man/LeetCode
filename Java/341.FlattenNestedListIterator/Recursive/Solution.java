@@ -52,9 +52,3 @@ public class NestedIterator implements Iterator<Integer> {
         return (idx < list.size());
     }
 }
-
-/**
- * Your NestedIterator object will be instantiated and called as such:
- * NestedIterator i = new NestedIterator(nestedList);
- * while (i.hasNext()) v[f()] = i.next();
- */
