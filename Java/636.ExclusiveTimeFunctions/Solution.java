@@ -1,15 +1,15 @@
 /* Stack: O(n)
- * 1. Have a Stack, and store pair {startTime, period}
- * 2. end time will be aligned with start time as the start of second
- * 3. When the log is start, do push, and update the "period" of the current "top"
- * 4. When the log is end, do pop, and update the "startTime" of the current "top" with endTime
+ * 1. Have a "stack", and store pair {current time, executed period}
+ * 2. end time will be aligned to start time as the start of second
+ * 3. When the log is start, do push, and update the "executed period" of the current "top"
+ * 4. When the log is end, do pop, and update the "current time" of the current "top" with endTime
  */
 
 import java.util.*;
 
 public class Solution{
     public int[] exclusiveTime(int n, List<String> logs) {
-        Deque<int[]> stack = new LinkedList<>(); //{startTime, period}
+        Deque<int[]> stack = new LinkedList<>(); //{current time, executed period}
         int[] times = new int[n];
         for(String log: logs){
             String[] filed = log.split(":");
@@ -35,10 +35,9 @@ public class Solution{
     }
 
     public static void main(String[] args){
-        Solution sol;
         int n = 2;
         List<String> logs = new ArrayList<String>(Arrays.asList("0:start:0", "1:start:2", "1:end:5", "0:end:6"));
-        sol = new Solution();
+        Solution sol = new Solution();
 
         System.out.println("n: " + n);
         System.out.println("logs: " + logs);
