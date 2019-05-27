@@ -1,4 +1,4 @@
-/* Hash: O(n*m), where n = string#, m = length of the longest string
+/* Hash: Time:O(n*m) Space:O(n*m), where n = string#, m = length of the longest string
  * 1. Find the identity of every string by shifting the first character to 'a'. e.g., "ba" => "az", "bcd" => "abc"
  * 2. Use hashmap to catagorize these strings by the identity
  */
