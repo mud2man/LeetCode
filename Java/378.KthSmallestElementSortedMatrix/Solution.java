@@ -6,15 +6,12 @@
 import java.util.*;
 
 public class Solution{
-    private int getLessEquelCount(int[][] matrix, int target){
-        int y = matrix.length - 1;
+    private int getLessOrEquelCount(int[][] matrix, int target){
         int count = 0;
-        
-        for(int x = 0; x < matrix[0].length; ++x){
+        for(int x = 0, y = matrix.length - 1; x < matrix[0].length; ++x){
             while(y >= 0 && matrix[y][x] > target){
                 --y;
             }
-            
             if(y == -1){
                 break;
             }
@@ -23,15 +20,12 @@ public class Solution{
         return count;
     }
     
-    private int getMaxFromLessEquelNums(int[][] matrix, int target){
-        int y = matrix.length - 1;
+    private int getMaxFromLessOrEquelNums(int[][] matrix, int target){
         int max = Integer.MIN_VALUE;
-        
-        for(int x = 0; x < matrix[0].length; ++x){
+        for(int x = 0, y = matrix.length - 1; x < matrix[0].length; ++x){
             while(y >= 0 && matrix[y][x] > target){
                 --y;
             }
-            
             if(y == -1){
                 break;
             }
@@ -48,35 +42,30 @@ public class Solution{
         
         while(lb <= ub){
             int mid = (int)(((long)lb + (long)ub) / 2);
-            int count = getLessEquelCount(matrix, mid);
+            int count = getLessOrEquelCount(matrix, mid);
             if(count >= k){
                 ub = mid - 1;
-            }
-            else{
+            }else{
                 lb = mid + 1;
             }
         }
         
-        int Kth = getMaxFromLessEquelNums(matrix, lb);
+        int Kth = getMaxFromLessOrEquelNums(matrix, lb);
         return Kth;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        int[][] matrix = {{1, 5, 9}, {10, 11, 13}, {12, 13, 15}};
-        int k;
-        int num;
-
-        k = 8;
-
+        int k = 8;
+        int[][] matrix = {{1, 5, 9}, 
+                          {10, 11, 13}, 
+                          {12, 13, 15}};
         System.out.println("matrix: ");
         for(int[] row: matrix){
             System.out.println(Arrays.toString(row));
         }
 
-        sol = new Solution();
-        num = sol.kthSmallest(matrix, k);
-
+        Solution sol = new Solution();
+        int num = sol.kthSmallest(matrix, k);
         System.out.println("");
         System.out.println(k+  "th num: " + num);
     }
