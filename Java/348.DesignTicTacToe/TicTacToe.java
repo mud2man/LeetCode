@@ -1,4 +1,4 @@
-/* HashSet: O(1)
+/* Array: Time:O(1), Space:O(n)
  * 1. Have columns, rows to record the points of every column and row given for player#1 and player#2
  * 2. Have diagnal and anitDiagnal to record the diagnal direction
  * 3. Return (player + 1) if (rows[player][row] == n || columns[player][col] == n || dignal[player] == n || antiDiagnal[player] == n)
