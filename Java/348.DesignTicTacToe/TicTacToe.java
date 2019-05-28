@@ -1,70 +1,26 @@
 /* HashSet: O(1)
- * 1. Have columnsConditions, rowsConditions to record the condition for every column and row
- * 2. Have diagnalTopLeftCondition and diagnalTopRightCondition to record the diagnal direction
- * 3. In class Condion, condition.owner = "Null" means no one occupy, condition.owner = "Impossible" means impossible to success
- * 4. If condition.remains is empty, return the successful player
+ * 1. Have columns, rows to record the points of every column and row given for player#1 and player#2
+ * 2. Have diagnal and anitDiagnal to record the diagnal direction
+ * 3. Return (player + 1) if (rows[player][row] == n || columns[player][col] == n || dignal[player] == n || antiDiagnal[player] == n)
+ * 4. Otherwise, return 0
  */          
 
 import java.util.*; // Stack
 
 public class TicTacToe{
+    int[][] rows;
+    int[][] columns;
+    int[] dignal;
+    int[] antiDiagnal;
+    int n;
+    
     /** Initialize your data structure here. */
-    private class Condition{
-        String owner;
-        Set<Integer> remains;
-        Condition(String o, Set<Integer> r){owner = o; remains = r;}
-    }
-    
-    private Condition[] columnsConditions;
-    private Condition[] rowsConditions;
-    private Condition diagnalTopLeftCondition;
-    private Condition diagnalTopRightCondition;
-    private int width;
-    
     public TicTacToe(int n) {
-        width = n;
-        
-        columnsConditions = new Condition[n];
-        for(int column = 0; column < n; ++column){
-            String owner = new String("Null");
-            Set<Integer> remains = new HashSet<Integer>();
-            int position = column;
-            for(int i = 0; i < n; ++i){
-                remains.add(position);
-                position = position + n;
-            }
-            columnsConditions[column] = new Condition(owner, remains);
-        }
-        
-        rowsConditions = new Condition[n];
-        for(int row = 0; row < n; ++row){
-            String owner = new String("Null");
-            Set<Integer> remains = new HashSet<Integer>();
-            int position = row * n;
-            for(int i = 0; i < n; ++i){
-                remains.add(position);
-                position = position + 1;
-            }
-            rowsConditions[row] = new Condition(owner, remains);
-        }
-        
-        String owner = new String("Null");
-        Set<Integer> remains = new HashSet<Integer>();
-        int position = 0;
-        for(int column = 0; column < n; ++column){
-            remains.add(position);
-            position = position + 1 + n;
-        }
-        diagnalTopLeftCondition = new Condition(owner, remains);
-        
-        owner = new String("Null");
-        remains = new HashSet<Integer>();
-        position = n - 1;
-        for(int column = n - 1; column >= 0; --column){
-            remains.add(position);
-            position = position - 1 + n;
-        }
-        diagnalTopRightCondition = new Condition(owner, remains);   
+        this.rows = new int[2][n];
+        this.columns = new int[2][n];
+        this.dignal = new int[2];
+        this.antiDiagnal = new int[2];
+        this.n = n;
     }
     
     /** Player {player} makes a move at ({row}, {col}).
@@ -76,45 +32,22 @@ public class TicTacToe{
                 1: Player 1 wins.
                 2: Player 2 wins. */
     public int move(int row, int col, int player) {
-        Condition[] conditions = new Condition[]{columnsConditions[col], rowsConditions[row], 
-                                                 diagnalTopLeftCondition, diagnalTopRightCondition};
-        
-        int position = col + row * width;
-        String currPlayer = Integer.toString(player);
-        for(Condition condition: conditions){
-            if(condition.owner.equals("Null")){
-                if(condition.remains.contains(position)){
-                    condition.remains.remove(position);
-                    condition.owner = currPlayer;
-                }
-            }
-            else if(condition.owner.equals(currPlayer)){
-                if(condition.remains.contains(position)){
-                    condition.remains.remove(position);
-                    if(condition.remains.isEmpty()){
-                        return player;
-                    }
-                }
-            }
-            else{
-                if(condition.remains.contains(position)){
-                    condition.owner = new String("Impossible");
-                    condition.remains.remove(position);
-                }
-            }
+        player--;
+        rows[player][row]++;
+        columns[player][col]++;
+        dignal[player] += (row == col)? 1: 0;
+        antiDiagnal[player] += ((row + col) == (n - 1))? 1: 0;
+        if(rows[player][row] == n || columns[player][col] == n || dignal[player] == n || antiDiagnal[player] == n){
+            return player + 1;
         }
         return 0;
     }
 
     public static void main(String[] args){
         TicTacToe tic = new TicTacToe(3);
-        int row;
-        int col;
-        int player;
-        
-        row = 0; 
-        col = 0;
-        player = 1;
+        int row = 0; 
+        int col = 0;
+        int player = 1;
         System.out.println("row:" + row + ", col:" + col + ", player:" + player + "result: " + tic.move(row, col, player));
         
         row = 0; 
