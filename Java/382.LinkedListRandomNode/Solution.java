@@ -24,13 +24,9 @@ public class Solution{
     /** Returns a random node's value. */
     public int getRandom() {
         Random rand = new Random(); 
-        int val;
-        ListNode node;
-        int idx;
-        
-        val = 0;
-        node = head;
-        idx = 0;
+        int val = 0;
+        ListNode node = head;
+        int idx = 0;
         while(node != null){
             val = (rand.nextInt(idx + 1) == 0)? node.val: val;
             idx++;
@@ -38,20 +34,15 @@ public class Solution{
         }
         return val;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        ListNode head;
-        ListNode node;
-        int x;
-
-        head = new ListNode(1);
+        ListNode head = new ListNode(1);
         head.next = new ListNode(2);
         head.next.next = new ListNode(3);
-        sol = new Solution(head);
+        Solution sol = new Solution(head);
 
         System.out.print("list: ");
-        node = head;
+        ListNode node = head;
         while(node != null){
             System.out.print(node.val + "->");
             node = node.next;
