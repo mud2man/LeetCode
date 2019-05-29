@@ -1,13 +1,12 @@
-/* Math: O(n)
+/* Floyd's Tortoise: Time:O(n), Space:O(1)
  *
  *               r 
- *            /    \|
+ *            /    \
  *   *---s---*-m-*--*
  *
- * 1. Assume fast pointer catch up slow pointer on s + m
- * 2. When fastPtr.next.next == slowPt, s + m + nr = 2s + 2m => nr - m = s
- * 3. Or when fastPtr.next == slowPtr, s + m - 1 + nr = 2s + 2m - 1 => nr - m = s
- * 3. Hence, the pointer starting from head take s  steps to meet the one starting from (s + m) which takes s steps
+ * 1. We can prove that fast pointer always catch up slow pointer, assume it happens on s + m
+ * 2. When (fastPtr == slowPt), s + m + nr = 2s + 2m => nr - m = s
+ * 3. Hence, the pointer starting from head take s steps to meet the one starting from (s + m) which takes (nr - m) = s steps
  * 4. And the meeting point is the starting pointer of the cycle
  */
 
@@ -23,19 +22,17 @@ class ListNode {
  
 public class Solution{
     public ListNode detectCycle(ListNode head) {
-        ListNode slowPtr = (head != null)? head.next: null;
-        ListNode fastPtr = (head != null && head.next != null)? head.next.next: null;
+        ListNode slowPtr = head;
+        ListNode fastPtr = head;
         ListNode intersectPtr = null;
         
         while(fastPtr != null){
             slowPtr = slowPtr.next;
-            if(fastPtr != null && fastPtr.next != null){
-                if(fastPtr.next == slowPtr || fastPtr.next.next == slowPtr){
-                    intersectPtr = slowPtr;
-                    break;
-                }
-            }
             fastPtr = (fastPtr != null && fastPtr.next != null)? fastPtr.next.next: null;
+            if(fastPtr == slowPtr){
+                intersectPtr = fastPtr;
+                break;
+            }
         }
         
         if(intersectPtr == null){
@@ -51,15 +48,9 @@ public class Solution{
             return ptr1;
         }
     }
-
+  
     public static void main(String[] args){
-        Solution sol = new Solution();
-        ListNode head;
-        ListNode node;
-        int m, n;
-
-        sol = new Solution();
-        head = new ListNode(1);
+        ListNode head = new ListNode(1);
         head.next = new ListNode(2);
         head.next.next = new ListNode(3);
         head.next.next.next = new ListNode(4);
@@ -67,14 +58,15 @@ public class Solution{
         head.next.next.next.next.next = head.next;
         
         System.out.print("list: ");
-        node = head;
+        ListNode node = head;
         for(int i = 0; i < 6; ++i){
             System.out.print(node.val + "->");
             node = node.next;
         }
         System.out.println("");
 
+        Solution sol = new Solution();
         node = sol.detectCycle(head);
-        System.out.println("the starting pinter: " + node.val);
+        System.out.println("the starting pointer: " + node.val);
     }
 }
