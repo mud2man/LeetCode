@@ -1,38 +1,37 @@
-/* Binary search: O(n*logn)
- * 1. Because the range is between 1 and n, we can binary search with lb = 1, hb = n
- * 2. If the number of elements <= mid is bigger than mid, we learn that the duplicated number is between 1 and mid, set hb = mid -1
- * 3. Otherwise, set lb = mid + 1
+/* Floyd's Tortoise: Time:O(n), Space:O(1). It's the same as LeetCode#142
+ *
+ *               r 
+ *            /    \
+ *   *---s---*-m-*--*
+ *
+ * 0. Let's start at 0, and next step of ptr is nums[ptr]. We can reformulate this problem to LeetCode#142
+ * 1. We can prove that fast pointer always catch up slow pointer, assume it happens on s + m
+ * 2. When (fastIdx == slowIdx), s + m + nr = 2s + 2m => nr - m = s
+ * 3. Hence, the pointer starting from head take s steps to meet the one starting from (s + m) which takes (nr - m) = s steps
+ * 4. And the meeting point is the starting pointer of the cycle
  */
 
 import java.util.*;
 
 public class Solution{
-    private int getCount(int[] nums, int target){
-        int count = 0;
-        for(int num: nums){
-            count = (num <= target)? count + 1: count;
-        }
-        return count;
-    }
-    
     public int findDuplicate(int[] nums) {
-        int hb = nums.length - 1;
-        int lb = 1;
+        int slowIdx = 0;
+        int fastIdx = 0;
+        do{
+            slowIdx = nums[slowIdx];
+            fastIdx = nums[nums[fastIdx]];
+        }while(slowIdx != fastIdx);
         
-        while(lb <= hb){
-            int mid = (lb + hb) / 2;
-            int equalLessCount = getCount(nums, mid);
-            if(equalLessCount > mid){
-                hb = mid - 1;
-            }
-            else{
-                lb = mid + 1;
-            }
+        int intersectionIdx = slowIdx;
+        int ptr0 = 0;
+        int ptr1 = intersectionIdx;
+        while(ptr0 != ptr1){
+            ptr0 = nums[ptr0];
+            ptr1 = nums[ptr1];
         }
-        
-        return lb;
+        return ptr0;
     }
- 
+  
     public static void main(String[] args){
         Solution sol;
         int[] nums = {1, 3, 4, 2, 2};
