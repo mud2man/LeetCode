@@ -1,4 +1,4 @@
-/* Stack: O(n)
+/* Stack: Time:O(n), Space:O(n)
  */
 
 import java.util.*; // Stack
