@@ -1,4 +1,4 @@
-/* List: Time:O(1), Space:O(n)
+/* List: Time:O(1), Space:O(n). We can use an array, and "front", "rear" pointer
  * 1. Have a private class "Node" to do circular deque
  */
 
