@@ -19,7 +19,7 @@ import java.util.*;
 public class Solution {
     public int countSubstrings(String s) {
         StringBuilder sb = new StringBuilder("");
-        sb.append('*');
+        sb.append('#');
         for(char c : s.toCharArray()){
             sb.append(c);
             sb.append('#');
