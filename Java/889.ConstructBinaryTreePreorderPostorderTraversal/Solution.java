@@ -1,8 +1,12 @@
-/* DFS: Time:O(n^2), Space:O(n)
+/* DFS: Time:O(n), Space:O(n)
  * 1. Use dfs to construct a tree
  * 2. In dfs, if preStart > preEnd, retnrn null.
  * 3. If preStart == preEnd, return the single node
  * 4. Otherwise, find the length of left sub-tree, and append root.left/root.right by calling dfs with the left range nad right range
+ * 5. Step4 works only all number are distinct
+ *
+ * ex: pre={1, 2, 4, 5, 3, 6, 7}, post={4, 5, 2, 6, 7, 3, 1}
+ *             <  L  >  <  R  >         <  L  >  <  R  > 
  */
 
 import java.util.*; // Stack
@@ -16,33 +20,30 @@ class TreeNode {
 }
 
 public class Solution {
-    private TreeNode dfs(int[] pre, int preStart, int preEnd, int[] post, int postStart, int postEnd){
+    private TreeNode dfs(int[] pre, int preStart, int preEnd, int[] post, int postStart, int postEnd, Map<Integer, Integer> num2Index){
         if(preStart > preEnd){
             return null;
-        }
-        else if(preStart == preEnd){
+        }else if(preStart == preEnd){
             return new TreeNode(pre[preStart]);
         }
         
         TreeNode root = new TreeNode(pre[preStart]);
-        int leftLen = 0;
-        for(int i = postStart; i <= postEnd; ++i){
-            if(post[i] == pre[preStart + 1]){
-                break;
-            }
-            else{
-                leftLen++;
-            }
-        }
-        root.left = dfs(pre, preStart + 1, preStart + leftLen + 1, post, postStart, postStart + leftLen);
-        root.right = dfs(pre, preStart + leftLen + 2, preEnd, post, postStart + leftLen + 1, postEnd);
+        int preLeftTreeRootVal = pre[preStart + 1];
+        int postLeftTreeLastIndex = num2Index.get(preLeftTreeRootVal);
+        int leftTreeLen = postLeftTreeLastIndex - postStart + 1;
+        root.left = dfs(pre, preStart + 1, preStart + leftTreeLen, post, postStart, postStart + leftTreeLen - 1, num2Index);
+        root.right = dfs(pre, preStart + leftTreeLen + 1, preEnd, post, postStart + leftTreeLen, postEnd, num2Index);
         return root;
     }
     
     public TreeNode constructFromPrePost(int[] pre, int[] post) {
-        return dfs(pre, 0, pre.length - 1, post, 0, post.length - 1);
+        Map<Integer, Integer> num2Index = new HashMap<>();
+        for(int i = 0; i < post.length; ++i){
+            num2Index.put(post[i], i);
+        }
+        return dfs(pre, 0, pre.length - 1, post, 0, post.length - 1, num2Index);
     }
- 
+
     private void preorder(TreeNode root){
         if(root == null){
             return;
