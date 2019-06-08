@@ -14,30 +14,25 @@ public class Solution {
             int right = (mid < nums.length - 1)? nums[mid + 1]: nums[mid] + 1;
             if(nums[mid] != left && nums[mid] != right){
                 return nums[mid];
-            }
-            else if(nums[mid] == left){
-                int leftCount = mid - 1 - lb;
+            }else if(nums[mid] == left){
+                int leftCount = mid + 1;
                 if(leftCount % 2 == 1){
                     hb = mid - 2;
-                }
-                else{
+                }else{
                     lb = mid + 1;
                 }
-            }
-            else{
-                int leftCount = mid - lb;
+            }else{
+                int leftCount = mid;
                 if(leftCount % 2 == 1){
                     hb = mid - 1;
-                }
-                else{
+                }else{
                     lb = mid + 2;
                 }
             }
-        }
-        
+        } 
         //dead code
         return 0;
-    }  
+    }
 
     public static void main(String[] args){
         Solution sol = new Solution();
