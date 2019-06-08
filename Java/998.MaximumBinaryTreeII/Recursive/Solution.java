@@ -18,13 +18,11 @@ public class Solution {
     private void insert(TreeNode prev, TreeNode curr, int val){
         if(curr == null){
             prev.right = new TreeNode(val);
-        }
-        else if(val > curr.val){
+        }else if(val > curr.val){
             TreeNode newNode = new TreeNode(val);
             prev.right = newNode;
             newNode.left = curr;
-        }
-        else{
+        }else{
             insert(curr, curr.right, val);
         }
     }
