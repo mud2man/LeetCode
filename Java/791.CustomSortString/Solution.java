@@ -1,46 +1,34 @@
-/* Time:O(nlogn), Space:O(m), where n is the length of T, m is the length of S
- * 1. Have a map to map chracter to its position in S, and use it to compare
+/* Time:O(n + m), Space:O(1), where n is the length of T, m is the length of S
+ * 1. Treat "S" an order list, and get the character count "count" from "T"
+ * 2. Scan the order list "S" from left, and append count[c] times to the "answer"
+ * 3. Append the un-scanned character from "count" to answer, which their order doesn't matter
  */
 
 import java.util.*;
 
 public class Solution{
-    private class Node{
-        int position;
-        char character;
-        Node(int p, char c){position = p; character = c;}
-    }
-    
-    private class CharComparator implements Comparator<Node>{
-        public int compare(Node x, Node y){
-            return x.position - y.position;
-        }
-    } 
-    
     public String customSortString(String S, String T) {
-        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        int[] count = new int[26];
+        for(char c: T.toCharArray()){
+            count[c - 'a']++;
+        }
+        
+        StringBuilder answer = new StringBuilder();
         for(int i = 0; i < S.length(); ++i){
-            map.put(S.charAt(i), i);
-        }
-        
-        List<Node> tList = new ArrayList<Node>();
-        for(int i = 0; i < T.length(); ++i){
-            char c = T.charAt(i);
-            if(map.containsKey(c)){
-                tList.add(new Node(map.get(c), c));
+            char c = S.charAt(i);
+            for(int j = 0; j < count[c - 'a']; ++j){
+                answer.append(c);
             }
-            else{
-                tList.add(new Node(S.length(), c));
+            count[c - 'a'] = 0;
+        }
+        
+        for(int i = 0; i < 26; ++i){
+            char c = (char)(i + 'a');
+            for(int j = 0; j < count[i]; ++j){
+                answer.append(c);
             }
         }
-        
-        Collections.sort(tList, new CharComparator());
-        
-        StringBuilder ret = new StringBuilder("");
-        for(int i = 0; i < tList.size(); ++i){
-            ret.append(tList.get(i).character);   
-        }
-        return ret.toString();
+        return answer.toString();
     }
   
     public static void main(String[] args){
