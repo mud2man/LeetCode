@@ -6,48 +6,30 @@
 import java.util.*; // Stack
 
 public class Solution {
-        public int countBattleships(char[][] board) {
+    public int countBattleships(char[][] board) {
         int count = 0;
-        
-        if(board.length == 0 || board[0].length == 0){
-            return 0;
-        } 
-        
         for(int y = 0; y < board.length; ++y){
-            if(y == 0 && board[0][0] == 'X'){
-                count++;
-            }
-            else if(y > 0 && board[y][0] == 'X' && board[y - 1][0] == '.'){
-                count++;
-            }
-            
-            for(int x = 1; x < board[0].length; ++x){
+            for(int x = 0; x < board[0].length; ++x){
                 if(board[y][x] == 'X'){
-                    if(y == 0 && board[0][x - 1] == '.'){
-                        count++;
-                    }
-                    else if(y > 0 && board[y][x - 1] == '.' && board[y - 1][x] == '.'){
-                        count++;
-                    }
+                    boolean isXLeft = (x == 0)? false: board[y][x - 1] == 'X';
+                    boolean isXUp = (y == 0)? false: board[y - 1][x] == 'X';
+                    count += (!isXLeft && !isXUp)? 1: 0;
                 }
             }
         }
         return count;
     }
- 
+  
     public static void main(String[] args){
-        Solution sol;
         char board[][] = {{'X', '.', '.', 'X'},
                           {'.', '.', '.', 'X'},
                           {'.', '.', '.', 'X'}};
-
-        sol = new Solution();
+        Solution sol = new Solution();
 
         System.out.println("board: ");
         for(char[] row: board){
             System.out.println(Arrays.toString(row));
         }
-
         System.out.println("battleship#: " + sol.countBattleships(board));
 	}
 }
