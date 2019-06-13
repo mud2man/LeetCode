@@ -1,6 +1,8 @@
-/* Iteration: Time:O(n^2), Space:O(1).
+/* Iteration: Time:O(n), Space:O(1).
  * 1. Traverse tree by taking right subtree as next step
  * 2. Attach left subtree to the rightest leave of right subtree
+ *
+ * Time Complexity: All node was visied by "rightSon" and "curr"  at most once. So the time complexity is O(n)
  */
 
 import java.util.*;
@@ -15,22 +17,27 @@ class TreeNode {
 
 public class Solution {
     public void flatten(TreeNode root) {
-        TreeNode itr = root;
-        while(itr != null){
-            if(itr.left != null){
-                TreeNode right = itr.right;
-                TreeNode inerItr = itr.left;
-                while(inerItr.right != null){
-                    inerItr = inerItr.right;
+        TreeNode curr = root;
+        while(curr != null){
+            TreeNode left = curr.left;
+            if(left == null){
+                curr = curr.right;
+            }else{
+                TreeNode right = curr.right;
+                TreeNode farther = left;
+                TreeNode rightSon = left.right;
+                while(rightSon != null){
+                    farther = rightSon;
+                    rightSon = rightSon.right;
                 }
-                inerItr.right = right;
-                itr.right = itr.left;
-                itr.left = null;
+                farther.right = right;
+                curr.right = left;
+                curr.left = null;
+                curr = curr.right;
             }
-            itr = itr.right;
         }
     }
-     
+
     public void dump(TreeNode root){
         if(root == null){
             return;
