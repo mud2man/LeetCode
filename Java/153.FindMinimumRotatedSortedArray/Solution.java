@@ -24,15 +24,12 @@ public class Solution {
             int right = (mid < nums.length - 1)? nums[mid + 1]: Integer.MAX_VALUE;
             if(nums[mid] <= left && nums[mid] <= right){
                 return nums[mid];
-            }
-            else if(nums[mid] > nums[hb]){
+            }else if(nums[mid] > nums[hb]){
                 lb = mid + 1;
-            }
-            else{
+            }else{
                 hb = mid - 1;
             }
         }
-
         //unreachale
         return 0;
     } 
