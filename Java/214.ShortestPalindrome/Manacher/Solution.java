@@ -1,59 +1,59 @@
 /* Manacher: Time:O(n), Space:O(n). LeetCode has KMP solution
- * 1. Interleave '#' in the input string s, and reverse it
- * 2. In every loop, check if "right" reaches to the end, since the sooner reach to end, the shorter the palindrome  
- * 3. If so, we can generate the according palindrome
+ * 1. Interleave '*' in the input string s, 
+ * 2. In every loop, check if "i == r", since the longer r[i] has radius reaching to 0, the shorter the palindrome  
+ * 3. If so, we can generate the associated palindrome
  */
 
 import java.util.*; // Stack
 
 public class Solution {
     private String genPalindrome(StringBuilder sb, int center){
-        String mid = (center % 2 == 0)? "": sb.substring(center, center + 1);
-        int end = (center % 2 == 0)? center - 1: center - 2;
-        StringBuilder right = new StringBuilder("");
-        for(int i = end; i >= 0; i -= 2){
-            right.append(sb.charAt(i));
+        StringBuilder p = (center % 2 == 1)? new StringBuilder(Character.toString(sb.charAt(center))): new StringBuilder();
+        int right = center + 1;
+        while(right < sb.length()){
+            if(right % 2 == 1){
+                p.insert(0, sb.charAt(right));
+                p.append(sb.charAt(right));
+            }
+            right++;
         }
-        String palindrome = mid + right.toString();
-        right.reverse();
-        palindrome = right + palindrome;
-        return palindrome;
+        return p.toString();
     }
     
     public String shortestPalindrome(String s) {
-        if(s == null || s.equals("")){
+        if(s.length() == 0){
             return "";
         }
-        
-        StringBuilder sb = new StringBuilder("");
-        for(int i = 0; i < s.length(); ++i){
-            sb.append(s.charAt(i));
-            sb.append('#');
+        StringBuilder sb = new StringBuilder("*");
+        for(char c: s.toCharArray()){
+            sb.append(c);
+            sb.append('*');
         }
-        sb.reverse();
         
-        int right = 1;
-        int center = 1;
+        //Manacher
         int[] radius = new int[sb.length()];
-        for(int i = 1; i < sb.length(); ++i){
-            int r = (right > i)? Math.min(radius[2 * center - i], right - i): 0;
+        radius[1] = 1;
+        int center = 1;
+        int right = 1;
+        int keyIdx = 1;
+        for(int i = 2; i < sb.length(); ++i){
+            int r = (right > i)? Math.min(right - i, radius[2 * center - i]): 0;
             while(i + r + 1 < sb.length() && i - r - 1 >= 0 && sb.charAt(i + r + 1) == sb.charAt(i - r - 1)){
                 ++r;
             }
             radius[i] = r;
-                
+            
+            if(i == r){
+                keyIdx = i;
+            }
             if(i + r > right){
                 right = i + r;
                 center = i;
             }
-            
-            if(right == sb.length() - 1){
-                return genPalindrome(sb, center);
-            }
         }
-        return "";
+        return genPalindrome(sb, keyIdx);
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         String s = "aacecaaa"; 
