@@ -41,12 +41,11 @@ public class Solution {
     }
 
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         int[] nums = {1, 5, 3, 6, 4};
         int k = 2;
         int t = 1;
 
-        sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("k: " + k);
         System.out.println("t: " + t);
