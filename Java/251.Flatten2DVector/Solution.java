@@ -1,48 +1,45 @@
 /* Iterator: Time:O(1), Space:O(1)
  * 1. Have two pointer y and x
- * 2. Have "cache" to store the next value
- * 3. Determine if has next by (cache != null)
+ * 2. The next value is v[y][x]
+ * 3. Determine if has next by (y < v.length)
  */
 
 import java.util.*;
 
 public class Solution{
-    int y = 0;
-    int x = 0;
-    Integer cache;
+    int y;
+    int x;
     int[][] v;
-
     public Solution(int[][] v) {
         this.y = 0;
         this.x = 0;
         this.v = v;
-        while(y < v.length && cache == null){
-            while(x < v[y].length && cache == null){
-                cache = v[y][x++];
+        while(y < v.length){
+            if(x < v[y].length){
                 break;
             }
-            x = (cache == null)? 0: x;
-            y += (cache == null)? 1: 0;
+            ++y;
         }
     }
     
     public int next() {
-        Integer temp = this.cache;
+        int next = v[y][x];
+        ++x;
         while(y < v.length){
-            while(x < v[y].length){
-                this.cache = this.v[y][x++];
-                return temp;
+            if(x < v[y].length){
+                break;
+            }else{
+                x = 0;
             }
-            x = 0;
             ++y;
         }
-        this.cache = null;
-        return temp;
+        return next;
     }
     
     public boolean hasNext() {
-        return (cache != null);
-    } 
+        return (y < v.length);
+    }
+ 
     public static void main(String[] args){
         int[][] vec2d = {{1, 2}, {3}, {4}};
         Solution sol = new Solution(vec2d);    
