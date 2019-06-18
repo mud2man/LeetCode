@@ -2,82 +2,86 @@
  * 1. Caculate the number of strobogrammatic number between length of low and high
  * 2. Cut off the answer with the number of strobogrammatic number less than low
  * 3. Cut off the answer with the number of strobogrammatic number larger than high
+ * 4. If the nearest strobogrammatic of low is smaller than low, decrease total count
+ * 5. If the nearest strobogrammatic of high is bigger than high, decrease total count
  */
 
 import java.util.*;
 import java.math.*;
 
 public class Solution{
-    private String fill(String left, int endIdx){
-        char[] map = {'0', '1', ' ', ' ', ' ', ' ', '9', ' ', '8', '6'};
-        StringBuilder right = new StringBuilder("");
-        for(int i = endIdx; i >= 0; --i){
-            char c = left.charAt(i);
-            right.append(map[c - '0']);
+    private int getBoundryCount(String boundry, boolean isLower){
+        char[] map = {'0', '1', '#', '#', '#', '#', '9', '#', '8', '6'};
+        int[][] medianCount = {{0, 1, 2, 2, 2, 2, 2, 2, 2, 3}, {2, 1, 1, 1, 1, 1, 1, 1, 0, 0}};
+        int[][] lsbCount = {{0, 0, 1, 1, 1, 1, 1, 2, 2, 3}, {4, 3, 3, 3, 3, 3, 2, 2, 1, 0}};
+        int[][] middleCount = {{0, 1, 2, 2, 2, 2, 2, 3, 3, 4}, {4, 3, 3, 3, 3, 3, 2, 2, 1, 0}};
+        int len = boundry.length();
+        int end = (len % 2 == 1)? len / 2: len / 2 - 1;
+        int right = (len % 2 == 1)? 3: 1;
+        len /= 2;
+        right *= (len > 0)? (int)Math.pow(5, len - 1): 1;
+        right *= (len > 0)? 4: 1;
+        int left = 0;
+        int tableIdx = isLower? 0: 1;
+        int totalCount = 0;
+        for(int i = 0; i <= end; ++i){
+            char c = boundry.charAt(i);
+            if(i == end && boundry.length() % 2 == 1){
+                left = medianCount[tableIdx][c - '0'];
+                right /= 3;
+            }else if(i == 0){
+                left = lsbCount[tableIdx][c - '0'];
+                right /= 4;
+            }else{
+                left = middleCount[tableIdx][c - '0'];
+                right /= 5;
+            }
+            totalCount += left * right;
+            if(map[c - '0'] == '#'){
+                break;
+            }
         }
-        return left + right.toString();
+        return totalCount;
     }
     
-    private int getBeyondLimit(String boundry, Set<Integer> ends, Set<Integer> middles, Set<Integer> centers, boolean isLower){
-        int[][] middleCount = {{0, 1, 2, 2, 2, 2, 2, 3, 3, 4, 5}, {4, 3, 3, 3, 3, 3, 2, 2, 1, 0}};
-        int[][] endCount = {{0, 0, 1, 1, 1, 1, 1, 2, 2, 3, 4}, {4, 3, 3, 3, 3, 3, 2, 2, 1, 0}};
-        int[][] cneterCount = {{0, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3}, {2, 1, 1, 1, 1, 1, 1, 1, 0, 0}};
-        int count = 0;
-        int base = (boundry.length() % 2 == 1)? 3: 5;
-        int len = boundry.length();
-        int y = isLower? 0: 1;
-        for(int i = 0; i < (len + 1) / 2 ; ++i){
-            int digit = boundry.charAt(i) - '0';
-            int remain = (len - (i + 1) * 2 + 1) / 2 - 1;
-            if(i == 0){
-                count += (remain >= 0)? endCount[y][digit] * (int)Math.pow(5, remain) * base: endCount[y][digit];
-                if(!ends.contains(digit)){
-                    return count;
-                }
-            }
-            else if(len % 2 == 0 || i < (len / 2)){
-                count += (remain >= 0)?middleCount[y][digit]*(int)Math.pow(5, remain)*base: middleCount[y][digit];
-                if(!middles.contains(digit)){
-                    return count;
-                }
-            }
-            else{
-                count += cneterCount[y][digit];
-                if(!centers.contains(digit)){
-                    return count;
-                }
+    private String genStrobogrammatic(String number){
+        char[] map = {'0', '1', '#', '#', '#', '#', '9', '#', '8', '6'};
+        StringBuilder strobogrammatic = new StringBuilder("");
+        for(int i = (number.length() + 1) / 2 - 1; i >= 0; --i){
+            if(map[number.charAt(i) - '0'] == '#'){
+                return "#";
+            }else if(i == (number.length() + 1) / 2 - 1 && number.length() % 2 == 1){
+                strobogrammatic.append(number.charAt(i));
+            }else{
+                char left = number.charAt(i);
+                char right = map[left - '0'];
+                strobogrammatic.insert(0, left);
+                strobogrammatic.append(right);
             }
         }
-        String s = (len%2 == 0)? fill(boundry.substring(0, len/2), len/2 - 1): fill(boundry.substring(0, len/2 + 1), len/2 - 1);
-        return (isLower)? (s.compareTo(boundry) < 0)? count + 1: count: (s.compareTo(boundry) > 0)? count + 1: count;
+        return strobogrammatic.toString();
     }
     
     public int strobogrammaticInRange(String low, String high) {
-        int[] middleCount = {1, 2, 2, 2, 2, 2, 2, 2, 3, 3};
-        int count = 0;
-        if(low.length() > high.length() || (low.length() == high.length() && low.compareTo(high) > 0)){
+        if(new BigInteger(low).compareTo(new BigInteger(high)) > 0){
             return 0;
         }
-        if(low.length() == 1 && high.length() == 1){
-            count += middleCount[Integer.valueOf(high)];
-            count -= (Integer.valueOf(low) == 0)? 0: middleCount[Integer.valueOf(low) - 1];
-            return count;
+        int totalCount = 0;
+        int lowLen = low.length();
+        int highLen = high.length();
+        for(int l = lowLen; l <= highLen; ++l){
+            int len = l;
+            int count = (len % 2 == 1)? 3: 1;
+            len /= 2;
+            count *= (len > 0)? (int)Math.pow(5, len - 1): 1;
+            count *= (len > 0)? 4: 1;
+            totalCount += count; 
         }
-        else if(low.length() == 1){
-            count += middleCount[9];
-            count -= (Integer.valueOf(low) == 0)? 0: middleCount[Integer.valueOf(low) - 1];
-            low = "10";
-        }
-        
-        for(int i = low.length(); i <= high.length(); ++i){
-            count += (i % 2 == 1)? 4 * (int)Math.pow(5, i / 2 - 1) * 3: 4 * (int)Math.pow(5, i / 2 - 1);
-        }
-        Set<Integer> ends = new HashSet<>(Arrays.asList(new Integer[]{1, 6, 8, 9}));
-        Set<Integer> middles = new HashSet<>(Arrays.asList(new Integer[]{0, 1, 6, 8, 9}));
-        Set<Integer> centers = new HashSet<>(Arrays.asList(new Integer[]{0, 1, 8}));
-        count -= getBeyondLimit(low, ends, middles, centers, true);
-        count -= getBeyondLimit(high, ends, middles, centers, false);
-        return count;
+        totalCount -= getBoundryCount(low, true);
+        totalCount -= getBoundryCount(high, false);
+        totalCount -= (!genStrobogrammatic(low).equals("#") && low.compareTo(genStrobogrammatic(low)) > 0)? 1: 0;
+        totalCount -= (!genStrobogrammatic(high).equals("#") && high.compareTo(genStrobogrammatic(high)) < 0)? 1: 0;
+        return totalCount;
     }
   
     public static void main(String[] args){
