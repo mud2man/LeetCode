@@ -8,52 +8,37 @@
 
 import java.util.*;
 public class Solution{
-    private void backtarck(long sum, long multiply, String num, int start, long target, String path, List<String> ret){
+    private void backtrack(String num, int start, long sum, long multiply, long target, String path, List<String> answer){
         if(start == num.length()){
             if(sum + multiply == target){
-                ret.add(path);
+                answer.add(path);
             }
             return;
         }
         
-        for(int end = start + 1; end <= num.length(); ++end){
-            String nextNum = num.substring(start, end);
-            //plus
-            String plusPath = path + "+" + nextNum;
-            long nextSum = sum + multiply;
-            long nextMultiply = Long.valueOf(nextNum);
-            backtarck(nextSum, nextMultiply, num, end, target, plusPath, ret);
-            
-            //minus
-            String minusPath = path + "-" + nextNum;
-            nextSum = sum + multiply;
-            nextMultiply = -Long.valueOf(nextNum);
-            backtarck(nextSum, nextMultiply, num, end, target, minusPath, ret);
-            
-            //multiply
-            String multilpyPath = path + "*" + nextNum;
-            nextSum = sum;
-            nextMultiply = multiply*Long.valueOf(nextNum);
-            backtarck(nextSum, nextMultiply, num, end, target, multilpyPath, ret);
-            
-            if(num.charAt(start) == '0'){
+        for(int i = start + 1; i <= num.length(); ++i){
+            long nextNum = Long.valueOf(num.substring(start, i));
+            backtrack(num, i, sum + multiply, nextNum, target, path + "+" + num.substring(start, i), answer); //'+'
+            backtrack(num, i, sum + multiply, -nextNum, target, path + "-" + num.substring(start, i), answer); //'-'
+            backtrack(num, i, sum, multiply * nextNum, target, path + "*" + num.substring(start, i), answer); //'-'
+            if(nextNum == 0){
                 break;
             }
         }
     }
     
     public List<String> addOperators(String num, int target) {
-        List<String> ret = new ArrayList<>();
+        List<String> answer = new LinkedList<>();
         for(int i = 1; i <= num.length(); ++i){
             long multiply = Long.valueOf(num.substring(0, i));
-            backtarck(0L, multiply, num, i, (long)target, num.substring(0, i), ret);
-            if(num.charAt(0) == '0'){
+            backtrack(num, i, 0, multiply, (long)target, num.substring(0, i), answer);
+            if(multiply == 0){
                 break;
             }
         }
-        return ret;
+        return answer;
     }
-
+ 
     public static void main(String[] args){
         Solution sol;
         String num = "123";
