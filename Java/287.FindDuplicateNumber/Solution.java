@@ -3,12 +3,13 @@
  *               r 
  *            /    \
  *   *---s---*-m-*--*
- *
- * 0. Let's start at 0, and next step of ptr is nums[ptr]. We can reformulate this problem to LeetCode#142
- * 1. We can prove that fast pointer always catch up slow pointer, assume it happens on s + m
- * 2. When (fastIdx == slowIdx), s + m + nr = 2s + 2m => nr - m = s
- * 3. Hence, the pointer starting from head take s steps to meet the one starting from (s + m) which takes (nr - m) = s steps
- * 4. And the meeting point is the starting pointer of the cycle
+ * 
+ * 1. Since pointer 0 will not be pointered, so 0 can be the starting point. If there is np cycle in the path, there is no duplicate which is contradicted.
+ * 2. Let's start at 0, and next step of ptr is nums[ptr]. We can reformulate this problem to LeetCode#142
+ * 3. We can prove that fast pointer always catch up slow pointer, assume it happens on s + m
+ * 4. When (fastIdx == slowIdx), s + m + nr = 2s + 2m => nr - m = s
+ * 5. Hence, the pointer starting from head take s steps to meet the one starting from (s + m) which takes (nr - m) = s steps
+ * 6. And the meeting point is the starting pointer of the cycle
  */
 
 import java.util.*;
