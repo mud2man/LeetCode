@@ -11,50 +11,55 @@ public class Solution{
     int[][] matrix;
     public NumMatrix(int[][] matrix) {
         int depth = matrix.length;
-        int width = (matrix.length > 0)? matrix[0].length: 0;
-        this.matrix = new int[depth][width];
+        int width = (depth > 0)? matrix[0].length: 0;
         binaryIndexTree = new int[depth + 1][width + 1];
         for(int y = 0; y < depth; ++y){
             for(int x = 0; x < width; ++x){
-                update(y, x, matrix[y][x]);
+                put(y + 1, x + 1, matrix[y][x]);
             }
+        }
+        this.matrix = matrix;
+    }
+    
+    private int next(int curr){
+        return curr + (curr & (-curr));
+    }
+    
+    private int prev(int curr){
+        return curr - (curr & (-curr));
+    }
+    
+    private void put(int row, int col, int diff){
+        for(int y = row; y < binaryIndexTree.length; y = next(y)){
+            for(int x = col; x < binaryIndexTree[0].length; x = next(x)){
+                binaryIndexTree[y][x] += diff;
+            }   
         }
     }
     
-    private int next(int x){
-        return x + (x & (-x));
-    }
-    
-    private int prev(int x){
-        return x - (x & (-x));
-    } 
-    
-    public void update(int row, int col, int val) {
-        int diff = val - matrix[row][col];
-        matrix[row][col] = val;
-        for(int y = row + 1; y < binaryIndexTree.length; y = next(y)){
-            for(int x = col + 1; x < binaryIndexTree[0].length; x = next(x)){
-                binaryIndexTree[y][x] += diff; 
-            }
-        }
-    }
-    
-    private int getSumFromLeftTop(int y, int x){
+    private int get(int row, int col){
         int sum = 0;
-        for(int i = y + 1; i > 0; i = prev(i)){
-            for(int j = x + 1; j > 0; j = prev(j)){
-                sum += binaryIndexTree[i][j];
-            }
+        for(int y = row; y > 0; y = prev(y)){
+            for(int x = col; x > 0; x = prev(x)){
+                sum += binaryIndexTree[y][x];
+            }   
         }
         return sum;
     }
     
+    public void update(int row, int col, int val) {
+        int diff = val - matrix[row][col];
+        matrix[row][col] = val;
+        put(row + 1, col + 1, diff);
+    }
+    
     public int sumRegion(int row1, int col1, int row2, int col2) {
-        int leftTopSum = (row1 > 0 && col1 > 0)? getSumFromLeftTop(row1 - 1, col1 - 1): 0;
-        int leftSum = (col1 > 0)? getSumFromLeftTop(row2, col1 - 1): 0;
-        int topSum = (row1 > 0)? getSumFromLeftTop(row1 - 1, col2): 0;
-        int sum = getSumFromLeftTop(row2, col2);
-        return sum - leftSum - topSum + leftTopSum; 
+        int bottomRight = get(row2 + 1, col2 + 1);
+        int bottomLeft = get(row2 + 1, col1);
+        int topLeft = get(row1, col1);
+        int topRight = get(row1, col2 + 1);
+        int sum = bottomRight - bottomLeft - topRight + topLeft;
+        return sum;
     }
   
     public static void main(String[] args){
