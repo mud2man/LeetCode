@@ -23,47 +23,41 @@ import java.util.*;
  * }
  */
 public class NestedIterator implements Iterator<Integer> {
-    Integer next;
     Deque<Iterator<NestedInteger>> stack;
-    Integer dummy;
+    Integer next;
     public NestedIterator(List<NestedInteger> nestedList) {
         stack = new LinkedList<>();
-        dummy = new Integer(0);
-        next = dummy;
-        NestedInteger nestedInteger = null;
         stack.add(nestedList.iterator());
-        nestedInteger = stack.peekLast().hasNext()? stack.peekLast().next(): null;
-        while(nestedInteger != null && !nestedInteger.isInteger() && !nestedInteger.getList().isEmpty()){
-            stack.add(nestedInteger.getList().iterator());
-            nestedInteger = stack.peekLast().next();
-        }
-        next = (nestedInteger != null && nestedInteger.isInteger())? nestedInteger.getInteger(): next();
+        next();
     }
 
     @Override
     public Integer next() {
+        Integer prevNext = next;
         Integer nextNext = null;
         while(!stack.isEmpty() && nextNext == null){
-            Iterator<NestedInteger> top = stack.peekLast();
-            if(!top.hasNext()){
-                stack.pollLast();
-            }else{
-                NestedInteger nestedInteger = top.next();
-                while(!nestedInteger.isInteger() && !nestedInteger.getList().isEmpty()){
-                    stack.add(nestedInteger.getList().iterator());
-                    nestedInteger = stack.peekLast().next();
+            //push the iterator of List<NestedInteger>
+            while(stack.peekLast().hasNext()){
+                NestedInteger ni = stack.peekLast().next();
+                if(ni.isInteger()){
+                    nextNext = ni.getInteger();
+                    break;
+                }else{
+                    stack.add(ni.getList().iterator());
                 }
-                nextNext = nestedInteger.isInteger()? nestedInteger.getInteger(): null;
+            }
+            //pop the burn out iterator 
+            while(!stack.isEmpty() && !stack.peekLast().hasNext()){
+                stack.pollLast();
             }
         }
-        Integer prevNext = next;
         next = nextNext;
-        return (prevNext == dummy)? nextNext: prevNext;
+        return prevNext;
     }
 
     @Override
     public boolean hasNext() {
-        return (next != null);
+        return(next != null);
     }
 }
 
