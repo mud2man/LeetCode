@@ -9,39 +9,35 @@
 import java.util.*;
 
 public class Solution{
-    private void dfs(String start, HashMap<String, PriorityQueue<String>> adjList, LinkedList<String> path){
+    private void dfs(String start, HashMap<String, PriorityQueue<String>> adjList, Deque<String> path){
         while(adjList.containsKey(start) && !adjList.get(start).isEmpty()){
             dfs(adjList.get(start).poll(), adjList, path);
         }
         path.addFirst(start);
     }
-
-    public List<String> findItinerary(String[][] tickets) {
+    
+    public List<String> findItinerary(List<List<String>> tickets) {
         HashMap<String, PriorityQueue<String>> adjList = new HashMap<String, PriorityQueue<String>>();
-        LinkedList<String> path = new LinkedList<String>();
-        
-        for(String[] ticket: tickets){
-            String from = ticket[0];
-            String to = ticket[1];
-            if(!adjList.containsKey(from)){
-                adjList.put(from, new PriorityQueue<String>());
-            }
+        Deque<String> path = new LinkedList<String>();
+        for(List<String> ticket: tickets){
+            String from = ticket.get(0);
+            String to = ticket.get(1);
+            adjList.putIfAbsent(from, new PriorityQueue<>());
             adjList.get(from).add(to);
         }
-
         dfs("JFK", adjList, path);
-        return path;
+        return new ArrayList<>(path);
     }
 
     public static void main(String[] args){
         String[][] tickets = {{"JFK","SFO"}, {"JFK","ATL"}, {"SFO","ATL"}, {"ATL","JFK"}, {"ATL","SFO"}};
+        List<List<String>> ticketList = new ArrayList<>();
         Solution sol = new Solution();
-        
         System.out.println("tickets:");
         for(String[] ticket: tickets){
             System.out.println(Arrays.toString(ticket));
+            ticketList.add(Arrays.asList(ticket));
         }
-        
-        System.out.println("itinerary:" + sol.findItinerary(tickets));
+        System.out.println("itinerary:" + sol.findItinerary(ticketList));
     }
 }
