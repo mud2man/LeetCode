@@ -9,88 +9,64 @@
 import java.util.*;
 
 public class Solution {
-    private boolean bfs(int[] building, int targetNumber, int[][] grid, int[][] distance, int[][] passed){
+    private void bfs(int[][] grid, int startY, int startX, int[][] hitCount, int[][] distance){
         int depth = grid.length;
-        int width = (depth > 0)? grid[0].length: 0; 
+        int width = grid[0].length;
         boolean[][] visited = new boolean[depth][width];
-        visited[building[0]][building[1]] = true;
-        LinkedList<int[]> queue = new LinkedList<int[]>();
-        queue.add(building);
-        int reachCount = 1;
-        int dist = 0;
-        int[][] shifts = {{0, -1}, {0, 1}, {1, 0}, {-1, 0}};
-        
+        Deque<int[]> queue = new LinkedList<>();
+        queue.add(new int[]{startY, startX});
+        int radius = 0;
+        int[][] shifts = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
         while(!queue.isEmpty()){
+            radius++;
             int size = queue.size();
-            dist++;
             for(int i = 0; i < size; ++i){
-                int[] current = queue.pollFirst();
+                int[] curr = queue.pollFirst();
                 for(int[] shift: shifts){
-                    int[] next = new int[]{current[0] + shift[0], current[1] + shift[1]};
-                    if(next[0] < 0 || next[0] >= depth || next[1] < 0 || next[1] >= width){
-                        continue;
-                    }
-                    
-                    if(visited[next[0]][next[1]] == true){
-                        continue;
-                    }
-                    
-                    if(grid[current[0]][current[1]] == 0 && grid[next[0]][next[1]] == 1){
-                        visited[next[0]][next[1]] = true;;
-                        reachCount++;   
-                    }
-                    else if(grid[next[0]][next[1]] == 2){
-                        continue;
-                    }
-                    else if(grid[next[0]][next[1]] == 0){
-                        visited[next[0]][next[1]] = true;
-                        distance[next[0]][next[1]] += dist;
-                        passed[next[0]][next[1]]++;
-                        queue.add(next);
+                    int y = curr[0] + shift[0];
+                    int x = curr[1] + shift[1];
+                    if(y >= 0 && y < depth && x >= 0 && x < width && grid[y][x] == 0 && !visited[y][x]){
+                        distance[y][x] += radius;
+                        hitCount[y][x]++;
+                        visited[y][x] = true;
+                        queue.add(new int[]{y, x});
                     }
                 }
             }
         }
-        return (reachCount == targetNumber);
     }
     
     public int shortestDistance(int[][] grid) {
-        List<int[]> buildings = new ArrayList<int[]>();
         int depth = grid.length;
-        int width = (depth > 0)? grid[0].length: 0;
+        int width = grid[0].length;
+        int[][] distance = new int[depth][width];
+        int[][] hitCount = new int[depth][width];
+        int k = 0;
         for(int y = 0; y < depth; ++y){
             for(int x = 0; x < width; ++x){
                 if(grid[y][x] == 1){
-                    buildings.add(new int[]{y, x});
+                    bfs(grid, y, x, hitCount, distance);
+                    ++k;
                 }
             }
         }
         
-        int[][] distance = new int[depth][width];
-        int[][] passed = new int[depth][width];
-        for(int[] building: buildings){
-            if(!bfs(building, buildings.size(), grid, distance, passed)){
-                return -1;
-            }
-        }
-        
-        int minDistance = Integer.MAX_VALUE;
+        int min = Integer.MAX_VALUE;
         for(int y = 0; y < depth; ++y){
             for(int x = 0; x < width; ++x){
-                if(distance[y][x] > 0 && passed[y][x] == buildings.size()){
-                    minDistance = Math.min(minDistance, distance[y][x]);
+                if(hitCount[y][x] == k){
+                    min = Math.min(min, distance[y][x]); 
                 }
             }
         }
-        return (minDistance == Integer.MAX_VALUE)? - 1: minDistance;
+        return (min == Integer.MAX_VALUE)? -1: min;
     }
  
     public static void main(String[] args){
-        Solution sol;
         int[][] grid = {{1, 0, 2, 0, 1}, 
                         {0, 0, 0, 0, 0},
                         {0, 0, 1, 0, 0}};
-        sol = new Solution();
+        Solution sol = new Solution();
         
         System.out.println("grid: ");
         for(int[] row: grid){
