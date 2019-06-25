@@ -1,6 +1,7 @@
 /* Time:O(m*n), Space:O(m*n)
- * 1. Have a 3D array dp, where dp[y][x][0] = row hit on (y, x), dp[y][x][1] = column hit on (y, x)
- * 2. Because for every position (y, x), it only contributed on row count or column count once.
+ * 1. Have an array cols, where cols[x] = column hit on (y, x), row = row hit on (y, x).
+ * 2. Reset col as {-1, -1, ...}
+ * 2. Because for every position (y, x), it only contributed on row count or column count once, since we count only in cols[x] == -1 or row == -1
  * 3. Therefore the amortized complexity is O(m*n)
  */
 
@@ -10,44 +11,37 @@ public class Solution{
     public int maxKilledEnemies(char[][] grid) {
         int depth = grid.length;
         int width = (depth > 0)? grid[0].length: 0;
-        int[][][] dp = new int[depth][width][2];
-        int maxHit = 0;
-        
+        int[] cols = new int[width];
+        Arrays.fill(cols, -1);
+        int max = 0;
         for(int y = 0; y < depth; ++y){
+            int row = -1;
             for(int x = 0; x < width; ++x){
-                char c = grid[y][x];
-                if(c == 'E' || c == '0'){
-                    if(dp[y][x][0] == 0){
-                        int rowHit = 0;
+                if(grid[y][x] == 'W'){
+                    cols[x] = -1;
+                    row = -1;
+                }else{
+                    if(cols[x] == -1){
+                        int count = 0;
+                        for(int j = y; j < depth && grid[j][x] != 'W'; ++j){
+                            count +=(grid[j][x] == 'E')? 1: 0;
+                        }
+                        cols[x] = count;
+                    }
+                    if(row == -1){
+                        int count = 0;
                         for(int i = x; i < width && grid[y][i] != 'W'; ++i){
-                            rowHit += (grid[y][i] == 'E')? 1: 0;
+                            count +=(grid[y][i] == 'E')? 1: 0;
                         }
-                        
-                        for(int i = x; i < width && grid[y][i] != 'W'; ++i){
-                            dp[y][i][0] = rowHit;
-                        }
+                        row = count;
                     }
-                    
-                    if(dp[y][x][1] == 0){
-                        int columnHit = 0;
-                        for(int i = y; i < depth && grid[i][x] != 'W'; ++i){
-                            columnHit += (grid[i][x] == 'E')? 1: 0;
-                        }
-                        
-                        for(int i = y; i < depth && grid[i][x] != 'W'; ++i){
-                            dp[i][x][1] = columnHit;
-                        }
-                    }
-                    
-                    if(c == '0'){
-                        maxHit = Math.max(dp[y][x][0] + dp[y][x][1], maxHit);
-                    }
+                    max = (grid[y][x] == '0')? Math.max(max, row + cols[x]): max;
                 }
             }
         }
-        return maxHit;
+        return max;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         char[][] grid = {{'0', 'E', '0', '0'},
