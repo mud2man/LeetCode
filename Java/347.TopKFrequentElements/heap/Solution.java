@@ -43,15 +43,11 @@ public class Solution {
     }
 
     public static void main(String[] args){
-        Solution sol;
-        List<Integer> topK;
         int[] nums = {1, 1, 2, 2, 3};
-        int k;
-
-        k = 2;
-        sol = new Solution();
+        int k = 2;
+        Solution sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
-        topK = sol.topKFrequent(nums , k);
+        List<Integer> topK = sol.topKFrequent(nums , k);
         System.out.println("top" + k + ": " + topK);
     }
 }

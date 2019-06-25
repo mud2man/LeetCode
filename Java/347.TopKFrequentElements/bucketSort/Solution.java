@@ -13,41 +13,31 @@ public class Solution {
             num2Freq.putIfAbsent(num, 0);
             num2Freq.put(num, num2Freq.get(num) + 1);
         }
-        
-        Map<Integer, Set<Integer>> freq2Nums = new HashMap<>();
+        Map<Integer, List<Integer>> freq2Nums = new HashMap<>();
         for(Map.Entry<Integer, Integer> entry: num2Freq.entrySet()){
-            int freq = entry.getValue();
             int num = entry.getKey();
-            freq2Nums.putIfAbsent(freq, new HashSet<>());
+            int freq = entry.getValue();
+            freq2Nums.putIfAbsent(freq, new ArrayList<>());
             freq2Nums.get(freq).add(num);
         }
-        
         List<Integer> topK = new ArrayList<>();
         for(int i = nums.length; i > 0 && topK.size() < k; --i){
             if(freq2Nums.containsKey(i)){
-                for(int num: freq2Nums.get(i)){
-                    if(topK.size() < k){
-                        topK.add(num);
-                    }
-                    else{
-                        break;
-                    }
+                List<Integer> numsWithFreqI = freq2Nums.get(i);
+                for(int j = 0; j < numsWithFreqI.size() && topK.size() < k; ++j){
+                    topK.add(numsWithFreqI.get(j));
                 }
             }
         }
         return topK;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        List<Integer> topK;
         int[] nums = {1, 1, 2, 2, 3};
-        int k;
-
-        k = 2;
-        sol = new Solution();
+        int k = 2;
+        Solution sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
-        topK = sol.topKFrequent(nums , k);
+        List<Integer> topK = sol.topKFrequent(nums , k);
         System.out.println("top" + k + ": " + topK);
     }
 }
