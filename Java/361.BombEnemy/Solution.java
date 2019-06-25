@@ -1,4 +1,4 @@
-/* Time:O(m*n), Space:O(m*n)
+/* Time:O(m*n), Space:O(n)
  * 1. Have an array cols, where cols[x] = column hit on (y, x), row = row hit on (y, x).
  * 2. Reset col as {-1, -1, ...}
  * 2. Because for every position (y, x), it only contributed on row count or column count once, since we count only in cols[x] == -1 or row == -1
