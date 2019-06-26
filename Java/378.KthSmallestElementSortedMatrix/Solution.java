@@ -6,30 +6,25 @@
 import java.util.*;
 
 public class Solution{
-    private int getLessOrEquelCount(int[][] matrix, int target){
+    private int getLessEqualCount(int[][] matrix, int num){
         int count = 0;
         for(int x = 0, y = matrix.length - 1; x < matrix[0].length; ++x){
-            while(y >= 0 && matrix[y][x] > target){
+            while(y > 0 && matrix[y][x] > num){
                 --y;
             }
-            if(y == -1){
-                break;
-            }
-            count += (y + 1);
+            count +=(matrix[y][x] <= num)? (y + 1): 0;
         }
         return count;
     }
     
-    private int getMaxFromLessOrEquelNums(int[][] matrix, int target){
+    private int getMaxFromLessEqual(int[][] matrix, int num){
+        int boundry = num;
         int max = Integer.MIN_VALUE;
         for(int x = 0, y = matrix.length - 1; x < matrix[0].length; ++x){
-            while(y >= 0 && matrix[y][x] > target){
+            while(y > 0 && matrix[y][x] > boundry){
                 --y;
             }
-            if(y == -1){
-                break;
-            }
-            max = Math.max(max, matrix[y][x]);
+            max = (matrix[y][x] <= boundry)? Math.max(max, matrix[y][x]): max;
         }
         return max;
     }
@@ -38,22 +33,22 @@ public class Solution{
         int depth = matrix.length;
         int width = matrix[0].length;
         int lb = matrix[0][0];
-        int ub = matrix[depth - 1][width - 1];
-        
-        while(lb <= ub){
-            int mid = (int)(((long)lb + (long)ub) / 2);
-            int count = getLessOrEquelCount(matrix, mid);
-            if(count >= k){
-                ub = mid - 1;
-            }else{
+        int hb = matrix[depth - 1][width - 1];
+        while(lb <= hb){
+            int mid = (int)(((long)lb + (long)hb) / 2l);
+            int lessEqualCount = getLessEqualCount(matrix, mid);
+            if(lessEqualCount == k){
+                lb = mid;
+                break;
+            }else if(lessEqualCount < k){
                 lb = mid + 1;
+            }else{
+                hb = mid - 1;
             }
         }
-        
-        int Kth = getMaxFromLessOrEquelNums(matrix, lb);
-        return Kth;
+        return getMaxFromLessEqual(matrix, lb);
     }
- 
+  
     public static void main(String[] args){
         int k = 8;
         int[][] matrix = {{1, 5, 9}, 
