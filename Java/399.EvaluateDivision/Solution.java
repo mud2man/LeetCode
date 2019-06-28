@@ -6,12 +6,17 @@
 import java.util.*;
 
 public class Solution {
-    private void floydWarshall(double[][] paths){
-        for(int k = 0; k < paths.length; ++k){
-            for(int i = 0; i < paths.length; ++i){
-                for(int j = 0; j < paths.length; ++j){
-                    if(paths[i][k] != -1.0 && paths[k][j] != -1.0){
-                        paths[i][j] = paths[i][k] * paths[k][j];
+    private void floydWarshall(Double[][] dp){ 
+        for(int i = 0; i < dp.length; ++i){
+            for(int from = 0; from < dp.length; ++from){
+                for(int to = 0; to < dp.length; ++to){
+                    if(from == to){
+                        continue;
+                    }else{
+                        if(dp[from][i] != null && dp[i][to] != null){
+                            dp[from][to] = dp[from][i] * dp[i][to];
+                            dp[to][from] = 1 / dp[from][to];
+                        }
                     }
                 }
             }
@@ -19,40 +24,41 @@ public class Solution {
     }
     
     public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
-        Map<String, Integer> indexMap = new HashMap<String, Integer>();
         int size = 0;
+        Map<String, Integer> str2Index = new HashMap<>();
         for(List<String> equation: equations){
-            indexMap.putIfAbsent(equation.get(0), size++);
-            indexMap.putIfAbsent(equation.get(1), size++);
+            String from = equation.get(0);
+            String to = equation.get(1);
+            str2Index.putIfAbsent(from, size++);
+            str2Index.putIfAbsent(to, size++);
         }
         
-        double[][] paths = new double[size][size];
-        for(int y = 0; y < size; ++y){
-            for(int x = 0; x < size; ++x){
-                paths[y][x] = (y == x)? 1.0: -1.0;
-            }
-        }
-        
+        Double[][] dp = new Double[size][size];
         for(int i = 0; i < equations.size(); ++i){
-            int source = indexMap.get(equations.get(i).get(0));
-            int destination = indexMap.get(equations.get(i).get(1));
-            paths[source][destination] = values[i];
-            paths[destination][source] = 1 / values[i];
+            int fromIndex = str2Index.get(equations.get(i).get(0));
+            int toIndex = str2Index.get(equations.get(i).get(1));
+            dp[fromIndex][toIndex] = values[i];
+            dp[toIndex][fromIndex] = 1 / values[i];
+        }
+
+        for(int i = 0; i < size; ++i){
+            dp[i][i] = 1.0;
         }
         
-        floydWarshall(paths);
-        double[] results = new double[queries.size()];
+        floydWarshall(dp);
+        
+        double[] answers = new double[queries.size()];
         for(int i = 0; i < queries.size(); ++i){
-            String source = queries.get(i).get(0);
-            String destination = queries.get(i).get(1);
-            if(!indexMap.containsKey(source) || !indexMap.containsKey(destination)){
-                results[i] = -1.0;
-            }
-            else{
-                results[i] = paths[indexMap.get(source)][indexMap.get(destination)];
+            if(!str2Index.containsKey(queries.get(i).get(0)) || !str2Index.containsKey(queries.get(i).get(1))){
+                answers[i] = -1.0;
+                continue;
+            }else{
+                int fromIndex = str2Index.get(queries.get(i).get(0));
+                int toIndex = str2Index.get(queries.get(i).get(1));
+                answers[i] =(dp[fromIndex][toIndex] != null)? dp[fromIndex][toIndex]: -1.0;
             }
         }
-        return results;
+        return answers;
     }
  
     public static void main(String[] args){
