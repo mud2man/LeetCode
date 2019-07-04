@@ -1,4 +1,4 @@
-/* Sort and Greedy: O(nlogn)
+/* Sort and Greedy: Time:O(nlogn), Space:O(1)
  * 1. The same as the problem: find the maximum number of intervals that are non-overlapping
  * 2. Sort intervals by end time, and set the previous end time previousEnd as Integer.MIN_VALUE
  * 3. Select the next index of interval without overlap, update previousEnd, and accumulate maxCount
