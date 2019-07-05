@@ -1,4 +1,4 @@
-/* Dynamic Programming: Time:O(n), Space:O(n)
+/* Dynamic Programming: Time:O(n^2), Space:O(n^2)
  * 1. dp.get(i).get(diff) is the number of sequence with difference "diff" with length at least 2 ending with A[i]
  * 2. Traverse the input array A from left, then update dp and accumulate returned value "count"
  * 3. If dp.get(j).containsKey(diff), we accumulate dp.get(i) with dp.get(j).get(diff) + 1
@@ -9,27 +9,24 @@ import java.util.*; // Stack
 
 public class Solution {
     public int numberOfArithmeticSlices(int[] A) {
-        List<Map<Long, Integer>> dp = new ArrayList<>();
-        for(int i = 0; i < A.length; ++i){
-            dp.add(new HashMap<>());
-        }
-        
         int count = 0;
+        Map<Integer, Map<Long, Integer>> dp = new HashMap<>();
+        dp.put(0, new HashMap<>());
         for(int i = 1; i < A.length; ++i){
-            int num1 = A[i];
+            int num0 = A[i];
+            Map<Long, Integer> currDiffMap = new HashMap<>();
             for(int j = i - 1; j >= 0; --j){
-                int num0 = A[j];
-                long diff = (long)num1 - (long)num0;
+                int num1 = A[j];
+                long diff = (long)A[i] - (long)A[j];
+                int localCount = 1;
                 if(dp.get(j).containsKey(diff)){
                     count += dp.get(j).get(diff);
-                    dp.get(i).putIfAbsent(diff, 0);
-                    dp.get(i).put(diff, dp.get(i).get(diff) + dp.get(j).get(diff) + 1);
+                    localCount += dp.get(j).get(diff);
                 }
-                else{
-                    dp.get(i).putIfAbsent(diff, 0);
-                    dp.get(i).put(diff, dp.get(i).get(diff) + 1);
-                }
+                currDiffMap.putIfAbsent(diff, 0);
+                currDiffMap.put(diff, currDiffMap.get(diff) + localCount);
             }
+            dp.put(i, currDiffMap);
         }
         return count; 
     }
