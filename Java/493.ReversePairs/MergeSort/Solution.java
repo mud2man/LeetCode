@@ -9,48 +9,43 @@ import java.util.*; // Stack
 
 /* Definition for binary tree */
 public class Solution {
-    private int mergeSort(int[] nums, int start, int end){
-        if(start >= end){
+    private int mergeSort(int lb, int hb, int[] nums){
+        if(lb >= hb){
             return 0;
         }
         
-        // count the number of important reverse pair, where left element is in left, and right element is in right
-        int mid = (start + end) / 2;
-        int leftCount = mergeSort(nums, start, mid);
-        int rightCount = mergeSort(nums, mid + 1, end);
-        int count = leftCount + rightCount;
-        for(int leftIdx = start, rightIdx = mid + 1; leftIdx <= mid; leftIdx++){
-            int target = (nums[leftIdx] > 0)? (nums[leftIdx] - 1) / 2: nums[leftIdx] / 2 - 1;
-            while(rightIdx <= end && nums[rightIdx] <= target){
+        int mid = (lb + hb) / 2;
+        int count = mergeSort(lb, mid, nums) + mergeSort(mid + 1, hb, nums);
+        for(int leftIdx = lb, rightIdx = mid + 1; leftIdx <= mid; ++leftIdx){
+            while(rightIdx <= hb && (long)nums[leftIdx] > 2L * (long)nums[rightIdx]){
                 rightIdx++;
             }
-            count += (rightIdx - (mid + 1));
+            count += (rightIdx - mid - 1);
         }
         
-        // merge sort
-        Deque<Integer> queue = new LinkedList<>();
-        int leftIdx = start;
+        Deque<Integer> mergedList = new LinkedList<>();
+        int leftIdx = lb;
         int rightIdx = mid + 1;
-        while(leftIdx <= mid || rightIdx <= end){
+        while(leftIdx <= mid || rightIdx <= hb){
             int leftVal = (leftIdx <= mid)? nums[leftIdx]: Integer.MAX_VALUE;
-            int rightVal = (rightIdx <= end)? nums[rightIdx]: Integer.MAX_VALUE;
+            int rightVal = (rightIdx <= hb)? nums[rightIdx]: Integer.MAX_VALUE;
             if(leftVal <= rightVal && leftIdx <= mid){
-                queue.add(nums[leftIdx++]);
-            }
-            else{
-                queue.add(nums[rightIdx++]);
+                mergedList.add(nums[leftIdx++]);
+            }else{
+                mergedList.add(nums[rightIdx++]);
             }
         }
-        for(int i = start; i <= end; ++i){
-            nums[i] = queue.pollFirst();
+    
+        for(int i = lb; i <= hb; ++i){
+            nums[i] = mergedList.pollFirst();
         }
         return count;
     }
     
     public int reversePairs(int[] nums) {
-        return mergeSort(nums, 0, nums.length - 1);
+        return mergeSort(0, nums.length - 1, nums);
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int[] nums = {1, 3, 2, 3, 1}; 
