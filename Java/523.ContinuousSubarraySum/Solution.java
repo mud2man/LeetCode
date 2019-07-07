@@ -14,9 +14,8 @@ public class Solution {
                 if(nums[i] == 0 && nums[i - 1] == 0){
                     return true;
                 }
-           }
-        }
-        else{
+            }
+        }else{
             Map<Integer, Integer> visited = new HashMap<>();
             visited.put(0, -1);
             int sum = 0;
@@ -33,11 +32,9 @@ public class Solution {
     }
 
     public static void main(String[] args){
-        Solution sol;
         int[] nums = {23, 2, 4, 6, 7};
         int k = 6;
-        
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("nums:" + Arrays.toString(nums));
         System.out.println("k:" + k);
         System.out.println("continuous subarray with sum = n*k exists: " + sol.checkSubarraySum(nums, k));
