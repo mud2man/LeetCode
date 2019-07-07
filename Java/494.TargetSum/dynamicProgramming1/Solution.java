@@ -1,4 +1,4 @@
-/* Dynamic programming O(n*k), where k = 2 * sum
+/* Dynamic programming: Time:O(n*k), Space:O(n*k), where k = 2 * sum
  * 1. Let sum = Sum(nums), base = -sum
  * 2. dp[y][x] the number of combinations between 0-th and y-th element of nums with sum = x - base, 
  * 3. Let previous value preVal = x + base, where 0 <= x <= 2*width

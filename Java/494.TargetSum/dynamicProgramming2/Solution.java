@@ -1,4 +1,4 @@
-/* Dynamic programming O(n*k), where k = (sum - S) / 2
+/* Dynamic programming: TimeO(n*k), Space:O(k), where k = (sum - S) / 2
  * 1. sum(possitive) = S + sum(negative)
  * 2. sum(possitive) + sum(negative) = S + 2*sum(negative)
  * 3. sum(all)/2 - S/2 = sum(negative)
