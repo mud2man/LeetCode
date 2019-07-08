@@ -10,31 +10,28 @@ import java.util.*;
 
 public class Solution{
     public int subarraySum(int[] nums, int k) {
-        HashMap<Integer, Integer> sumToCount = new HashMap<Integer, Integer>();
-        
-        int sum = 0;
+        Map<Integer, Integer> sum2Count = new HashMap<>();
         int count = 0;
-        sumToCount.putIfAbsent(0, 1);
-        for(int i = 0; i < nums.length; ++i){
-            sum += nums[i];
-            int remain = sum - k;
-            
-            if(sumToCount.containsKey(remain)){
-                count += sumToCount.get(remain);
+        int sum = 0;
+        for(int num: nums){
+            sum += num;
+            if(sum == k){
+                count++;
+                count += sum2Count.containsKey(0)? sum2Count.get(0): 0;
+            }else{
+                int target = sum - k;
+                count += sum2Count.containsKey(target)? sum2Count.get(target): 0;
             }
-            sumToCount.putIfAbsent(sum, 0);
-            sumToCount.put(sum, sumToCount.get(sum) + 1);
+            sum2Count.putIfAbsent(sum, 0);
+            sum2Count.put(sum, sum2Count.get(sum) + 1);
         }
-        
         return count;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
         int[] nums = {1, 1, 1};
         int k = 2;
-
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("k: " + k);
         System.out.println("the number of subarray: " + sol.subarraySum(nums, k));
