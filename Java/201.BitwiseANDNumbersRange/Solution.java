@@ -1,4 +1,4 @@
-/* Math: Time:O(1), Space:O(1)
+/* Math: Time:O(1), Space:O(1). LeetCode has a shorter and moe elegant solution
  * 1. Get the zero counts "zeroBits" for m and (n + 1) 
  * 2. If the zero count of m and n on position i are equal, then we or (1 << i)
  * 3. The zero count on each position of number n has a pattern. We can chek the following example
