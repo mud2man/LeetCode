@@ -20,36 +20,32 @@ public class Solution {
     public int countSubstrings(String s) {
         StringBuilder sb = new StringBuilder("");
         sb.append('#');
-        for(char c : s.toCharArray()){
+        for(char c: s.toCharArray()){
             sb.append(c);
             sb.append('#');
         }
         
+        int[] radius = new int[sb.length()];
         int c = 1;
         int rb = 1;
-        int[] r = new int[sb.length()];
-        int count = 1;
-        for(int i = 2; i < sb.length(); ++i){
-            int radius = (i <= rb)? Math.min(rb - i, r[2 * c - i]): 0;
-            while(i - radius - 1 >= 0 && i + radius + 1 < sb.length() && sb.charAt(i - radius - 1) == sb.charAt(i + radius + 1)){
-                radius++;
+        int count = 0;
+        for(int i = 1; i < sb.length(); ++i){
+            int r = (i < rb)? Math.min(rb - i, radius[2 * c - i]): 0;
+            while(i - r - 1 >= 0 && i + r + 1 < sb.length() && sb.charAt(i - r - 1) == sb.charAt(i + r + 1)){
+                ++r;
             }
-            r[i] = radius;
+            radius[i] = r;
             
-            if(i + radius > rb){
+            if(i + r > rb){
+                rb = i + r;
                 c = i;
-                rb = i + radius;
             }
-            
-            //retrieve string with two ends not equal to '#'
-            radius = (sb.charAt(i - radius) == '#')? radius - 1: radius;
-            //len("a#a#a") = (2 + 2) / 2 = 2, len("a#a#a#a") = (3 + 2) / 2 = 2
-            int len = (radius + 2) / 2;
-            count += len;
+            //len("#a#a#a#") = (3 + 1) / 2 = 2, len("#a#a#a#a#") = (4 + 1) / 2 = 2
+            count += (r + 1) / 2;
         }
         return count;
     }
-  
+
     public static void main(String[] args){
         Solution sol = new Solution();
         String s = "aaa";
