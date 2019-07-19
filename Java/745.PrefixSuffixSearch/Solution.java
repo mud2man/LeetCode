@@ -1,94 +1,76 @@
-/* Trie: Time:O(l + n), Space:O(n^2 * l). Leetcode has a better answer https://leetcode.com/problems/prefix-and-suffix-search/discuss/110044/Three-ways-to-solve-this-problem-in-Java
- * 1. Create 2 trie tree prefixTree and suffixTree(reverse of words)
- * 2. In query "f", get the index list of prefix and that of suffix
- * 3. Use merge-sort like method to find the first smae index in both prefix and suffix index list
- * 4. Since the index list in TrieNode is strictly decending, the first matched index is the biggest
+/* Trie: Time:O(n * l + m * l * logn), Space:O(l * n * n)
+ * 1. Insert the processed word to trie tree. e.g., apple => '*apple', 'e*apple', 'le*apple', 'ple*apple', 'pple*apple', 'apple*apple'
+ * 2. Process query word e.g.(a , e) => e*a
+ * 3. Have a maximum heap in each node, and insert the weight during insert
+ * 4. When searching, find the node and do  minHeap.peek() from the node
  */
 
 import java.util.*;
 
 public class Solution{
+    private class MaxHeapComparator implements Comparator<Integer>{
+        public int compare(Integer x, Integer y){
+            return y.compareTo(x);
+        }
+    }
+    
     private class TrieNode{
-        List<Integer> index;
         TrieNode[] child;
-        TrieNode(){index = new ArrayList<>(); child = new TrieNode[26];}
+        PriorityQueue<Integer> minHeap;
+        TrieNode(){child = new TrieNode[27]; minHeap = new PriorityQueue<>(new MaxHeapComparator());}   
     }
-    HashMap<String, Integer> cache;
-    TrieNode prefixTree;
-    TrieNode suffixTree;
     
-    public WordFilter(String[] words) {
-        cache = new HashMap<String, Integer>();
-        prefixTree = new TrieNode();
-        suffixTree = new TrieNode();
-        for(int i = words.length - 1; i >= 0; --i){
-            //System.out.println("word:" + words[i] + ", i:" + i);
-            insert(prefixTree, words[i], i);
-            insert(suffixTree, new StringBuilder(words[i]).reverse().toString(), i);
+    TrieNode root = new TrieNode();
+    public Solution(String[] words) {
+        int weight = 0;
+        for(String word: words){
+            StringBuilder wrap = new StringBuilder("*" + word);
+            for(int i = word.length() - 1; i >= -1; --i){
+                insert(root, wrap.toString(), weight);
+                if(i >= 0){
+                    wrap.insert(0, word.charAt(i));
+                }
+            }
+            weight++;
         }
     }
     
-    private void insert(TrieNode root, String word, int index){
+    private void insert(TrieNode root, String word, int weight){
+        TrieNode curr = root;
         for(int i = 0; i < word.length(); ++i){
-            root.index.add(index);
             char c = word.charAt(i);
-            if(root.child[c - 'a'] == null){
-                root.child[c - 'a'] = new TrieNode();
+            int idx = (c == '*')? 26: c - 'a';
+            if(curr.child[idx] == null){
+                curr.child[idx] = new TrieNode();
             }
-            root = root.child[c - 'a'];
+            curr = curr.child[idx];
+            curr.minHeap.add(weight);
         }
-        root.index.add(index);
     }
     
-    private TrieNode search(TrieNode root, String prefix){
-        for(int i = 0; i < prefix.length(); ++i){
-            char c = prefix.charAt(i);
-            if(root.child[c - 'a'] == null){
-                return null;
+    private int search(TrieNode root, String word){
+        TrieNode curr = root;
+        for(int i = 0; i < word.length(); ++i){
+            char c = word.charAt(i);
+            int idx = (c == '*')? 26: c - 'a';
+            if(curr.child[idx] == null){
+                return -1; 
             }
-            root = root.child[c - 'a'];
+            curr = curr.child[idx];
         }
-        return root;
+        return curr.minHeap.peek();
     }
-
+    
     public int f(String prefix, String suffix) {
-        String key = prefix + "," + suffix;
-        if(cache.containsKey(key)){
-            return cache.get(key);
-        }
-        else{
-            TrieNode prefixRoot = search(prefixTree, prefix);
-            List<Integer> prefixIndex = (prefixRoot != null)? prefixRoot.index: new ArrayList<>();
-            TrieNode suffixRoot = search(suffixTree, new StringBuilder(suffix).reverse().toString());
-            List<Integer> suffixIndex = (suffixRoot != null)? suffixRoot.index: new ArrayList<>();
-            int ptr0 = 0;
-            int ptr1 = 0;
-            while(ptr0 < prefixIndex.size() && ptr1 < suffixIndex.size()){
-                int prefixWeight = prefixIndex.get(ptr0);
-                int suffixWeight = suffixIndex.get(ptr1);
-                if(prefixWeight == suffixWeight){
-                    cache.put(key, prefixWeight);
-                    return prefixWeight;
-                }
-                else if(prefixWeight > suffixWeight){
-                    ptr0++;
-                }
-                else{
-                    ptr1++;
-                }
-            }
-            cache.put(key, -1);
-            return -1;
-        }
+        String wrap = suffix + "*" + prefix;
+        return search(root, wrap);
     }
   
     public static void main(String[] args){
-        Solution sol;
         String[] words = {"apple"};
         String[] prefix = {"a", "b"};
         String[] suffix = {"e", ""};
-        
-        sol = new Solution(words);
+        Solution sol = new Solution(words);
         System.out.println("words[]: " + Arrays.toString(words));
         for(int i = 0; i < prefix.length; ++i){
             System.out.println("prefix:" + prefix[i] + ", suffix:" + suffix[i] + ", weight:" + sol.f(prefix[i], suffix[i]));
