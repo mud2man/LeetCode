@@ -27,8 +27,7 @@ public class Solution{
                     sum -= front[0];
                     len -= front[1];
                 }
-            }
-            else{
+            }else{
                 sum += num;
                 len++;
                 int[] end = new int[]{num, 1};
@@ -40,8 +39,7 @@ public class Solution{
                 
                 if(end[0] > 0){
                     queue.addLast(end);
-                }
-                else{
+                }else{
                     sum = 0;
                     len = 0;
                 }
