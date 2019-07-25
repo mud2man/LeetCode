@@ -1,4 +1,4 @@
-/* Dfs: Time:O(n), Space:O(n). LeetCode has greedy solution only consums O(h) space
+/* Dfs: Time:O(n), Space:O(h). LeetCode has greedy solution
  * 1. The ret = {coveredWithCamera, coveredWithoutCamera, coveredLeftTree, coveredRightTree}
  * 2. Use dfs to caculate the current w.r.t if the node has left/right child
  * 3. The answer is Math.min(ret[0], ret[1]), where ret = dfs(root)
