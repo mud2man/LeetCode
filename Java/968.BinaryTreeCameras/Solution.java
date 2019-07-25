@@ -1,8 +1,7 @@
-/* Dynamic Programming: Time:O(n), Space:O(n). LeetCode has greedy solution only consums O(h) space
- * 1. Traverse tree in post order, and keep a map to recorder the sub solution
- * 2. The map store pairs with key = node, value = {min camera# with camera on node covering subtree, min camera# without camera on node coovering subtree}
- * 3. For camera on node: we need to consider grandsons
- * 4. For camera not on node: we just need to consider child
+/* Dfs: Time:O(n), Space:O(n). LeetCode has greedy solution only consums O(h) space
+ * 1. The ret = {coveredWithCamera, coveredWithoutCamera, coveredLeftTree, coveredRightTree}
+ * 2. Use dfs to caculate the current w.r.t if the node has left/right child
+ * 3. The answer is Math.min(ret[0], ret[1]), where ret = dfs(root)
  */
 
 import java.util.*; // Stack
@@ -16,56 +15,43 @@ class TreeNode {
 }
 
 public class Solution {
-    private void dfs(TreeNode root, Map<TreeNode, int[]> map){
-        if(root == null){
-            return;
-        }
-        
-        dfs(root.left, map);
-        dfs(root.right, map);
-        map.put(root, new int[2]);
-        //count if put camera on this node
-        TreeNode leftLeft = (root.left != null)? root.left.left: null;
-        TreeNode leftRight = (root.left != null)? root.left.right: null;
-        TreeNode rightLeft = (root.right != null)? root.right.left: null;
-        TreeNode rightRight = (root.right != null)? root.right.right: null;
-        int leftCount = (root.left != null)? Math.min(map.get(root.left)[0], map.get(root.left)[1]): 0;
-        int leftLeftCount = (leftLeft != null)? Math.min(map.get(leftLeft)[0], map.get(leftLeft)[1]): 0;
-        int leftRightCount = (leftRight != null)? Math.min(map.get(leftRight)[0], map.get(leftRight)[1]): 0;
-        leftCount = Math.min(leftCount, leftLeftCount + leftRightCount);
-        int rightCount = (root.right != null)? Math.min(map.get(root.right)[0], map.get(root.right)[1]): 0;
-        int rightLeftCount = (rightLeft != null)? Math.min(map.get(rightLeft)[0], map.get(rightLeft)[1]): 0;
-        int rightRightCount = (rightRight != null)? Math.min(map.get(rightRight)[0], map.get(rightRight)[1]): 0;
-        rightCount = Math.min(rightCount, rightLeftCount + rightRightCount);
-        map.get(root)[0] = leftCount + rightCount + 1;
-        
-        //count if not put camera on this node
-        if(root.left == null && root.right == null){
-            map.get(root)[1] = 1;
-        }
-        else if(root.left == null){
-            map.get(root)[1] = map.get(root.right)[0];
-        }
-        else if(root.right == null){
-            map.get(root)[1] = map.get(root.left)[0];
-        }
-        else{
-            TreeNode left = root.left;
-            TreeNode right = root.right;
-            map.get(root)[1] = Math.min(map.get(left)[0] + map.get(right)[1], map.get(left)[1] + map.get(right)[0]);
-            map.get(root)[1] = Math.min(map.get(root)[1], map.get(left)[0] + map.get(right)[0]);
+    private int[] dfs(TreeNode node){
+        if(node.left == null && node.right == null){
+            return new int[]{1, 1, 0, 0};
+        }else if(node.left == null){
+            int[] rightRet = dfs(node.right);
+            int coveredWithCamera = Math.min(1 + rightRet[0], 1 + rightRet[1]);
+            coveredWithCamera = Math.min(coveredWithCamera, 1 + rightRet[2] + rightRet[3]);
+            int coveredWithoutCamera = rightRet[0];
+            return new int[]{coveredWithCamera, coveredWithoutCamera, 0, Math.min(rightRet[0], rightRet[1])};
+        }else if(node.right == null){
+            int[] leftRet = dfs(node.left);
+            int coveredWithCamera = Math.min(1 + leftRet[0], 1 + leftRet[1]);
+            coveredWithCamera = Math.min(coveredWithCamera, 1 + leftRet[2] + leftRet[3]);
+            int coveredWithoutCamera = leftRet[0];
+            return new int[]{coveredWithCamera, coveredWithoutCamera, 0, Math.min(leftRet[0], leftRet[1])};
+        }else{
+            int[] leftRet = dfs(node.left);
+            int minLeft = Math.min(leftRet[0], leftRet[1]);
+            minLeft = Math.min(minLeft, leftRet[2] + leftRet[3]);
+            int[] rightRet = dfs(node.right);
+            int minRight = Math.min(rightRet[0], rightRet[1]);
+            minRight = Math.min(minRight, rightRet[2] + rightRet[3]);
+            int coveredWithCamera = 1 + minLeft + minRight;
+            int coveredWithoutCamera = Math.min(leftRet[0] + rightRet[1], leftRet[1] + rightRet[0]);
+            coveredWithoutCamera = Math.min(coveredWithoutCamera, leftRet[0] + rightRet[0]);
+            int coveredLeftTree = Math.min(leftRet[0], leftRet[1]);
+            int coveredRightTree = Math.min(rightRet[0], rightRet[1]);
+            return new int[]{coveredWithCamera, coveredWithoutCamera, coveredLeftTree, coveredRightTree};
         }
     }
     
     public int minCameraCover(TreeNode root) {
-        Map<TreeNode, int[]> map = new HashMap<>();
-        dfs(root, map);
-        return Math.min(map.get(root)[0], map.get(root)[1]);
+        int[] ret = dfs(root);
+        return Math.min(ret[0], ret[1]);
     }
 
     public static void main(String[] args){
-        Solution sol = new Solution();
-        
         /* Generate a input tree
          *     4
          *    /
@@ -77,6 +63,7 @@ public class Solution {
         root.left = new TreeNode(2);
         root.left.left = new TreeNode(1);
         root.left.right = new TreeNode(3);
+        Solution sol = new Solution();
         System.out.println("minimum camera#: " + sol.minCameraCover(root));
     }
 }
