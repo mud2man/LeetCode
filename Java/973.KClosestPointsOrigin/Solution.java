@@ -5,39 +5,41 @@
 import java.util.*;
 
 public class Solution{
-    public int[][] kClosest(int[][] points, int K) {
-        int lb = 0;
-        int hb = points.length - 1;
-        while(lb <= hb){
-            int[] pivot = points[hb];
-            int lessEqualIdx = lb - 1;
-            for(int i = lb; i < hb; ++i){
-                int[] point = points[i];
-                if(point[0]*point[0] + point[1]*point[1] <= pivot[0]*pivot[0] + pivot[1]*pivot[1]){
-                    int[] temp = points[lessEqualIdx + 1];
-                    points[++lessEqualIdx] = point;
+    private void selectKth(int[][] points, int k){
+        int start = 0;
+        int end = points.length - 1;
+        while(start < end){
+            int[] pivot = points[end];
+            int lessEqualTailIdx = start - 1;
+            for(int i = start; i < end; ++i){
+                int[] curr = points[i];
+                if(curr[0] * curr[0] + curr[1] * curr[1] <= pivot[0] * pivot[0] + pivot[1] * pivot[1]){
+                    int[] temp = points[lessEqualTailIdx + 1];
+                    points[++lessEqualTailIdx] = curr;
                     points[i] = temp;
                 }
             }
-            int[] temp = points[lessEqualIdx + 1];
-            points[++lessEqualIdx] = pivot;
-            points[hb] = temp;
+            int[] temp = points[lessEqualTailIdx + 1];
+            points[++lessEqualTailIdx] = pivot;
+            points[end] = temp;
             
-            if(lessEqualIdx == K - 1){
-                break;
-            }else if(lessEqualIdx < K - 1){
-                lb = lessEqualIdx + 1;
+            if(lessEqualTailIdx == k){
+                return;
+            }else if(lessEqualTailIdx < k){
+                start = lessEqualTailIdx + 1;
             }else{
-                hb = lessEqualIdx - 1;
+                end = lessEqualTailIdx - 1;
             }
         }
-        
-        int[][] kClosest = new int[K][2];
+    }
+    
+    public int[][] kClosest(int[][] points, int K) {
+        selectKth(points, K - 1);
+        int[][] kClosestPoints = new int[K][2];
         for(int i = 0; i < K; ++i){
-            kClosest[i][0] = points[i][0];
-            kClosest[i][1] = points[i][1];
+            kClosestPoints[i] = points[i];
         }
-        return kClosest;
+        return kClosestPoints;
     }
   
     public static void main(String[] args){
