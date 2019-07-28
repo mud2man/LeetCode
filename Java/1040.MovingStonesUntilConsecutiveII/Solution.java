@@ -8,46 +8,46 @@ import java.util.*; // Stack
 
 public class Solution {
     private int getMinMoves(int[] stones){
-        int minMoves = Integer.MAX_VALUE;
+        int moves = Integer.MAX_VALUE;
         Deque<Integer> queue = new LinkedList<>();
         int idx = 0;
-        queue.add(stones[idx++]);
         while(idx < stones.length){
-            int endValue = (!queue.isEmpty())? stones.length + queue.peekFirst() - 1: 0;
-            while(idx < stones.length && stones[idx] <= endValue){
-                queue.addLast(stones[idx++]);
+            if(queue.isEmpty()){
+                queue.add(stones[idx++]);
             }
-            if(queue.peekLast() == endValue 
-               || idx < (stones.length - 1) 
-               || (queue.peekFirst() != stones[0] && idx < stones.length)){
-                minMoves = Math.min(minMoves, stones.length - queue.size());
+            int front = queue.peekFirst();
+            while(idx < stones.length && stones[idx] - front + 1 <= stones.length){
+                queue.add(stones[idx++]);
+            }
+            if((queue.size() <= stones.length - 2) || (queue.size() != queue.peekLast() - queue.peekFirst() + 1)){
+                moves = Math.min(moves, stones.length - queue.size());
             }
             queue.pollFirst();
-            if(queue.isEmpty()){
-                queue.addLast(stones[idx++]);
-            }
         }
-        return minMoves;
+        return (moves == Integer.MAX_VALUE)? 0: moves;
     }
     
     private int getMaxMoves(int[] stones){
         int leftGap = stones[1] - stones[0];
         int rightGap = stones[stones.length - 1] - stones[stones.length - 2];
-        if(leftGap > 1 && rightGap > 1){
-            return (leftGap > rightGap)? 
-                (stones[stones.length - 2] - stones[0] + 1) - (stones.length - 1):
-                (stones[stones.length - 1] - stones[1] + 1) - (stones.length - 1);
+        int length = 0;
+        if(leftGap > 0 && rightGap > 0){
+            if(leftGap < rightGap){
+                length = stones[stones.length - 1] - stones[1] + 1;
+            }else{
+                length = stones[stones.length - 2] - stones[0] + 1;
+            }
+        }else if(leftGap == 0){
+            length = stones[stones.length - 2] - stones[0] + 1;
         }else{
-            return (stones[stones.length - 1] - stones[0] + 1) - stones.length;
+            length = stones[stones.length - 1] - stones[1] + 1;
         }
+        return length - stones.length + 1;
     }
     
     public int[] numMovesStonesII(int[] stones) {
         Arrays.sort(stones);
-        int[] movies = new int[2];
-        movies[0] = getMinMoves(stones);
-        movies[1] = getMaxMoves(stones);
-        return movies;
+        return new int[]{getMinMoves(stones), getMaxMoves(stones)};
     }
   
     public static void main(String[] args){
