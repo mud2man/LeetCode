@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Solution{
     interface Master {
-         public int guess(String word);
+        public int guess(String word);
     }
 
     private int minMaxGuess(List<Integer> candidates, int[][] matches){
