@@ -12,55 +12,50 @@ public class Solution{
         public int guess(String word);
     }
 
-    private int minMaxGuess(List<Integer> candidates, int[][] matches){
-        int selected = -1;
-        int globalMaxGroupSize = Integer.MAX_VALUE;
-        for(int candidate: candidates){
-            List<Integer> groupSize = new ArrayList<>();
-            for(int i = 0; i < 7; ++i){
-                groupSize.add(0);
+    private int minMaxGuess(List<Integer> candidates, int[][] matchCounts){
+        int max = Integer.MAX_VALUE;
+        int candidate = -1;
+        for(int x: candidates){
+            int[] group = new int[7];
+            int localMax = 0;
+            for(int y: candidates){
+                group[matchCounts[x][y]]++;
+                localMax = Math.max(localMax, group[matchCounts[x][y]]);
             }
-            int localMaxGroupSize = 0;
-            for(int other: candidates){
-                int count = matches[candidate][other];
-                groupSize.set(count, groupSize.get(count) + 1);
-                localMaxGroupSize = (groupSize.get(count) > localMaxGroupSize)? groupSize.get(count): localMaxGroupSize;
-            }
-            if(localMaxGroupSize < globalMaxGroupSize){
-                globalMaxGroupSize = localMaxGroupSize;
-                selected = candidate;
+            if(localMax < max){
+                max = localMax;
+                candidate = x;
             }
         }
-        return selected;
+        return candidate;
     }
     
     public void findSecretWord(String[] wordlist, Master master) {
-        int[][] matches = new int[wordlist.length][wordlist.length];
+        int length = wordlist.length;
+        int[][] matchCounts = new int[length][length];
         List<Integer> candidates = new ArrayList<>();
-        for(int i = 0; i < wordlist.length; ++i){
-            for(int j = 0; j < wordlist.length; ++j){
-                for(int k = 0; k < 6; ++k){
-                    char c0 = wordlist[i].charAt(k);
-                    char c1 = wordlist[j].charAt(k);
-                    matches[i][j] += (c0 == c1)? 1: 0;
-                }
-            }
+        for(int i = 0; i < length; ++i){
             candidates.add(i);
+            for(int j = 0; j < length; ++j){
+                int count = 0;
+                for(int k = 0; k < 6; ++k){
+                    count += (wordlist[i].charAt(k) == wordlist[j].charAt(k))? 1: 0;
+                }
+                matchCounts[i][j] = count;
+            }
         }
         
-        Set<Integer> guessed = new HashSet<>();
         while(!candidates.isEmpty()){
-            int i = minMaxGuess(candidates, matches);
-            guessed.add(i);
-            String word = wordlist[i];
-            int count = master.guess(word);
-            if(count == 6){
-                break;
+            int candidate = minMaxGuess(candidates, matchCounts);
+            int matchCount = master.guess(wordlist[candidate]);
+            if(matchCount == 6){
+                return;
             }
             List<Integer> nextCandidates = new ArrayList<>();
-            for(int j: candidates){
-                if(matches[i][j] == count && !guessed.contains(j)){
-                    nextCandidates.add(j);
+            for(int other: candidates){
+                int count = matchCounts[candidate][other];
+                if(count == matchCount){
+                    nextCandidates.add(other);
                 }
             }
             candidates = nextCandidates;
