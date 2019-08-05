@@ -44,7 +44,7 @@ public class Solution {
         sentence2HeapNode.put(sentence, newHeapNode);
     }
 
-    public AutocompleteSystem(String[] sentences, int[] times) {
+    public Solution(String[] sentences, int[] times) {
         root = new TrieNode();
         sentence2HeapNode = new HashMap<>();
         for(int i = 0; i < times.length; ++i){
@@ -88,7 +88,7 @@ public class Solution {
     public static void main(String[] args){
         String[] sentences = {"i love you", "island", "ironman", "i love leetcode"};
         int[] times = {5, 3, 2, 2};
-        iSolution sol = new Solution(sentences, times);
+        Solution sol = new Solution(sentences, times);
         System.out.println("sentences:" + Arrays.toString(sentences));
         System.out.println("times:" + Arrays.toString(times));
         System.out.println("input('i'): " + sol.input('i'));
