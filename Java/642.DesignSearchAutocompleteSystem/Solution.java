@@ -1,4 +1,4 @@
-/* Trie Tree: Time:O(n), Space:O(n), where n is number of characters
+/* Trie Tree: Time:O(nlogm), Space:O(n*m*l), where n is characters#, m is sentence#, l is length of snetence
  * 1. Have a trie tree, where the node contains "minHeap", and "child" array
  * 2. In the minHeap, the node contains "sentence" and its according hot degree. Also, we need have its comparator
  * 3. In constructor "AutocompleteSystem", insert all the sentecnes into trie tree, and "hotDegreeMap"
