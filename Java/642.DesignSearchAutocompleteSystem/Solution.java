@@ -1,116 +1,94 @@
 /* Trie Tree: Time:O(n), Space:O(n), where n is number of characters
- * 1. Have a trie tree, wwhere the node contains "minHeap", and "child" array
+ * 1. Have a trie tree, where the node contains "minHeap", and "child" array
  * 2. In the minHeap, the node contains "sentence" and its according hot degree. Also, we need have its comparator
  * 3. In constructor "AutocompleteSystem", insert all the sentecnes into trie tree, and "hotDegreeMap"
  * 4. In input, if character is '#', insert the new sentence into trie tree. Otherwise, retunr the minHeap of the current node
- * 
  */         
 
 import java.util.*;
 
 public class Solution {
-    HashMap<String, Integer> hotDegreeMap = new HashMap<String, Integer>();
-        
     private class HeapNode{
+        Integer freq;
         String sentence;
-        int hotDegree;
-        HeapNode(String s, int h){sentence = s; hotDegree = h;}
+        HeapNode(int f, String s){freq = f; sentence = s;}
     }
-    
-    private class HeapComparator implements Comparator<HeapNode>{
+    private class WordComparator implements Comparator<HeapNode>{
         public int compare(HeapNode x, HeapNode y){
-            if(x.hotDegree != y.hotDegree){
-                return x.hotDegree - y.hotDegree;
-            }
-            else{
-                return y.sentence.compareTo(x.sentence);
-            }
+            return (x.freq != y.freq)? y.freq.compareTo(x.freq): x.sentence.compareTo(y.sentence);
         }
-    } 
-    
+    }
     private class TrieNode{
-        char character;
-        PriorityQueue<HeapNode> minHeap;
-        TrieNode[] child;
-        TrieNode(char c){character = c; child = new TrieNode[27]; minHeap = new PriorityQueue<HeapNode>(new HeapComparator());}
+        TrieNode child[];
+        PriorityQueue<HeapNode> maxHeap;
+        TrieNode(){child = new TrieNode[27]; maxHeap = new PriorityQueue<>(new WordComparator());}
     }
+    TrieNode root;
+    TrieNode ptr;
+    StringBuilder path;
+    Map<String, HeapNode> sentence2HeapNode;
     
-    TrieNode trieTree;
-    private void insert(TrieNode root, String sentence, int hotDegree){
-        List<TrieNode> path = new ArrayList<TrieNode>();
-        for(int i = 0; i < sentence.length(); ++i){
-            char c = sentence.charAt(i);
-            int position = (c == ' ')? 0: c - 'a' + 1;
-            root.child[position] = (root.child[position] == null)? new TrieNode(c): root.child[position];
-            root = root.child[position];
-            path.add(root);
+    //remove heapNode and add, update sentence2HeapNode
+    private void insert(TrieNode root, HeapNode newHeapNode){
+        String sentence = newHeapNode.sentence;
+        HeapNode oldHeapNode = sentence2HeapNode.getOrDefault(sentence, null);
+        for(char c: sentence.toCharArray()){
+            int idx = (c != ' ')? c - 'a': 26;
+            if(root.child[idx] == null){
+                root.child[idx] = new TrieNode();
+            }
+            root = root.child[idx];
+            root.maxHeap.remove(oldHeapNode);
+            root.maxHeap.add(newHeapNode);
         }
+        sentence2HeapNode.put(sentence, newHeapNode);
+    }
 
-        HeapNode heapNode = new HeapNode(sentence, hotDegree);
-        for(TrieNode node: path){
-            HashMap<String, HeapNode> heapNodeMap = new HashMap<String, HeapNode>();
-            heapNodeMap.put(sentence, heapNode);
-            while(!node.minHeap.isEmpty()){
-                HeapNode n = node.minHeap.poll();
-                heapNodeMap.putIfAbsent(n.sentence, n);
-            }
-            for(Map.Entry<String, HeapNode> entry: heapNodeMap.entrySet()){
-                node.minHeap.add(entry.getValue());
-            }
-            if(node.minHeap.size() > 3){
-               node.minHeap.poll(); 
-            }
+    public AutocompleteSystem(String[] sentences, int[] times) {
+        root = new TrieNode();
+        sentence2HeapNode = new HashMap<>();
+        for(int i = 0; i < times.length; ++i){
+            HeapNode heapNode = new HeapNode(times[i], sentences[i]);
+            insert(root, heapNode);
         }
+        ptr = root;
+        path = new StringBuilder();
     }
     
-    public Solution(String[] sentences, int[] times) {
-        trieTree = new TrieNode(' ');
-        for(int i = 0; i < sentences.length; ++i){
-            String sentence = sentences[i];
-            int hotDegree = times[i];
-            insert(trieTree, sentence, hotDegree);
-            hotDegreeMap.put(sentence, hotDegree);
-        }
-        newSentence = new StringBuilder("");
-        currentNode = trieTree;
-    }
-    
-    StringBuilder newSentence;
-    TrieNode currentNode;
     public List<String> input(char c) {
+        List<String> top3 = new ArrayList<>();
         if(c == '#'){
-            String s = newSentence.toString();
-            hotDegreeMap.putIfAbsent(s, 0);
-            hotDegreeMap.put(s, hotDegreeMap.get(s) + 1);
-            insert(this.trieTree, s, hotDegreeMap.get(s));
-            currentNode = trieTree;
-            newSentence = new StringBuilder("");
-            return new ArrayList<String>();
-        }
-        else{
-            int position = (c == ' ')? 0: c - 'a' + 1;
-            newSentence.append(c);
-            currentNode.child[position] = (currentNode.child[position] == null)? new TrieNode(c): currentNode.child[position];
-            currentNode = currentNode.child[position];
-            LinkedList<String> top3 = new LinkedList<String>();
-            PriorityQueue<HeapNode> newHeap = new PriorityQueue<HeapNode>(new HeapComparator());
-            PriorityQueue<HeapNode> previousHeap = currentNode.minHeap;
-            while(!previousHeap.isEmpty()){
-                HeapNode heapNode = previousHeap.poll();
-                top3.addFirst(heapNode.sentence);
-                newHeap.add(heapNode);
+            String sentence = path.toString();
+            path = new StringBuilder();
+            HeapNode heapNode = sentence2HeapNode.getOrDefault(sentence, new HeapNode(0, sentence));
+            heapNode.freq++;
+            insert(root, heapNode);
+            ptr = root;
+        }else{
+            int idx = (c != ' ')? c - 'a': 26;
+            path.append(c);
+            if(ptr.child[idx] == null){
+                ptr.child[idx] = new TrieNode();
             }
-            currentNode.minHeap = newHeap;
-            return top3;
+            ptr = ptr.child[idx];
+            Deque<HeapNode> temp = new LinkedList<>();
+            PriorityQueue<HeapNode> maxHeap = ptr.maxHeap;
+            while(!maxHeap.isEmpty() && top3.size() < 3){
+                HeapNode front = maxHeap.poll();
+                top3.add(front.sentence);
+                temp.add(front);
+            }
+            while(!temp.isEmpty()){
+                maxHeap.add(temp.pollFirst());
+            }
         }
+        return top3;
     }
 
     public static void main(String[] args){
-        Solution sol;
         String[] sentences = {"i love you", "island", "ironman", "i love leetcode"};
         int[] times = {5, 3, 2, 2};
-        
-        sol = new Solution(sentences, times);
+        iSolution sol = new Solution(sentences, times);
         System.out.println("sentences:" + Arrays.toString(sentences));
         System.out.println("times:" + Arrays.toString(times));
         System.out.println("input('i'): " + sol.input('i'));
