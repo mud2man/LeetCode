@@ -31,11 +31,9 @@ public class Solution{
             if(nextTop[0] < top[0]){
                 stack.add(top);
                 top = nextTop;
-            }
-            else if(nextTop[0] == top[0]){
+            }else if(nextTop[0] == top[0]){
                 top[1] = nextTop[1];
-            }
-            else{
+            }else{
                 while(!stack.isEmpty() && nextTop[0] > top[0]){
                     water += (nextTop[1] - stack.peekLast()[1] - 1) * (Math.min(nextTop[0], stack.peekLast()[0]) - top[0]);
                     top = stack.pollLast();
@@ -44,11 +42,9 @@ public class Solution{
                 if(nextTop[0] < top[0]){
                     stack.add(top);
                     top = nextTop;
-                }
-                else if(nextTop[0] == top[0]){
+                }else if(nextTop[0] == top[0]){
                     top[1] = nextTop[1];
-                }
-                else{
+                }else{
                     top = nextTop;
                 }
             }
@@ -57,15 +53,9 @@ public class Solution{
     }
 
     public static void main(String[] args){
-        String s;
-        Solution sol;
         int[] height = {0, 1, 0, 2, 1, 0, 1, 3};
-        int volume;
-        
-        sol = new Solution();
-
-        System.out.println("height =" +Arrays.toString(height));
-        volume = sol.trap(height);
-        System.out.println("trapped watter = " + volume);
+        Solution sol = new Solution();
+        System.out.println("height =" + Arrays.toString(height));
+        System.out.println("trapped watter = " + sol.trap(height));
     }
 }
