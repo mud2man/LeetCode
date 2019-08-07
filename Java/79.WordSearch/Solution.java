@@ -18,28 +18,23 @@ public class Solution{
             return true;
         }
         
-        //push
         used[y][x] = true;
-        
         int[][] shifts = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
         for(int[] shift: shifts){
             if(dfs(used, board, y + shift[0], x + shift[1], word, i + 1)){
                 return true;
             }  
         }
-        
-        //pop
         used[y][x] = false; 
         return false;
     }
     
     public boolean exist(char[][] board, String word) {
-        int y, x;
         boolean[][] used = new boolean[board.length][board[0].length];
         boolean isExist;
        
-        for(y = 0; y < board.length; ++y){
-            for(x = 0; x < board[0].length; ++x){
+        for(int y = 0; y < board.length; ++y){
+            for(int x = 0; x < board[0].length; ++x){
                 if(dfs(used, board, y, x, word, 0)){
                     return true;
                 }
@@ -47,15 +42,14 @@ public class Solution{
         }
         return false;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
         String word = "ABCCED"; 
         char[][] board = {{'A', 'B', 'C', 'E'},
                           {'S', 'F', 'C', 'S'},
                           {'A', 'D', 'E', 'E'}};
         
-        sol = new Solution();
+        Solution sol = new Solution();
 
         System.out.println("word: " + word);
         System.out.println("board: ");
