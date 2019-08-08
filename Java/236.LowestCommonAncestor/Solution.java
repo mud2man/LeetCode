@@ -18,30 +18,22 @@ public class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         if(root == null){
             return null;
-        }
-        else if(root == p || root == q){
+        }else if(root == p || root == q){
             return root;
         }
         
         TreeNode left = lowestCommonAncestor(root.left, p, q);
         TreeNode right = lowestCommonAncestor(root.right, p, q);
-        
         if(left != null && right != null){
             return root;
-        }
-        else if(left == null){
+        }else if(left == null){
             return right;
-        }
-        else{
+        }else{
             return left;
         }
     }
  
     public static void main(String[] args) {
-        TreeNode root;
-        TreeNode lca;
-        Solution sol;
-        
         /* Generate a input tree
          *     8
          *    / \
@@ -51,7 +43,7 @@ public class Solution {
          *    / \ 
          *   4   7 
          */
-        root = new TreeNode(8);
+        TreeNode root = new TreeNode(8);
         root.left = new TreeNode(3);
         root.right = new TreeNode(10);
         root.left.left = new TreeNode(1);
@@ -60,11 +52,8 @@ public class Solution {
         root.left.right.left = new TreeNode(4);
         root.left.right.right = new TreeNode(7);
 
-        sol = new Solution();
-        lca = sol.lowestCommonAncestor(root, root.left.left, root.left.right.right);
-
+        Solution sol = new Solution();
+        TreeNode lca = sol.lowestCommonAncestor(root, root.left.left, root.left.right.right);
         System.out.println(lca.val);
-        
-        sol = null;
     }
 }
