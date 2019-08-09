@@ -8,47 +8,44 @@ import java.util.*;
 
 public class Solution{
     public int[] asteroidCollision(int[] asteroids) {
-        LinkedList<Integer> remainAsteroids = new LinkedList<Integer>();
-        
+        Deque<Integer> monotonousStack = new LinkedList<>();
         for(int asteroid: asteroids){
             if(asteroid > 0){
-                remainAsteroids.add(asteroid);
-            }
-            else{
-                while(!remainAsteroids.isEmpty() && remainAsteroids.peekLast() > 0){
-                    if((-asteroid) > remainAsteroids.peekLast()){
-                        remainAsteroids.pollLast();
-                    }
-                    else if ((-asteroid) == remainAsteroids.peekLast()){
-                        remainAsteroids.pollLast();
-                        asteroid = 0;
+                monotonousStack.add(asteroid);
+            }else{
+                boolean crashed = false;
+                while(!monotonousStack.isEmpty()){
+                    if(monotonousStack.peekLast() < 0){
                         break;
-                    }
-                    else{
-                        asteroid = 0;
-                        break;
+                    }else{
+                        if(monotonousStack.peekLast() > -asteroid){
+                            crashed = true;
+                            break;
+                        }else if(monotonousStack.peekLast() == -asteroid){
+                            monotonousStack.pollLast();
+                            crashed = true;
+                            break;
+                        }else{
+                            monotonousStack.pollLast();
+                        }
                     }
                 }
-                
-                if(asteroid != 0){
-                    remainAsteroids.add(asteroid);
+                if(!crashed){
+                    monotonousStack.add(asteroid);
                 }
             }
         }
         
-        int[] ret = new int[remainAsteroids.size()];
-        int index = 0;
-        for(int remainAsteroid: remainAsteroids){
-            ret[index++] = remainAsteroid;
+        int[] ret = new int[monotonousStack.size()];
+        for(int i = 0; i < ret.length; ++i){
+            ret[i] = monotonousStack.pollFirst();
         }
         return ret;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
         int[] asteroids = {5, 10, -5};
-        sol = new Solution();
-
+        Solution sol = new Solution();
         System.out.println("asteroids: " + Arrays.toString(asteroids));
         System.out.println("remaining: " + Arrays.toString(sol.asteroidCollision(asteroids)));
     }
