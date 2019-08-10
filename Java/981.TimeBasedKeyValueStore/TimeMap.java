@@ -21,12 +21,10 @@ public class TimeMap{
             Integer floorKey = db.get(key).floorKey(timestamp);
             if(floorKey == null){
                 return "";
-            }
-            else{
+            }else{
                 return db.get(key).get(floorKey);
             }
-        }
-        else{
+        }else{
             return "";
         }
     }
