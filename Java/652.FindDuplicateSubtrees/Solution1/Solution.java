@@ -36,9 +36,6 @@ public class Solution{
         return duplicates;
     }
     public static void main(String[] args){
-        TreeNode root;
-        Solution sol;
-        
         /* Generate a input tree
          *     1
          *    / \
@@ -48,14 +45,14 @@ public class Solution{
          *    /
          *   4   
          */
-        root = new TreeNode(1);
+        TreeNode root = new TreeNode(1);
         root.left = new TreeNode(2);
         root.right = new TreeNode(3);
         root.left.left = new TreeNode(4);
         root.right.left = new TreeNode(2);
         root.right.right = new TreeNode(4);
         root.right.left.left = new TreeNode(4);
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("duplicates: " + sol.findDuplicateSubtrees(root));
     }
 }
