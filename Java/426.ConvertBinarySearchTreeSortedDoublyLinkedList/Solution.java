@@ -24,8 +24,7 @@ public class Solution {
             head[0] = root;
             head[0].left = root;
             head[0].right = root;
-        }
-        else{
+        }else{
             root.right = head[0];
             root.left = head[0].left;
             head[0].left.right = root;
@@ -50,9 +49,6 @@ public class Solution {
     }
 
     public static void main(String[] args){
-        TreeNode root;
-        Solution sol = new Solution();
-        
         /* Generate a input tree
          *     4
          *    / \
@@ -60,12 +56,13 @@ public class Solution {
          *  / \   
          * 1   3  
          */
-        root = new TreeNode(4);
+        TreeNode root = new TreeNode(4);
         root.left = new TreeNode(2);
         root.right = new TreeNode(5);
         root.left.left = new TreeNode(1);
         root.left.right = new TreeNode(3);
         System.out.println("After transform: ");
+        Solution sol = new Solution();
         TreeNode head = sol.treeToDoublyList(root);
         sol.traverse(head); 
     }
