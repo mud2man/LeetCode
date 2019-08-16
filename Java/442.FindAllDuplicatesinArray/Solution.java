@@ -1,4 +1,4 @@
-/* O(n)
+/* Resurceive: O(n)
  * 1. Travserse nums from left to right, and call helper 
  * 2. If nums[index] == 0, means index + 1 never meet before, set nums[index] = -1
  * 3. If nums[index] == -1, means index + 1 already meet before, add index + 1 into dulpicates
