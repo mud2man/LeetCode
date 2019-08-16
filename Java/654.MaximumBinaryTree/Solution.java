@@ -16,47 +16,36 @@ class TreeNode {
 
 public class Solution {
     public TreeNode constructMaximumBinaryTree(int[] nums) {
-        Stack<TreeNode> stack = new Stack<TreeNode>();
+        TreeNode dummy = new TreeNode(Integer.MAX_VALUE);
+        Deque<TreeNode> stack = new LinkedList<TreeNode>();
+        stack.add(dummy);
         
-        for(int i = 0; i < nums.length; ++i){
-            TreeNode currNode = new TreeNode(nums[i]);
+        for(int num: nums){
+            TreeNode currNode = new TreeNode(num);
             TreeNode top = null;
-            while(!stack.empty() && stack.peek().val < currNode.val){
-                top = stack.pop();
+            while(stack.peekLast().val < currNode.val){
+                top = stack.pollLast();
             }
-            
-            if(!stack.empty()){
-                stack.peek().right = currNode;
-            }
-            
+            stack.peekLast().right = currNode;
             currNode.left = top;
-            stack.push(currNode);
+            stack.add(currNode);
         }
-        
-        TreeNode top = null;
-        while(!stack.empty()){
-            top = stack.pop();
-        }
-        return top;
+        return dummy.right;
     }
 
     private void preOrder(TreeNode root){
         if(root == null){
             return;
         }
-
         System.out.print(root.val + ", ");
         preOrder(root.left);
         preOrder(root.right);
     }
 
     public static void main(String[] args){
-        Solution sol;
         int[] nums = {3, 2, 1, 6, 0, 5};
-         
         System.out.println("nums:" + Arrays.toString(nums));
-
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("after construct:");
         TreeNode root = sol.constructMaximumBinaryTree(nums);
         sol.preOrder(root);
