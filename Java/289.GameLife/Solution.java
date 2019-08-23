@@ -9,34 +9,22 @@ import java.util.*;
 
 
 public class Solution{
-    int[][] shifts = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-    
     private boolean willLive(int y, int x, int[][] board){
+        int[][] shifts = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
         int count = 0;
         for(int i = 0; i < shifts.length; ++i){
             int shiftY = y + shifts[i][0];
             int shiftX = x + shifts[i][1];
             if(shiftY >= 0 && shiftY < board.length && shiftX >= 0 && shiftX < board[0].length){
-                if((board[shiftY][shiftX] & 0x1) != 0){
-                    count++;
-                }
+                count += ((board[shiftY][shiftX] & 0x1) != 0)? 1: 0;
             }
         }
-        
-        if(count == 3){
-            return true;
-        }
-        else if (count == 2){
-            return ((board[y][x] & 0x1) != 0);
-        }
-        else{
-            return false;
-        }
+        return (count == 3)? true: (count == 2)? ((board[y][x] & 0x1) != 0): false;
     }
     
     private void update(int y, int x, int[][] board){
         if(y >= 0 && y < board.length && x >= 0 && x < board[0].length){
-            board[y][x] = ((board[y][x] & 0x2) != 0)? 1 : 0;
+            board[y][x] = board[y][x] >> 1;
         }
     }
     
@@ -61,7 +49,7 @@ public class Solution{
         }
         update(depth - 1, width - 1, board);
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int[][] board = {{1, 1, 0},
