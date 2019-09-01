@@ -1,99 +1,68 @@
 /* MaxmunHeap + HashMap: time = O(nlogn), space = O(n)
- * 1. Have addHeightMap to record the height when encounter the left edge of building
- * 2. Have deleteHeightMap to record the height when encounter the right edge of building
- * 3. Traverse all the building to create addHeightMa, deleteHeightMapp and xPositions
- * 4. Sort the xPositions with increasing order
- * 5. Traverse xPositions and skip if encounetr duplicated one, add height if encounter left edge, delete if encounter right edge
- *  5.1 Add the heights if addHeightMap contains the current x, because it encounters left edge
- *  5.2 Delete the heights if deleteHeightMap contains the current x, because it encounters right edge
- *  5.3 If maxHeap empty, add int[x, 0], else add int[x, maxHeap.peek()] into skyline
- * 6. Delete the duplicated points from skyline, if the current point has the same height as the previous one has
+ * 1. Have x2LeftHights to record the height when encounter the left edge of building
+ * 2. Have x2RightHights to record the height when encounter the right edge of building
+ * 3. Traverse all the building to create addHeightMa, deleteHeightMapp and xs
+ * 4. Sort the xs with increasing order
+ * 5. Traverse xs and skip if encounetr duplicated one, add height if encounter left edge, delete if encounter right edge
+ *  5.1 Add the heights if x2LeftHights contains the current x, because it encounters left edge
+ *  5.2 Delete the heights if x2RightHights contains the current x, because it encounters right edge
+ *  5.3 Add (x, hight) to skyline if height changes
  */
 
 import java.util.*;
 
 public class Solution{
-    static class HeapComparator implements Comparator<Integer>{
-        @Override
-        public int compare(Integer x, Integer y){
-            return y - x;
-        }
-    }
-    
-    public List<int[]> getSkyline(int[][] buildings) {
-        List<Integer> xPositions = new LinkedList<Integer>();
-        HashMap<Integer, List<Integer>> addHeightMap = new HashMap<Integer, List<Integer>>();
-        HashMap<Integer, List<Integer>> deleteHeightMap = new HashMap<Integer, List<Integer>>();
-        List<int[]> skyline = new LinkedList<int[]>(); 
-        
+    public List<List<Integer>> getSkyline(int[][] buildings) {
+        Map<Integer, List<Integer>> x2LeftHights = new HashMap<>();
+        Map<Integer, List<Integer>> x2RightHights = new HashMap<>();
+        List<Integer> xs = new ArrayList<>();
+        Set<Integer> visitedXs = new HashSet<>();
         for(int[] building: buildings){
-            int startX = building[0];
-            int endX = building[1];
-            int height = building[2];
-            xPositions.add(startX);
-            xPositions.add(endX);
-            if(!addHeightMap.containsKey(startX)){
-                addHeightMap.put(startX, new LinkedList<Integer>());
+            x2LeftHights.computeIfAbsent(building[0], key -> new ArrayList<>()).add(building[2]);
+            x2RightHights.computeIfAbsent(building[1], key -> new ArrayList<>()).add(building[2]);
+            if(!visitedXs.contains(building[0])){
+                xs.add(building[0]);
             }
-            addHeightMap.get(startX).add(height);
-            
-            if(!deleteHeightMap.containsKey(endX)){
-                deleteHeightMap.put(endX, new LinkedList<Integer>());
+            if(!visitedXs.contains(building[1])){
+                xs.add(building[1]);
             }
-            deleteHeightMap.get(endX).add(height);
+            visitedXs.add(building[0]);
+            visitedXs.add(building[1]);
         }
+        Collections.sort(xs);
         
-        Collections.sort(xPositions);
-        
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(new HeapComparator());
-        int prevX = -1;
-        for(int x: xPositions){
-            if(x != prevX){
-                if(addHeightMap.containsKey(x)){
-                    for(int height: addHeightMap.get(x)){
-                        maxHeap.add(height);
-                    }
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((x, y) -> y.compareTo(x));
+        List<List<Integer>> skyline = new LinkedList<>();
+        int currHeight = 0;
+        for(int x: xs){
+            if(x2LeftHights.containsKey(x)){
+                for(int y: x2LeftHights.get(x)){
+                    maxHeap.add(y);
                 }
-                
-                if(deleteHeightMap.containsKey(x)){
-                    for(int height: deleteHeightMap.get(x)){
-                        maxHeap.remove(height);
-                    }
+            }
+            if(x2RightHights.containsKey(x)){
+                for(int y: x2RightHights.get(x)){
+                    maxHeap.remove(y);
                 }
-                skyline.add(new int[]{x, !maxHeap.isEmpty()? maxHeap.peek(): 0});
             }
-            prevX = x;
-        }
-
-        //reduce
-        int[] prevPoint = new int[]{-1, -1};
-        Iterator<int[]> iterator = skyline.iterator();
-        while(iterator.hasNext()){
-            int[] currentPoint = iterator.next();
-            if(currentPoint[1] == prevPoint[1]){
-                iterator.remove();
+            int hight = maxHeap.isEmpty()? 0: maxHeap.peek();
+            if(hight != currHeight){
+                skyline.add(Arrays.asList(x, hight));
+                currHeight = hight;
             }
-            prevPoint = currentPoint;
         }
         return skyline;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         int[][] buildings = {{2, 9, 10}, {3, 7, 15}, {5, 12, 12}, {15, 20, 10}, {19, 24, 8}};
 
-        sol = new Solution();
         System.out.println("buildings: ");
         for(int[] building: buildings){
             System.out.print(Arrays.toString(building) + ", ");
         }
         System.out.println("");
-
-        List<int[]> skyline = sol.getSkyline(buildings);
-        System.out.println("skylin: ");
-        for(int[] point: skyline){
-            System.out.print(Arrays.toString(point) + ", ");
-        }
-        System.out.println("");
+        System.out.println("skylin: " + sol.getSkyline(buildings));
     }
 }
