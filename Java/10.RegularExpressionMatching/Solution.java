@@ -37,12 +37,10 @@ public class Solution{
                 char charP = p.charAt(y - 1);
                 if(charP == '*'){
                     char prevCharP = p.charAt(y - 2);
-                    if(prevCharP != charS && prevCharP != '.'){
-                        dp[y][x] = dp[y - 2][x];
-                    }else{
-                        //use one or more previous p | remove previous p
-                        dp[y][x] = dp[y][x - 1] | dp[y - 2][x]; 
-                    }
+                    //remove previous p
+                    dp[y][x] = dp[y - 2][x];
+                    //use one or more previous p
+                    dp[y][x] |= (prevCharP == charS || prevCharP == '.')? dp[y][x - 1]: false;
                 }else if(charP == '.' || charP == charS){
                     dp[y][x] = dp[y - 1][x - 1];
                 }else{
