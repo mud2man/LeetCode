@@ -8,66 +8,64 @@ import java.util.*;
 
 //Definition for singly-linked list.
 public class Solution{
-    private void bfs(String beginWord, String endWord, Set<String> unvisited, Map<String, Set<String>> right2Left){
-        Set<String> queue = new HashSet<>();
+    private boolean bfs(String beginWord, String endWord, Set<String> unvisited, Map<String, Set<String>> right2Lefts){
+        Deque<String> queue = new LinkedList<>();
         queue.add(beginWord);
-        
-        while(!queue.isEmpty()){
-            Set<String> nextQueue = new HashSet<>();
-            for(String visitedWord: queue){
-                StringBuilder word = new StringBuilder(visitedWord);
-                for(int i = 0; i < word.length(); ++i){
-                    for(char c = 'a'; c <= 'z'; ++c){
-                        word.setCharAt(i, c);
-                        if(visitedWord.charAt(i) != word.charAt(i) && unvisited.contains(word.toString())){
-                            right2Left.putIfAbsent(word.toString(), new HashSet<>());
-                            right2Left.get(word.toString()).add(visitedWord);
-                            nextQueue.add(word.toString()); 
+        boolean hit = false;
+        while(!queue.isEmpty() && !hit){
+            int size = queue.size();
+            Set<String> rights = new HashSet<>();
+            for(int i = 0; i < size; ++i){
+                String left = queue.pollFirst();
+                //find rights
+                StringBuilder sb = new StringBuilder(left);
+                for(int j = 0; j < left.length(); ++j){
+                    char c = sb.charAt(j);
+                    for(int k = 0; k < 26; ++k){
+                        if(c != 'a' + k){
+                            sb.setCharAt(j, (char)('a' + k));
+                            String right = sb.toString();
+                            if(unvisited.contains(right)){
+                                if(!rights.contains(right)){
+                                    queue.add(right);
+                                }
+                                rights.add(right);
+                                right2Lefts.computeIfAbsent(right, key -> new HashSet<>()).add(left);
+                                hit = right.equals(endWord)? true: hit;   
+                            }
                         }
                     }
-                    word.setCharAt(i, visitedWord.charAt(i));
+                    sb.setCharAt(j, c);
                 }
             }
-            if(nextQueue.contains(endWord)){
-                return;
-            }
-            else{
-                for(String visitedWord: nextQueue){
-                    unvisited.remove(visitedWord);
-                }
-                queue = nextQueue;
-            }
+            unvisited.removeAll(rights);
         }
+        return hit;
     }
     
-    private void dfs(String begin, String curr, Map<String, Set<String>> right2Left, Deque<String> path, List<List<String>> ladders){
-        path.addFirst(curr);
-        if(curr.equals(begin)){
-            List<String> ladder = new LinkedList<>(path);
-            ladders.add(ladder);
+    private void dfs(String begin, String cur, Deque<String> path, Map<String, Set<String>> right2Lefts, List<List<String>> ret){
+        path.addFirst(cur);
+        if(cur.equals(begin)){
+            ret.add(new LinkedList<>(path));
             path.pollFirst();
             return;
         }
-        Set<String> lefts = right2Left.get(curr);
+        
+        Set<String> lefts = right2Lefts.get(cur);
         for(String left: lefts){
-            dfs(begin, left, right2Left, path, ladders);
+            dfs(begin, left, path, right2Lefts, ret);
         }
         path.pollFirst();
     }
     
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        Map<String, Set<String>> right2Lefts = new HashMap<>();
+        List<List<String>> ladders = new ArrayList<>();
         Set<String> unvisited = new HashSet<>(wordList);
-        Map<String, Set<String>> right2Left = new HashMap<>();
-        bfs(beginWord, endWord, unvisited, right2Left);
-        
-        if(!right2Left.containsKey(endWord)){
-            return new ArrayList<>();
+        if(bfs(beginWord, endWord, unvisited, right2Lefts)){
+            dfs(beginWord, endWord, new LinkedList<>(), right2Lefts, ladders);
         }
-        else{
-            List<List<String>> ladders = new LinkedList<>();
-            dfs(beginWord, endWord, right2Left, new LinkedList<String>(), ladders);
-            return ladders;
-        }
+        return ladders;
     }
 
     public static void main(String[] args){
