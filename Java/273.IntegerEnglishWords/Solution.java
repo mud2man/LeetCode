@@ -6,7 +6,6 @@
 import java.util.*;
 
 public class Solution{
-   class Solution {
     private String helper(int num){
         if(num == 0){
             return "";
@@ -18,14 +17,13 @@ public class Solution{
         
         String ret = "";
         int tail = num % 100;
-        num = num / 100;
         if(tail < 20){
             ret = digits[tail];
-        }
-        else{
+        }else{
             ret = (tail % 10 > 0)? (twoDigits[tail / 10] + " " + digits[tail % 10]): twoDigits[tail / 10];
         }
         
+        num = num / 100;
         if(num > 0){
             ret = (ret.length() > 0)? (digits[num] + " Hundred ") + ret: (digits[num] + " Hundred");
         }
@@ -51,7 +49,7 @@ public class Solution{
         }
         return word.trim();
     }
- 
+  
     public static void main(String[] args){
         int num = 1234567;
         Solution sol = new Solution();
