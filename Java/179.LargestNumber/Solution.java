@@ -5,33 +5,27 @@
 import java.util.*; // Stack
 
 public class Solution {
-    private class OrderComparator implements Comparator<Integer>{
-        public int compare(Integer x, Integer y){
-            String xy = Integer.toString(x) + Integer.toString(y);
-            String yx = Integer.toString(y) + Integer.toString(x);
-            return yx.compareTo(xy);
-        }
-    }
-    
     public String largestNumber(int[] nums) {
         Integer[] numObjects = new Integer[nums.length];
         for(int i = 0; i < nums.length; ++i){
             numObjects[i] = new Integer(nums[i]);
         }
-        Arrays.sort(numObjects, new OrderComparator());
+        Arrays.sort(numObjects, (x, y) -> {
+            String xy = Integer.toString(x) + Integer.toString(y);
+            String yx = Integer.toString(y) + Integer.toString(x);
+            return yx.compareTo(xy);
+        });
         
-        StringBuilder sb = new StringBuilder("");
-        for(int numObject: numObjects){
-            sb.append(numObject);
+        String ret = "";
+        for(Integer numObject: numObjects){
+           ret = ret + Integer.toString(numObject);
         }
-        return (sb.charAt(0) == '0')? "0": sb.toString();
+        return (ret.charAt(0) == '0')? "0": ret;
     }
   
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         int[] nums = {3, 30, 34, 5, 9};
-
-        sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("largestNumber: " + sol.largestNumber(nums));
     }
