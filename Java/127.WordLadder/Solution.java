@@ -9,52 +9,41 @@ import java.util.*;
 
 //Definition for singly-linked list.
 public class Solution{
-    private List<String> getNeighbors(Set<String> wordSet, String currNode){
-        StringBuilder sb = new StringBuilder(currNode);
-        int length = currNode.length();
-        List<String> neighbors = new LinkedList<String>();
-        for(int i = 0; i < length; ++i){
-            for(char c = 'a'; c <= 'z'; c++){
-                char tmp =  sb.charAt(i);
-                if(tmp == c){
-                    continue;
-                }
-                sb.setCharAt(i, c);
-                String neighbor = sb.toString();
-                if(wordSet.contains(neighbor)){
-                    neighbors.add(neighbor);
-                    wordSet.remove(neighbor);
-                }
-                sb.setCharAt(i, tmp);
-            }
-        }
-        return neighbors;
-    }
-    
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        Set<String> wordSet = new HashSet<String>(wordList);
-        if(!wordSet.contains(endWord)){
-            return 0;
-        }
-        
+        Set<String> wordSet = new HashSet<>(wordList);
         Deque<String> queue = new LinkedList<String>();
         queue.add(beginWord);
         int distance = 1;
         while(!queue.isEmpty()){
-            Deque<String> nextQueue = new LinkedList<>();
-            while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i = 0; i < size; ++i){
                 String currNode = queue.pollFirst();
                 if(currNode.equals(endWord)){
                     return distance;
                 }
-                nextQueue.addAll(getNeighbors(wordSet, currNode));
+                StringBuilder sb = new StringBuilder(currNode);
+                int length = currNode.length();
+                for(int j = 0; j < length; ++j){
+                    for(char c = 'a'; c <= 'z'; c++){
+                        char tmp =  sb.charAt(j);
+                        if(tmp == c){
+                            continue;
+                        }
+                        sb.setCharAt(j, c);
+                        String neighbor = sb.toString();
+                        if(wordSet.contains(neighbor)){
+                            queue.add(neighbor);
+                            wordSet.remove(neighbor);
+                        }
+                        sb.setCharAt(j, tmp);
+                    }
+                }
             }
-            queue = nextQueue;
             distance++;
         }
         return 0;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         String beginWord = "hit";
