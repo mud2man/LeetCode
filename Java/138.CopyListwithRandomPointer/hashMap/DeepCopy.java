@@ -8,50 +8,32 @@ import java.util.*;
 class RandomListNode {
     int label;
     RandomListNode next, random;
-    
-    RandomListNode(int x) {
-        this.label = x;
-    }
+    RandomListNode(int x) {label = x;}
 }
 
 public class DeepCopy {
     public RandomListNode copyRandomList(RandomListNode head){
-        HashMap<RandomListNode, RandomListNode> map;
-        RandomListNode node, cloneNode, cloneHead, preNode;
-        
-        map = new HashMap<RandomListNode, RandomListNode>();
+        HashMap<RandomListNode, RandomListNode> map = new HashMap<RandomListNode, RandomListNode>();
         
         /* clone main trunk */
-        preNode = null;
-        cloneHead = null;
-        for(node = head; node != null; node = node.next){
-            if(!map.containsKey(node))
-                map.put(node, new RandomListNode(node.label));
-            cloneNode = map.get(node);
-            if(node.random != null && !map.containsKey(node.random))
-                map.put(node.random, new RandomListNode(node.random.label));   
+        RandomListNode dummy = new RandomListNode(0);
+        RandomListNode preNode = dummy;
+        for(RandomListNode node = head; node != null; node = node.next){
+            map.computeIfAbsent(node, key -> new RandomListNode(key.label));
+            RandomListNode cloneNode = map.get(node);
+            if(node.random != null && !map.containsKey(node.random)) {
+                map.computeIfAbsent(node.random, key -> new RandomListNode(key.label));
+            }
             cloneNode.random = map.get(node.random);
-            if(preNode == null){
-                cloneHead = cloneNode;
-            }
-            else{
-                preNode.next = cloneNode;
-            }
+            preNode.next = cloneNode;
             preNode = cloneNode;
         }
-        
-        return cloneHead;
+        return dummy.next;
     }
 
     public static void main(String[] args){
-        RandomListNode head;
-        RandomListNode cloneHead;
-        RandomListNode node;
-        DeepCopy dc;
-
-        dc = new DeepCopy();
-
-        head = new RandomListNode(1);
+        DeepCopy dc = new DeepCopy();
+        RandomListNode head = new RandomListNode(1);
         head.next = new RandomListNode(2);
         head.next.next = new RandomListNode(3);
         head.random = head.next;
@@ -59,14 +41,14 @@ public class DeepCopy {
         head.next.next.random = head;
 
         System.out.println("head:");
-        node = head;
+        RandomListNode node = head;
         while(node != null){
             System.out.println("node.label:" + node.label);
             System.out.println("node.random.label:" + node.random.label);
             node = node.next;
         }
 
-        cloneHead = dc.copyRandomList(head);
+        RandomListNode cloneHead = dc.copyRandomList(head);
         
         System.out.println("cloneHead:");
         node = cloneHead;
