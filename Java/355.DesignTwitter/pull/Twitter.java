@@ -1,154 +1,66 @@
-/* Pull model
- # 1. Have a time stamp to record the post time for every tweet
- # 2. Use minHeap the collect the last 10 tweets from folowee's tweet 
+/* Pull model: Time:O(1), Space:O(n)
+ * 1. Have "user2Tweets" to record the user->tweets, and keep up to 10 tweets
+ * 2. Have "user2Followees" to record user->followees
+ * 3. Have "timeStamp" in Tweet, and sorting by it
+ * 4. Output a list of tweets acording followees and user2Tweets with decending order of timeStamp 
+ * 5. Each user need to follow herself, and cannot be unfollowed
  */
 
+import java.util.stream.Collectors;
 import java.util.*;
 import java.math.*;
 
 public class Twitter{
     private class Tweet{
-        int timeStamp;
-        int tweetId;
-        Tweet(int time, int id) {timeStamp = time; tweetId = id;}
+        int id;
+        Integer timeStamp;
+        Tweet(int i, int t){id = i; timeStamp = t;}
     }
-    
-    private class TweetComparator implements Comparator<Tweet>{
-        public int compare(Tweet o1, Tweet o2){
-            return o1.timeStamp - o2.timeStamp;
-        }
-    }
-    
-    private class TweetComparator2 implements Comparator<Tweet>{
-        public int compare(Tweet o1, Tweet o2){
-            return o2.timeStamp - o1.timeStamp;
-        }
-    }
-
-    HashMap<Integer, Set<Integer>> followeesMap;
-    HashMap<Integer, List<Tweet>> tweetsMap;
+    Map<Integer, Deque<Tweet>> user2Tweets;
+    Map<Integer, Set<Integer>> user2Followees;
     int timeStamp;
-    
     /** Initialize your data structure here. */
     public Twitter() {
-        followeesMap = new HashMap<Integer, Set<Integer>>();
-        tweetsMap = new HashMap<Integer, List<Tweet>>();
+        user2Tweets = new HashMap<>();
+        user2Followees = new HashMap<>();
         timeStamp = 0;
     }
     
     /** Compose a new tweet. */
     public void postTweet(int userId, int tweetId) {
-        timeStamp++;
-        Set<Integer> followees;
-        List<Tweet> tweets;
-        Tweet tweet;
-       
-        if(!followeesMap.containsKey(userId)){
-            followees = new HashSet<Integer>();
-            followees.add(userId);
-            followeesMap.put(userId, followees);
-        }
-        else{
-            followees = followeesMap.get(userId);
-            followees.add(userId);
-        }
-        
-        if(!tweetsMap.containsKey(userId)){
-            tweet = new Tweet(timeStamp, tweetId);
-            tweets = new LinkedList<Tweet>();
-            tweets.add(tweet);
-            tweetsMap.put(userId, tweets);
-        }
-        else{
-            tweet = new Tweet(timeStamp, tweetId);
-            tweets = tweetsMap.get(userId);
-            if(tweets.size() == 10){
-                tweets.remove(0);
-            }
-            tweets.add(tweet);
+        user2Tweets.computeIfAbsent(userId, key -> new LinkedList<>()).add(new Tweet(tweetId, timeStamp++));
+        user2Followees.computeIfAbsent(userId, key -> new HashSet<>()).add(userId);
+        if(user2Tweets.get(userId).size() > 10){
+            user2Tweets.get(userId).pollFirst();
         }
     }
     
     /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
     public List<Integer> getNewsFeed(int userId) {
-        PriorityQueue<Tweet> minHeap;
-        Set<Integer> followees;
-        List<Tweet> tweets;
-        List<Integer> news;
-        int i;
-        
-        minHeap = new PriorityQueue<Tweet>(new TweetComparator());
-        news = new ArrayList<Integer>();
-        
-        if(!followeesMap.containsKey(userId)){
-            return news;
-        }
-        
-        followees = followeesMap.get(userId);
-        if(followees == null){
-            return news;
-        }
+        List<Tweet> news = new ArrayList<>();
+        Set<Integer> followees = user2Followees.getOrDefault(userId, new HashSet<>());
         for(int followee: followees){
-            tweets = tweetsMap.get(followee);
-            if(tweets == null){
-                continue;
-            }
-            for(Tweet tweet: tweets){
-                if(minHeap.size() < 10){
-                   minHeap.add(tweet); 
-                }
-                else{
-                    if(minHeap.peek().timeStamp < tweet.timeStamp){
-                        minHeap.poll();
-                        minHeap.add(tweet);
-                    }
-                }
+            news.addAll(user2Tweets.getOrDefault(followee, new LinkedList<>()));
+            Collections.sort(news, (x, y) -> {return y.timeStamp.compareTo(x.timeStamp);});
+            if(news.size() > 10) {
+                news = news.subList(0, 10);
             }
         }
-        
-        Tweet tweetArray[] = new Tweet[minHeap.size()];
-        tweetArray = minHeap.toArray(tweetArray);
-        Arrays.sort(tweetArray, new TweetComparator2());
-        
-        news = new ArrayList<Integer>();
-        for(i = 0; i < tweetArray.length; ++i){
-            news.add(tweetArray[i].tweetId);
-        }
-        
-        return news;
+        return news.stream().map(tweet -> tweet.id).collect(Collectors.toList());
     }
     
     /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
     public void follow(int followerId, int followeeId) {
-        Set<Integer> followees;
-        
-        if(!followeesMap.containsKey(followerId)){
-            followees = new HashSet<Integer>();
-            followees.add(followeeId);
-            followeesMap.put(followerId, followees);
-        }
-        else{
-            followees = followeesMap.get(followerId);
-            followees.add(followeeId);
-        }
+        user2Followees.computeIfAbsent(followerId, key -> new HashSet<>()).add(followeeId);
     }
     
     /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
     public void unfollow(int followerId, int followeeId) {
-        Set<Integer> followees;
-        
-        if(followerId == followeeId){
-            return;
-        }
-        
-        if(followeesMap.containsKey(followerId)){
-            followees = followeesMap.get(followerId);
-            if(followees.contains(followeeId)){
-                followees.remove(followeeId);
-            }
+        if(user2Followees.containsKey(followerId) && followerId != followeeId){
+            user2Followees.get(followerId).remove(followeeId);
         }
     }
-
+ 
     public static void main(String[] args){
         int userId0;
         int userId1;
