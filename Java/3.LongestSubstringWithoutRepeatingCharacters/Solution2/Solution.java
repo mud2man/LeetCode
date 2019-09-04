@@ -21,8 +21,7 @@ public class Solution {
                 while(s.charAt(++head) != c){
                     visited.put(s.charAt(head), visited.get(s.charAt(head)) - 1);
                 }
-            }
-            else{
+            }else{
                 visited.put(c, 1);
             }
             maxLen = Math.max(maxLen, tail - head);
