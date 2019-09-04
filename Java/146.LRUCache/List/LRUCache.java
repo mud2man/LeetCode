@@ -16,11 +16,10 @@ public class LRUCache {
         Node next;
         Node(int k, int v){key = k; val = v; prev = this; next = this;}
     }
-    
     Map<Integer, Node> key2Node;
     int remain;
     Node head;
-    
+
     public LRUCache(int capacity) {
         key2Node = new HashMap<>();
         remain = capacity;
@@ -30,13 +29,11 @@ public class LRUCache {
     public int get(int key) {
         if(!key2Node.containsKey(key)){
             return -1;
-        }
-        else{
+        }else{
             Node node = key2Node.get(key);
             if(node == head){
                 head = head.next;
-            }
-            else{
+            }else{
                 node.next.prev = node.prev;
                 node.prev.next = node.next;
                 
@@ -53,8 +50,7 @@ public class LRUCache {
         if(key2Node.containsKey(key)){
             key2Node.get(key).val = value;
             get(key);
-        }
-        else{
+        }else{
             remain--;
             if(remain >= 0){
                 Node node = new Node(key, value);
@@ -62,19 +58,16 @@ public class LRUCache {
                 
                 if(head == null){
                     head = node;
-                }
-                else{
+                }else{
                     node.next = head;
                     node.prev = head.prev;
                     head.prev.next = node;
                     head.prev = node;
                 }
-            }
-            else{
+            }else{
                 if(head == null){
                     return;
-                }
-                else{
+                }else{
                     key2Node.remove(head.key);
                     key2Node.put(key, head);
                     head.val = value;
@@ -86,11 +79,10 @@ public class LRUCache {
     }
  
     public static void main(String[] args){
-        LRUCache cache;
+        LRUCache cache = new LRUCache(2);
         int n = 6;
         int key, value;
 
-        cache = new LRUCache(2);
 
         key = 1;
         value = 1;
