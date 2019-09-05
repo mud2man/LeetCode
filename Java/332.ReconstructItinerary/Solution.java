@@ -22,13 +22,12 @@ public class Solution{
         for(List<String> ticket: tickets){
             String from = ticket.get(0);
             String to = ticket.get(1);
-            adjList.putIfAbsent(from, new PriorityQueue<>());
-            adjList.get(from).add(to);
+            adjList.computeIfAbsent(from, key -> new PriorityQueue<>()).add(to);
         }
         dfs("JFK", adjList, path);
         return new ArrayList<>(path);
     }
-
+ 
     public static void main(String[] args){
         String[][] tickets = {{"JFK","SFO"}, {"JFK","ATL"}, {"SFO","ATL"}, {"ATL","JFK"}, {"ATL","SFO"}};
         List<List<String>> ticketList = new ArrayList<>();
