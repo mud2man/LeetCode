@@ -15,21 +15,16 @@ public class Solution {
                 return mid;
             }
             
-            //left solpe
-            if(nums[mid] >= nums[lb]){
+            if(nums[mid] >= nums[lb]){ //left solpe
                 if(nums[mid] > target && nums[lb] <= target){
                     hb = mid - 1;
-                }
-                else{
+                }else{
                     lb = mid + 1;
                 }
-            }
-            //right solpe
-            else{
+            }else{ //right solpe
                 if(nums[mid] < target && nums[hb] >= target){
                     lb = mid + 1;
-                }
-                else{
+                }else{
                     hb = mid - 1;
                 }
             }
@@ -38,13 +33,10 @@ public class Solution {
     }
  
     public static void main(String[] args){
-        Solution sol;
         int[] nums = {4, 5, 6, 7, 0, 1, 2};
-        int target;
+        int target = 7;
         
-        target = 7;
-        sol = new Solution();
-
+        Solution sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("target: " + target);
         System.out.println("position: " + sol.search(nums, target));
