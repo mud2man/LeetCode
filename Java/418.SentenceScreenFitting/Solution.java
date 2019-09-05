@@ -6,16 +6,8 @@
 import java.util.*; // Stack
 
 public class Solution {
-    private class SentencesInRow{
-        int sentenceCount;
-        int nextWordId;
-        SentencesInRow(int s, int n){sentenceCount = s; nextWordId = n;}
-    }
-    
-    private boolean setSentenceCount(SentencesInRow[] sentencesInRows, int[] lengths, int cols){
-        int size = lengths.length;
-            
-        for(int startWordId = 0; startWordId < size; ++startWordId){
+    private boolean setSentenceCount(int[][] dp, int[] lengths, int cols){
+        for(int startWordId = 0; startWordId < lengths.length; ++startWordId){
             int x = 0;
             int count = 0;
             int wordId = startWordId;
@@ -23,16 +15,13 @@ public class Solution {
             if(lengths[wordId] > cols){
                 return false;
             }
-            
             while(x < cols){
                 x = x + lengths[wordId] - 1;
-                if(x < cols && wordId == (size - 1)){
-                    count++; 
-                }
-                wordId = (x < cols) ? (wordId + 1) % size: wordId;
+                count += (x < cols && wordId == (lengths.length - 1))? 1: 0;
+                wordId = (x < cols) ? (wordId + 1) % lengths.length: wordId;
                 x = x + 2;
             }
-            sentencesInRows[startWordId] = new SentencesInRow(count, wordId);
+            dp[startWordId] = new int[]{count, wordId};
         }
         return true;
     }
@@ -43,22 +32,21 @@ public class Solution {
             lengths[i] = sentence[i].length();
         }
         
-        SentencesInRow[] sentencesInRow = new SentencesInRow[sentence.length];
-        if(!setSentenceCount(sentencesInRow, lengths, cols)){
+        int[][] dp = new int[sentence.length][2];
+        if(!setSentenceCount(dp, lengths, cols)){
             return 0;
         }
         
         int count = 0;
-        int wordId = 0;
-        for(int rowId = 0; rowId < rows; ++rowId){
-            count += sentencesInRow[wordId].sentenceCount;
-            wordId = sentencesInRow[wordId].nextWordId;
+        for(int rowId = 0, wordId = 0; rowId < rows; ++rowId){
+            count += dp[wordId][0];
+            wordId = dp[wordId][1];
         }
         return count;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         String[] sentence = {"a", "bcd", "e"};
         int rows = 3;
         int cols = 6;
@@ -66,9 +54,6 @@ public class Solution {
         System.out.println("sentence:" + Arrays.toString(sentence));
         System.out.println("rows:" + rows);
         System.out.println("cols:" + cols);
-
-        sol = new Solution();
-
         System.out.println("number of sentence: " + sol.wordsTyping(sentence, rows, cols));
     }
 }
