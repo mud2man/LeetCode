@@ -17,19 +17,17 @@ public class Solution {
         int[] start = {0, 0};
         List<Integer> spirals = new ArrayList<>();
         while((start[0] <= (depth - 1) / 2) && (start[1] <= (width - 1) / 2)){
-            int y = start[0];
-            int x = start[1];
+            int y = start[0]++;
+            int x = start[1]++;
             if(lens[1] == 1){
                 for(int i = 0; i < lens[0]; ++i){
                     spirals.add(matrix[y][x + i]);
                 }
-            }
-            else if(lens[0] == 1){
+            }else if(lens[0] == 1){
                 for(int i = 0; i < lens[1]; ++i){
                     spirals.add(matrix[y + i][x]);
                 }
-            }
-            else{
+            }else{
                 for(int i = 0; i < 4; ++i){
                     for(int j = 0; j < lens[i] - 1; ++j){
                         spirals.add(matrix[y][x]);
@@ -39,12 +37,10 @@ public class Solution {
                     lens[i] -= 2;
                 }
             }
-            start[0] += 1;
-            start[1] += 1;
         }
         return spirals;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
