@@ -12,58 +12,43 @@ import java.util.*;
 
 /* Definition for binary tree */
 public class Solution {
-    class Interval {
-        int start;
-        int end;
-        Interval() { start = 0; end = 0; }
-        Interval(int s, int e) { start = s; end = e; }
-    }
-
-    private class StartComparator implements Comparator<Interval>{
-        @Override
-        public int compare(Interval i0, Interval i1){
-            return i0.start - i1.start;
-        }
-    }
-    
-    public List<Interval> merge(List<Interval> intervals) {
-        LinkedList<Interval> mergedIntervals = new LinkedList<Interval>();
-        if(intervals.isEmpty()){
-            return mergedIntervals;
+    public int[][] merge(int[][] intervals) {
+        Deque<int[]> mergedIntervals = new LinkedList<>();
+        if(intervals.length == 0){
+            return intervals;
         }
         
-        Collections.sort(intervals, new StartComparator());
-        mergedIntervals.add(intervals.get(0));
-        for(Interval interval: intervals){
-            if(mergedIntervals.peekLast().end >= interval.start){
-                mergedIntervals.peekLast().end = Math.max(mergedIntervals.peekLast().end, interval.end);
-            }
-            else{
+        Arrays.sort(intervals, (x, y) -> (x[0] - y[0]));
+        mergedIntervals.add(intervals[0]);
+        for(int[] interval: intervals){
+            if(mergedIntervals.peekLast()[1] >= interval[0]){
+                mergedIntervals.peekLast()[1] = Math.max(mergedIntervals.peekLast()[1], interval[1]);
+            }else{
                 mergedIntervals.add(interval);
             }
         }
-        return mergedIntervals;
+        int[][] ret = new int[mergedIntervals.size()][2];
+        int size = mergedIntervals.size();
+        for(int i = 0; i < size; ++i){
+            ret[i] = mergedIntervals.pollFirst();
+        }
+        return ret;
     }
- 
+  
     public static void main(String[] args) {
         Solution sol = new Solution();
-        List<Interval> intervals = new ArrayList<Interval>();
-        intervals.add(sol.new Interval(1, 3));
-        intervals.add(sol.new Interval(8, 10));
-        intervals.add(sol.new Interval(2, 6));
-        intervals.add(sol.new Interval(15, 18));
-        
+        int[][] intervals = {{1, 3}, {8, 10}, {2, 6}, {15, 18}};
         System.out.println("Before merge:");
-        for(Interval interval: intervals){
-            System.out.print("[" + interval.start + "," + interval.end + "], ");
+        for(int[] interval: intervals){
+            System.out.print(Arrays.toString(interval) + ", ");
         }
         System.out.println("");
 
         intervals = sol.merge(intervals);
 
         System.out.println("After merge:");
-        for(Interval interval: intervals){
-            System.out.print("[" + interval.start + "," + interval.end + "], ");
+        for(int[] interval: intervals){
+            System.out.print(Arrays.toString(interval) + ", ");
         }
         System.out.println("");
 	}
