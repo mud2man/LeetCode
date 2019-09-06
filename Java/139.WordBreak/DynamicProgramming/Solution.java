@@ -17,8 +17,7 @@ public class Solution{
         for(int i = 0; i < size; ++i){
             if(dp[i] != true){
                 continue;
-            }
-            else{
+            }else{
                 for(String word: wordDict){
                     if(s.startsWith(word, i)){
                         dp[i + word.length()] = true; 
@@ -26,27 +25,16 @@ public class Solution{
                 }
             }
         }
-        
         return dp[size];
     }
     
     public static void main(String[] args){
-        Solution sol;
-        String s;
-        List<String> wordDict;
-        boolean canBroken;
-
-        s = "leetcode";
-        sol = new Solution();
-        wordDict = new ArrayList <String>();
-        wordDict.add("leet");
-        wordDict.add("code");
-
-        canBroken = sol.wordBreak(s , wordDict);
+        List<String> wordDict = Arrays.asList("leet", "code");
+        String s = "leetcode";
+        Solution sol = new Solution();
 
         System.out.println("s: " + s);
         System.out.println("wrodDict: " + wordDict);
-        System.out.println("canBorken: " + canBroken);
-        
+        System.out.println("canBorken: " + sol.wordBreak(s, wordDict));
     }
 }
