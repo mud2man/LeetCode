@@ -27,10 +27,8 @@ public class Solution{
                     int upLeft = (y > 0 && x > 0)? dp[(y - 1) % 2][x - 1][2]: 0;
                     dp[y % 2][x][0] = up + 1;
                     dp[y % 2][x][1] = left + 1;
-                    int currLen = Math.min(dp[y % 2][x][0], dp[y % 2][x][1]);
-                    currLen = Math.min(upLeft + 1, currLen);
-                    dp[y % 2][x][2] = currLen;
-                    maxLen = Math.max(maxLen, currLen);
+                    dp[y % 2][x][2] = Math.min(upLeft + 1, Math.min(dp[y % 2][x][0], dp[y % 2][x][1]));
+                    maxLen = Math.max(maxLen, dp[y % 2][x][2]);
                 }
             }
         }
