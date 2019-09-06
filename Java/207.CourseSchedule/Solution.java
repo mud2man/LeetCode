@@ -10,14 +10,12 @@ public class Solution {
     private boolean dfs(int start, int[] colors, Map<Integer, Set<Integer>> adjacencyList){
         if(colors[start] == 2){
             return true;
-        }
-        else if(colors[start] == 1){
+        }else if(colors[start] == 1){
             // cycle found
             return false;
-        }
-        else{
+        }else{
             colors[start] = 1;
-            Set<Integer> neighbors = (adjacencyList.containsKey(start))? adjacencyList.get(start): new HashSet<>();
+            Set<Integer> neighbors = adjacencyList.getOrDefault(start, new HashSet<>());
             for(int neighbor: neighbors){
                 if(!dfs(neighbor, colors, adjacencyList)){
                     return false;
@@ -31,8 +29,7 @@ public class Solution {
     public boolean canFinish(int numCourses, int[][] prerequisites) {
         Map<Integer, Set<Integer>> adjacencyList = new HashMap<>();
         for(int[] prerequisite: prerequisites){
-            adjacencyList.putIfAbsent(prerequisite[0], new HashSet<>());
-            adjacencyList.get(prerequisite[0]).add(prerequisite[1]);
+            adjacencyList.computeIfAbsent(prerequisite[0], key -> new HashSet<>()).add(prerequisite[1]);
         }
         //0:white, 1:gray, 2:black
         int[] colors = new int[numCourses];
@@ -45,11 +42,6 @@ public class Solution {
     }
   
     public static void main(String[] args){
-        final int numCourses = 5;
-        Solution sol;
-        int[][] prerequisites;
-        boolean canfinish; 
-
         /*    Relationship graph
          *         0
          *        / \
@@ -62,20 +54,12 @@ public class Solution {
          *       @| @
          *        4
          */
-        prerequisites = new int [][] 
-        {
-            {1, 0}, {2, 0}, {3, 1}, {4, 3}, {1, 4} 
-        };
-
-        sol = new Solution();
-        canfinish = sol.canFinish(numCourses, prerequisites);
-        
-        if(canfinish)
-        {
+        int numCourses = 5;
+        int[][] prerequisites = {{1, 0}, {2, 0}, {3, 1}, {4, 3}, {1, 4}};
+        Solution sol = new Solution();
+        if(sol.canFinish(numCourses, prerequisites)){
             System.out.println("No conflict!!!");
-        }
-        else
-        {
+        }else{
             System.out.println("Conflict!!!");
         }
     }
