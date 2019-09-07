@@ -1,75 +1,37 @@
 /* Math: O(1), However Leetcode has a much shorter solution
- * 1. Get all the combinations of pointers by backtrack
- * 2. Check if the pointers are square by inner product, and distance
+ * 1. Sort points by x axis first, and then y axisk
+ * 2. If it's a square, diagnoals must be orthogonal, diagnoals have same lengths, 4 edges have samae lengths and length > 0
  */
 
 import java.util.*;
 
 public class Solution{
-    private boolean helper(LinkedList<int[]> order){
-        long[][] vectors = new long[4][];
-        
-        for(int i = 0; i < 4; ++i){
-            int start = i;
-            int end = (i + 1) % 4;
-            vectors[i] = new long[]{(long)order.get(end)[0] - (long)order.get(start)[0], 
-                                    (long)order.get(end)[1] - (long)order.get(start)[1]};
-        }
-        
-        for(int i = 0; i < 4; ++i){
-            int start = i;
-            int end = (i + 1) % 4;
-            long innerProduct = vectors[start][0] * vectors[end][0] + vectors[start][1] * vectors[end][1];
-            long distanceStart = vectors[start][0] * vectors[start][0] + vectors[start][1] * vectors[start][1];
-            long distanceEnd = vectors[end][0] * vectors[end][0] + vectors[end][1] * vectors[end][1];
-            if(distanceStart != distanceEnd || innerProduct != 0){
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    private boolean backtrack(int[][] points, boolean[] used, LinkedList<int[]> order){
-        if(order.size() == 4){
-            return helper(order);
-        }
-        else{
-            for(int i = 0; i < 4; ++i){
-                if(used[i] == false){
-                    order.add(points[i]);
-                    used[i] = true;
-                    if(backtrack(points, used, order) == true){
-                        return true;
-                    }
-                    order.pollLast();
-                    used[i] = false;
-                }
-            }
-            return false;
-        }
-    }
-    
     public boolean validSquare(int[] p1, int[] p2, int[] p3, int[] p4) {
-        HashSet<String> identies = new HashSet<String>();
-        int[][] points = new int[4][];
-        points[0] = p1;
-        points[1] = p2;
-        points[2] = p3;
-        points[3] = p4;
-        LinkedList<int[]> order = new LinkedList<int[]>();
-        boolean[] used = new boolean[4];
-        
-        for(int i = 0; i < 4; ++i){
-            String identity = Integer.toString(points[i][0]) + "#" + Integer.toString(points[i][1]);
-            if(identies.contains(identity)){
-               return false; 
-            }
-            else{
-                identies.add(identity);
-            }
+        int[][] points = new int[][]{p1, p2, p3, p4};
+        Arrays.sort(points, (x, y) -> {return (x[1] != y[1])? x[1] - y[1]: x[0] - y[0];});
+        int[] diagnolVector1 = {points[3][0] - points[0][0], points[3][1] - points[0][1]};
+        int[] diagnolVector2 = {points[2][0] - points[1][0], points[2][1] - points[1][1]};
+        //check if two diagnoals orthogonal
+        if((diagnolVector1[0] * diagnolVector2[0] + diagnolVector1[1] * diagnolVector2[1]) != 0){ 
+            return false;
+        //check if two diagnoals have same length
+        }else if((diagnolVector1[0] *diagnolVector1[0] + diagnolVector1[1] * diagnolVector1[1]) != 
+                 (diagnolVector2[0] *diagnolVector2[0] + diagnolVector2[1] * diagnolVector2[1])){
+            return false;
+        }else{
+            int[][] edges = new int[4][2];
+            edges[0] = new int[]{points[0][0] - points[1][0], points[0][1] - points[1][1]};
+            edges[1] = new int[]{points[1][0] - points[3][0], points[1][1] - points[3][1]};
+            edges[2] = new int[]{points[3][0] - points[2][0], points[3][1] - points[2][1]};
+            edges[3] = new int[]{points[2][0] - points[0][0], points[2][1] - points[0][1]};
+            int[] lengths = new int[4];
+            lengths[0] = edges[0][0] * edges[0][0] + edges[0][1] * edges[0][1];
+            lengths[1] = edges[1][0] * edges[1][0] + edges[1][1] * edges[1][1]; 
+            lengths[2] = edges[2][0] * edges[2][0] + edges[2][1] * edges[2][1]; 
+            lengths[3] = edges[3][0] * edges[3][0] + edges[3][1] * edges[3][1];
+            return (lengths[0] == lengths[1] && lengths[1] == lengths[2] && 
+                    lengths[2] == lengths[3] && lengths[3] == lengths[0] && lengths[0] > 0);
         }
-        
-        return backtrack(points, used, order);
     }
  
     public static void main(String[] args){
