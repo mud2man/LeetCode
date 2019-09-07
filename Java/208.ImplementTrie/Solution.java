@@ -31,32 +31,30 @@ public class Solution{
         node.word = word;
     }
     
-    /** Returns if the word is in the trie. */
-    public boolean search(String word) {
+    private TrieNode searchHelper(String word){
         TrieNode node = root;
         for(int i = 0; i < word.length(); ++i){
             char c = word.charAt(i);
             if(node.child[c - 'a'] == null){
-                return false;
+                return null;
             }
             node = node.child[c - 'a'];
         }
-        return (node.word.length() > 0);
+        return node;
+    }
+    
+    /** Returns if the word is in the trie. */
+    public boolean search(String word) {
+        TrieNode node = searchHelper(word);
+        return (node != null && node.word.length() > 0);
     }
     
     /** Returns if there is any word in the trie that starts with the given prefix. */
     public boolean startsWith(String prefix) {
-        TrieNode node = root;
-        for(int i = 0; i < prefix.length(); ++i){
-            char c = prefix.charAt(i);
-            if(node.child[c - 'a'] == null){
-                return false;
-            }
-            node = node.child[c - 'a'];
-        }
-        return true;
+        TrieNode node = searchHelper(prefix);
+        return (node != null);
     }
- 
+  
     public static void main(String[] args){
         Solution sol= new Solution();
         String word = "apple";
