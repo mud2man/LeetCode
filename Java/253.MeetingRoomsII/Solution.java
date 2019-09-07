@@ -13,62 +13,29 @@
 
 import java.util.*; // Stack
 
-/* Definition for interval */
-class Interval {
-	int start;
-	int end;
-	Interval() { start = 0; end = 0; }
- 	Interval(int s, int e) { start = s; end = e; }
-}
-
-class IntervalComparator implements Comparator<Interval>{
- 
-	@Override
-	public int compare(Interval o1, Interval o2) {
-		return o1.start - o2.start;
-	}
-}
-
 public class Solution {
-    public int minMeetingRooms(Interval[] intervals) {
-        int i;
-        int earilestEnd;
-        PriorityQueue<Integer> minHeap;
-        
-        if(intervals.length == 0){
-            return 0;
-        }
-        
-        minHeap = new PriorityQueue<Integer>();
-        Arrays.sort(intervals, new IntervalComparator());
-        minHeap.add(intervals[0].end);
-        
-        for(i = 1; i < intervals.length; ++i){
-            earilestEnd = minHeap.peek();
-            if(earilestEnd <= intervals[i].start){
+    public int minMeetingRooms(int[][] intervals) {
+        Arrays.sort(intervals, (x, y) -> {return x[0] - y[0];});
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((x, y) ->{return x[1] - y[1];});
+        int roomsNumber = 0;
+        for(int[] interval: intervals){
+            while(!minHeap.isEmpty() && minHeap.peek()[1] <= interval[0]){
                 minHeap.poll();
             }
-            minHeap.add(intervals[i].end);
+            minHeap.add(interval);
+            roomsNumber = Math.max(roomsNumber, minHeap.size());
         }
-        return minHeap.size();
+        return roomsNumber;
     }
-
+ 
     public static void main(String[] args){
-		Solution sol;
-		Interval[] intervals;
+		Solution sol = new Solution();
+		int[][] intervals = {{0, 30}, {5, 10}, {15, 20}};
 		
-		intervals = new Interval[3];
-		sol = new Solution();
-		
-		intervals[0] = new Interval(0, 30);
-		intervals[1] = new Interval(5, 10);
-		intervals[2] = new Interval(15, 20);
-		
-		System.out.println("intervals[]: ");	
-		for(Interval i: intervals){
-			System.out.print("[" + i.start + ", " + i.end + "]\n");	
-		}
-		
-		System.out.println("#rooms: " + sol.minMeetingRooms(intervals));	
+        System.out.println("intervals[]: ");	
+        for(int[] i: intervals){
+			System.out.print(Arrays.toString(i) + ", ");	
+        }
+        System.out.println("\nrooms#: " + sol.minMeetingRooms(intervals));	
 	}
 }
