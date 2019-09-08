@@ -27,8 +27,7 @@ public class RandomizedSet {
             indexMap.put(size, val);
             reverseIndexMap.put(val, size++);
             return true;
-        }
-        else{
+        }else{
             return false;
         }
     }
@@ -43,8 +42,7 @@ public class RandomizedSet {
             reverseIndexMap.remove(val);
             indexMap.remove(size);
             return true;
-        }
-        else{
+        }else{
             return false;
         }
     }
