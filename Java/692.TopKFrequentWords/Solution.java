@@ -7,16 +7,12 @@
 import java.util.*;
 
 public class Solution{
-    private class WordComparator implements Comparator<Map.Entry<String, Integer>>{
-        public int compare(Map.Entry<String, Integer> x, Map.Entry<String, Integer> y){
-            return (x.getValue() != y.getValue())? x.getValue().compareTo(y.getValue()): y.getKey().compareTo(x.getKey());
-        }
-    }
-    
     public List<String> topKFrequent(String[] words, int k) {
         LinkedList<String> topK = new LinkedList<String>();
         HashMap<String, Integer> frequencyMap = new HashMap<String, Integer>();
-        PriorityQueue<Map.Entry<String, Integer>> minHeap = new PriorityQueue<>(new WordComparator());
+        PriorityQueue<Map.Entry<String, Integer>> minHeap = new PriorityQueue<>((x, y) -> {
+            return (x.getValue() != y.getValue())? x.getValue().compareTo(y.getValue()): y.getKey().compareTo(x.getKey());
+        });
     
         for(String word: words){
             frequencyMap.putIfAbsent(word, 0);
@@ -34,7 +30,7 @@ public class Solution{
         }
         return topK;
     }
- 
+  
     public static void main(String[] args){
         String[] words = {"i", "love", "leetcode", "i", "love", "coding"};
         int k = 2;
