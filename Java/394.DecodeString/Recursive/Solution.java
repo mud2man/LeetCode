@@ -11,7 +11,7 @@ public class Solution{
         StringBuilder sb = new StringBuilder("");
         while(index[0] < s.length() && s.charAt(index[0]) != ']'){
             if(!Character.isDigit(s.charAt(index[0]))){
-                while(!Character.isDigit(s.charAt(index[0])) && s.charAt(index[0]) != ']'){
+                while(index[0] < s.length() && !Character.isDigit(s.charAt(index[0])) && s.charAt(index[0]) != ']'){
                     sb.append(s.charAt(index[0]++));
                 }
             }else{
@@ -30,11 +30,10 @@ public class Solution{
     }
     
     public String decodeString(String s) {
-        s = 1 + "[" + s + "]";
         int[] index = {0};
         return decode(index, s);
     }
-
+ 
     public static void main(String[] args){
         String s = "3[a]2[bc]";
         Solution sol = new Solution();
