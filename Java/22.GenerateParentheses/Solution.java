@@ -1,4 +1,4 @@
-/* Backtrack: Time:O(n) Space:O(k*n), where k is the number of valid parentheses
+/* Backtrack: Time:O(c(2n, n)) Space:O(n^2 * c(2n, n))
  * 1. In backtrack, invoke backtrack with parenthesis + ")" only when score > 0
  */
 
