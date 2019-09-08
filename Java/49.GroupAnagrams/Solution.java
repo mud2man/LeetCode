@@ -6,7 +6,7 @@
 import java.util.*;
 
 public class Solution {
-    public String getKey(String s){
+     public String getKey(String s){
         int[] count = new int[26];
         for(char c: s.toCharArray()){
             count[c - 'a']++;
@@ -24,17 +24,14 @@ public class Solution {
         List<List<String>> anagramsList = new ArrayList<List<String>>();
         
         for(String str: strs){
-            String key = getKey(str);
-            anagramsHashMap.putIfAbsent(key, new ArrayList<String>());
-            anagramsHashMap.get(key).add(str);
+            anagramsHashMap.computeIfAbsent(getKey(str), key -> new ArrayList<String>()).add(str);
         }
-        
         for (Map.Entry<String, List<String>> entry : anagramsHashMap.entrySet()) {
             anagramsList.add(entry.getValue());
         }
         return anagramsList;
     }
- 
+  
     public static void main(String[] args){
         String[] strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
         Solution sol = new Solution();
