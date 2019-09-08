@@ -5,6 +5,7 @@
  */
 
 import java.util.*;
+import java.util.concurrent.locks.*;
 
 class Counter{
     int timeStamp;
@@ -13,63 +14,77 @@ class Counter{
 }
 
 public class HitCounter {
+    private final LinkedList<int[]> queue;
     private int count;
-    private Counter currCount;
-    private PriorityQueue<Counter> minHeap;
-    
-    private class HitComparator implements Comparator<Counter>{
-        @Override
-        public int compare(Counter o1, Counter o2){
-            return o1.timeStamp - o2.timeStamp;
-        }
-    }
-
+    private final ReadWriteLock readWriteLock;
+    private final Lock readLock;
+    private final Lock writeLock;
+ 
     /** Initialize your data structure here. */
     public HitCounter() {
-        minHeap = new PriorityQueue<Counter>(new HitComparator());
         count = 0;
-        currCount = null;
+        queue = new LinkedList<int[]>();
+        readWriteLock = new ReentrantReadWriteLock();
+        readLock = readWriteLock.readLock();
+        writeLock = readWriteLock.writeLock();
+    }
+    
+    private void updateQueue(int timestamp){        
+        while(!queue.isEmpty()){
+            if(queue.peekFirst()[0] <= (timestamp - 300)){
+                count -= queue.peekFirst()[1];
+                queue.pollFirst();
+            }else{
+                break;
+            }
+        }
     }
     
     /** Record a hit.
         @param timestamp - The current timestamp (in seconds granularity). */
     public void hit(int timestamp) {
-        count = getHits(timestamp);
-        
-        if(currCount == null){
-            currCount = new Counter(timestamp, 1);   
+        writeLock.lock();
+        try{
+            if(queue.isEmpty()){
+                queue.add(new int[]{timestamp, 1});
+                count++;
+            }else{
+                int[] last = queue.peekLast();
+                if(last[0] == timestamp){
+                    last[1]++;
+                }else{
+                    queue.add(new int[]{timestamp, 1});
+                }
+                count++;
+                updateQueue(timestamp);
+            }
+        }finally{
+            writeLock.unlock();
         }
-        else if(currCount.timeStamp == timestamp){
-            currCount.number++;
-        }
-        else{
-            minHeap.add(currCount);
-            currCount = new Counter(timestamp, 1); 
-        }
-        
-        count++;
     }
     
     /** Return the number of hits in the past 5 minutes.
         @param timestamp - The current timestamp (in seconds granularity). */
     public int getHits(int timestamp) {
-        if((currCount != null) && (currCount.timeStamp <= (timestamp - 300))){
-            count = count - currCount.number;
-            currCount = null;
+        writeLock.lock();
+        try{
+            updateQueue(timestamp);
+        }finally{
+            writeLock.unlock();
         }
         
-        while((!minHeap.isEmpty()) && (minHeap.peek().timeStamp <= (timestamp - 300))){
-            count = count - minHeap.poll().number;
+        readLock.lock();
+        try{
+            return count;
+        }finally{
+            readLock.unlock();
         }
-        
-        return count;
     }
 
     public static void main(String[] args){
-        int timeStamp;
         HitCounter obj = new HitCounter();
-
-        timeStamp = 1;
+        int timeStamp = 1;
+        
         obj.hit(timeStamp);
         System.out.println("hit @ time:" + timeStamp);
         
