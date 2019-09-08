@@ -15,17 +15,13 @@ public class Solution {
             products[i] = product;
         }
         
-        products[nums.length - 1] = products[nums.length - 2];
-        int rightProduct = nums[nums.length - 1];
-        for(int j = nums.length - 2; j > 0 ; --j){
-            products[j] = products[j - 1] * rightProduct;
+        for(int j = nums.length - 1, rightProduct = 1; j >= 0 ; --j){
+            products[j] = (j == 0)? rightProduct: products[j - 1] * rightProduct;
             rightProduct = rightProduct * nums[j];
         }
-        products[0] = rightProduct;
-        
         return products;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         int[] nums = {1, 2, 3, 4};
