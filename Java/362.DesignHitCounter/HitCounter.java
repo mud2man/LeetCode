@@ -7,80 +7,46 @@
 import java.util.*;
 import java.util.concurrent.locks.*;
 
-class Counter{
-    int timeStamp;
-    int number;
-    Counter(int t, int n){timeStamp = t; number = n;}
-}
-
 public class HitCounter {
-    private final LinkedList<int[]> queue;
-    private int count;
-    private final ReadWriteLock readWriteLock;
-    private final Lock readLock;
-    private final Lock writeLock;
- 
+    int count;
+    Deque<int[]> times;
+    
     /** Initialize your data structure here. */
     public HitCounter() {
-        count = 0;
-        queue = new LinkedList<int[]>();
-        readWriteLock = new ReentrantReadWriteLock();
-        readLock = readWriteLock.readLock();
-        writeLock = readWriteLock.writeLock();
+        count = 0;   
+        times = new LinkedList<>();
     }
     
-    private void updateQueue(int timestamp){        
-        while(!queue.isEmpty()){
-            if(queue.peekFirst()[0] <= (timestamp - 300)){
-                count -= queue.peekFirst()[1];
-                queue.pollFirst();
-            }else{
-                break;
-            }
+    private void reduce(int timestamp){
+        while(!times.isEmpty() && timestamp - times.peekFirst()[0] >= 300){
+            int frontTime = times.peekFirst()[0];
+            int frontCount = times.pollFirst()[1];
+            count -= frontCount;
         }
     }
     
     /** Record a hit.
         @param timestamp - The current timestamp (in seconds granularity). */
     public void hit(int timestamp) {
-        writeLock.lock();
-        try{
-            if(queue.isEmpty()){
-                queue.add(new int[]{timestamp, 1});
-                count++;
-            }else{
-                int[] last = queue.peekLast();
-                if(last[0] == timestamp){
-                    last[1]++;
-                }else{
-                    queue.add(new int[]{timestamp, 1});
-                }
-                count++;
-                updateQueue(timestamp);
+        synchronized(this){
+            reduce(timestamp);
+            count++;
+            if(times.isEmpty() || times.peekLast()[0] != timestamp){
+                times.add(new int[]{timestamp, 0});
             }
-        }finally{
-            writeLock.unlock();
+            times.peekLast()[1]++;
         }
     }
     
     /** Return the number of hits in the past 5 minutes.
         @param timestamp - The current timestamp (in seconds granularity). */
     public int getHits(int timestamp) {
-        writeLock.lock();
-        try{
-            updateQueue(timestamp);
-        }finally{
-            writeLock.unlock();
-        }
-        
-        readLock.lock();
-        try{
+        synchronized(this){
+            reduce(timestamp);
             return count;
-        }finally{
-            readLock.unlock();
         }
     }
-
+ 
     public static void main(String[] args){
         HitCounter obj = new HitCounter();
         int timeStamp = 1;
