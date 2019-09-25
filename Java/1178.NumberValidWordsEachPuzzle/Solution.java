@@ -1,4 +1,4 @@
-/* Trie Tree: Time:O(n + m), Space:O(n + m), where n is the character# of words, m is the characetr # of puzzles
+/* Trie Tree: Time:O(n + m), Space:O(n + m), where n is the character# of words, m is the characetr # of puzzles. Leetcode has a shorter solution
  * 1. Have trie node with "counts" for retrieving words contain first char of puzzle, and "child" 
  * 2. Construct trie tree by inserting words
  * 3. Traverse tree for single puzzle, and accumulate count[0] during the search. Then select the next character of puzzle
