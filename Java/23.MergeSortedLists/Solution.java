@@ -15,16 +15,10 @@ class ListNode {
 }
  
 public class Solution{
-    private class NodeComparator implements Comparator<ListNode>{
-        public int compare(ListNode x, ListNode y ){
-            return x.val - y.val;
-        }
-    }
-    
     public ListNode mergeKLists(ListNode[] lists) {
         ListNode prevNode, currNode;
         ListNode dummy = new ListNode(0);
-        PriorityQueue<ListNode> minHeap = new PriorityQueue<ListNode>(new NodeComparator());
+        PriorityQueue<ListNode> minHeap = new PriorityQueue<ListNode>((x, y) -> x.val - y.val);
         
         for(ListNode node: lists){
             if(node != null){
