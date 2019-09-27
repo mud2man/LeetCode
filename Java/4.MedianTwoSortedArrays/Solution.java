@@ -28,17 +28,14 @@ public class Solution{
             if(smallLeft <= bigRight && smallRight >= bigLeft){
                 if(len % 2 == 1){
                     return (double)Math.min(bigRight, smallRight);
-                }
-                else{
+                }else{
                     int left = Math.max(bigLeft, smallLeft);
                     int right = Math.min(bigRight, smallRight);
                     return (double)(left + right) / 2.0;
                 }
-            }
-            else if(smallLeft > bigRight){
+            }else if(smallLeft > bigRight){
                 hb = mid - 1;
-            }
-            else{
+            }else{
                 lb = mid + 1;
             }
         }
