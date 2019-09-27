@@ -1,4 +1,4 @@
-/* Disjoint Intervals: Time:O((A + R) * (A + R) * Q * log(A + R)), Space:O(A + R), because we have at most (A + R) intervals
+/* Disjoint Intervals: Time: add/remove=O(A + R), query=O(log(A + R)), Space:O(A + R), because we have at most (A + R) intervals
  * 1. Use treeMap to store the disjoint intervals
  * 2. In "addRange", remove the range [left, right) first, and add interval [left, right), then do merge around [left, right)
  * 3. In "queryRange", get the closest interval from left
