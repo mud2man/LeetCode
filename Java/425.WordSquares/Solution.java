@@ -1,4 +1,4 @@
-/* TrieTree + backtrack: Time:O(n!), Space:O(n^2)
+/* TrieTree + backtrack: Time:O(n!^2), Space:O((n*m)^2), where n is words#, m is word's length
  * 1. Use trie tree to store prefix-wordList pair
  * 2. Use backtrack to find all the word square give caculating prefix
  */
@@ -6,70 +6,66 @@
 import java.util.*;
 
 public class Solution{
-    private class TrieTree{
+    private class TrieNode{
         List<String> words;
-        TrieTree[] child;
-        TrieTree(){words = new ArrayList<>(); child = new TrieTree[26];}
+        TrieNode[] child;
+        TrieNode(){words = new ArrayList<>(); child = new TrieNode[26];}
     }
+    TrieNode root;
     
-    private void insert(TrieTree root, String word){
-        root.words.add(word);
-        for(int i = 0; i < word.length(); ++i){
-            char c = word.charAt(i);
-            if(root.child[c - 'a'] == null){
-                root.child[c - 'a'] = new TrieTree();
-            }
-            root = root.child[c - 'a'];
-            root.words.add(word);
+    private void insert(String word){
+        TrieNode node = root;
+        node.words.add(word);
+        for(char c: word.toCharArray()){
+            node.child[c - 'a'] = (node.child[c - 'a'] == null)? new TrieNode(): node.child[c - 'a'];
+            node = node.child[c - 'a'];
+            node.words.add(word);
         }
     }
     
-    private List<String> search(TrieTree root, String prefix){
+    private List<String> search(StringBuilder prefix){
+        TrieNode node = root;
         for(int i = 0; i < prefix.length(); ++i){
             char c = prefix.charAt(i);
-            root = root.child[c - 'a'];
-            if(root == null){
+            if(node.child[c - 'a'] == null){
                 return new ArrayList<>();
             }
+            node = node.child[c - 'a'];
         }
-        return root.words;
+        return node.words;
     }
     
-    private void backtrack(List<List<String>> squares, LinkedList<String> path, int n, TrieTree root){
-        if(path.size() == n){
-            squares.add(new ArrayList<>(path));
+    private void backtrack(int remain, Deque<String> path, List<List<String>> squares){
+        if(remain == 0){
+            squares.add(new LinkedList<>(path));
             return;
         }
-        
         StringBuilder prefix = new StringBuilder("");
-        for(int i = 0; i < path.size(); ++i){
-            prefix.append(path.get(i).charAt(path.size()));
+        List<String> list = new ArrayList<>(path);
+        for(int y = 0; y < list.size(); ++y){  
+            prefix.append(list.get(y).charAt(list.size()));
         }
-        List<String> nexts = search(root, prefix.toString());
-        
+        List<String> nexts = search(prefix);
         for(String next: nexts){
-            path.add(next);
-            backtrack(squares, path, n, root);
+            path.addLast(next);
+            backtrack(remain - 1, path, squares);
             path.pollLast();
         }
     }
     
     public List<List<String>> wordSquares(String[] words) {
-        TrieTree root = new TrieTree();
-        for(String w: words){
-            insert(root, w);
+        root = new TrieNode();
+        for(String word: words){
+            insert(word);
         }
-        
-        List<List<String>> squares = new ArrayList<List<String>>();
-        backtrack(squares, new LinkedList<String>(), words[0].length(), root);
+        List<List<String>> squares = new ArrayList<>();
+        backtrack(words[0].length(), new LinkedList<>(), squares);
         return squares;
     }
   
     public static void main(String[] args){
-        Solution sol;
         String[] words = {"area","lead","wall","lady","ball"};
-        
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("words[]: " + Arrays.toString(words));
         System.out.println("word squares: " + sol.wordSquares(words));
     }
