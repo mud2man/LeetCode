@@ -34,12 +34,10 @@ public class Solution {
             
             if(j == i - 1){
                 continue;
-            }
-            else if(j == 0){
+            }else if(j == 0){
                 sequence.add(i);
                 reverse(A, i - 1);
-            }
-            else{
+            }else{
                 sequence.add(j + 1);
                 reverse(A, j);
                 sequence.add(i);
@@ -47,8 +45,7 @@ public class Solution {
             }
         }
         return sequence;
-    }
-
+    } 
     public static void main(String[] args){
         Solution sol = new Solution();
         int[] A = {3, 2, 4, 1};
