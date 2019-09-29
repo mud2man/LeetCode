@@ -13,30 +13,22 @@ import java.util.*;
 
 public class Solution {
     public int change(int amount, int[] coins) {
-        if(amount == 0){
-            return 1;
+        if(coins.length == 0){
+            return (amount == 0)? 1: 0;
         }
         
         int[][] dp = new int[coins.length][amount + 1];
-        for(int i = 0; i < coins.length; ++i){
-            int coin = coins[i];
-            for(int j = 0; j <= amount; ++j){
-                //combination count whithout coins[i];
-                dp[i][j] = (i > 0)? dp[i - 1][j]: 0;
-                
-                //combination count with at least coins[i];
-                if(coin == j){
-                    dp[i][j] += 1;
-                }
-                else if(coin < j){
-                    dp[i][j] += dp[i][j - coin];
-                }
+        for(int y = 0; y < dp.length; ++y){
+            dp[y][0] = 1;
+            for(int x = 1; x <= amount; ++x){
+                int takeZeroCoinY = (y > 0)? dp[y - 1][x]: 0;
+                int takeOneOrMoreCoinY = (x >= coins[y])? dp[y][x - coins[y]]: 0;
+                dp[y][x] = takeZeroCoinY + takeOneOrMoreCoinY;
             }
         }
-
-        return (coins.length > 0)? dp[coins.length - 1][amount]: 0;
+        return dp[coins.length - 1][amount];
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int amount = 5;
