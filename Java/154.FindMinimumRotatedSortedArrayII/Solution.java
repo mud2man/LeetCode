@@ -10,31 +10,28 @@ import java.util.*;
 
 public class Solution {
     public int findMin(int[] nums) {
-        int min = Math.min(nums[0], nums[nums.length - 1]);
         int lb = 0;
         int hb = nums.length - 1;
         while(lb <= hb){
             int mid = (lb + hb) / 2;
             int left = (mid > 0)? nums[mid - 1]: Integer.MAX_VALUE;
             int right = (mid < nums.length - 1)? nums[mid + 1]: Integer.MAX_VALUE;
-            min = Math.min(min, nums[mid]);
             if(nums[mid] < left && nums[mid] < right){
-                return min;
-            }
-            else if(nums[mid] > nums[hb]){
+                lb = mid;
+                break;
+            }else if(nums[mid] >= nums[lb] && nums[mid] > nums[hb]){ //right slope
                 lb = mid + 1;
-            }
-            else if(nums[mid] < nums[hb]){
+            }else if(nums[mid] > nums[lb] && nums[mid] <= nums[hb]){ //left slope
                 hb = mid - 1;
-            }
-            else{
-                min = Math.min(min, nums[lb]);
+            }else if(nums[lb] > nums[hb]){
                 lb++;
+            }else{
+                hb--;
             }
         }
-        return min;
+        return nums[lb];
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int[] nums = {2, 2, 2, 7, 0, 1, 2};
