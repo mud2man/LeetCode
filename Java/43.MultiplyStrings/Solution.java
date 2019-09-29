@@ -10,9 +10,6 @@ import java.math.*;
 
 public class Solution{
     public String multiply(String num1, String num2) {
-        int size = num1.length() + num2.length();
-        int[] integerNum3 = new int[size];
-        
         int[] integerNum1 = new int[num1.length()];
         for(int i = num1.length() - 1; i >= 0; --i){
             integerNum1[num1.length() - i - 1] = num1.charAt(i) - '0';
@@ -23,12 +20,12 @@ public class Solution{
             integerNum2[num2.length() - i - 1] = num2.charAt(i) - '0';
         }
         
+        int[] integerNum3 = new int[num1.length() + num2.length()];
         for(int i = 0; i < integerNum1.length; ++i){
             for(int j = 0; j < integerNum2.length; ++j){
                 int index = i + j;
-                int subAnswer = integerNum1[i] * integerNum2[j];
-                integerNum3[index] = integerNum3[index] + (subAnswer % 10);
-                integerNum3[index + 1] = integerNum3[index + 1] + (subAnswer / 10);
+                int multiply = integerNum1[i] * integerNum2[j];
+                integerNum3[index] = integerNum3[index] + multiply;
             }
         }
         
@@ -43,22 +40,18 @@ public class Solution{
         for(int i = 0; i < integerNum3.length; ++i){
             answer.insert(0, integerNum3[i]);
         }
-        
         while(answer.length() > 1 && answer.charAt(0) == '0'){
             answer.deleteCharAt(0);
         }
         
         return answer.toString();
     }
- 
-	public static void main(String[] args){
-		Solution sol;
+	
+    public static void main(String[] args){
 		String num1  = "123";
 		String num2  = "454";
 		String product  = "";
-
-		sol = new Solution();
-		
+		Solution sol = new Solution();
 		System.out.println("num1: " + num1);
 		System.out.println("num2: " + num2);
 		System.out.println("product: " + sol.multiply(num1, num2));
