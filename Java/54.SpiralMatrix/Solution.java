@@ -7,38 +7,39 @@
 
 import java.util.*;
 
-
 public class Solution {
     public List<Integer> spiralOrder(int[][] matrix) {
-        int depth = matrix.length;
-        int width = (depth > 0)? matrix[0].length: 0;
+        if(matrix == null || matrix.length == 0 || matrix[0].length == 0){
+            return new ArrayList<>();
+        }
         int[][] dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-        int[] lens = {width, depth, width, depth};
+        int[] lens = {matrix[0].length - 1, matrix.length - 1, matrix[0].length - 1, matrix.length - 1};
         int[] start = {0, 0};
-        List<Integer> spirals = new ArrayList<>();
-        while((start[0] <= (depth - 1) / 2) && (start[1] <= (width - 1) / 2)){
-            int y = start[0]++;
-            int x = start[1]++;
-            if(lens[1] == 1){
-                for(int i = 0; i < lens[0]; ++i){
-                    spirals.add(matrix[y][x + i]);
+        List<Integer> serial = new ArrayList<>();
+        while(serial.size() < matrix.length * matrix[0].length){
+            int[] pos = {start[0]++, start[1]++};
+            if(lens[0] == 0){ //single column
+                for(int j = 0; j <= lens[1]; ++j){
+                    serial.add(matrix[pos[0]++][pos[1]]);
                 }
-            }else if(lens[0] == 1){
-                for(int i = 0; i < lens[1]; ++i){
-                    spirals.add(matrix[y + i][x]);
+            }else if(lens[1] == 0){ //single row
+                for(int j = 0; j <= lens[0]; ++j){
+                    serial.add(matrix[pos[0]][pos[1]++]);
                 }
             }else{
-                for(int i = 0; i < 4; ++i){
-                    for(int j = 0; j < lens[i] - 1; ++j){
-                        spirals.add(matrix[y][x]);
-                        y += dirs[i][0];
-                        x += dirs[i][1];
+                for(int i = 0; i < 4; ++i){ //top, right, bottom, left edges
+                    int[] dir = dirs[i];
+                    int len = lens[i];
+                    for(int j = 0; j < len; ++j){
+                        serial.add(matrix[pos[0]][pos[1]]);
+                        pos[0] += dir[0];
+                        pos[1] += dir[1];
                     }
                     lens[i] -= 2;
                 }
             }
         }
-        return spirals;
+        return serial;
     }
   
     public static void main(String[] args){
