@@ -34,25 +34,21 @@ public class Solution{
             char c = s.charAt(i);
             if(c == '('){
                 stack.push(new Node());
-            }
-            else{
+            }else{
                 if(stack.isEmpty()){
                     queued = 0;
-                }
-                else{
+                }else{
                     int count = stack.pop().count + 1;
                     if(stack.isEmpty()){
                         queued += count;
                         max = Math.max(max, queued);
-                    }
-                    else{
+                    }else{
                         stack.peek().count += count;
                         max = Math.max(max, stack.peek().count);
                     }
                 }
             }
         }
-        
         return max * 2;
     }
  
