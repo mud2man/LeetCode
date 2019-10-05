@@ -29,15 +29,12 @@ public class Solution {
                 int[] value = entry.getValue();
                 if(start <= key && end >= value[0]){
                     map.remove(key);
-                }
-                else if(start > key && end >= value[0]){
+                }else if(start > key && end >= value[0]){
                     map.get(key)[0] = start;
-                }
-                else if(start < key && end < value[0]){
+                }else if(start < key && end < value[0]){
                     map.put(end, value.clone());
                     map.remove(key);
-                }
-                else{
+                }else{
                     map.put(end, value.clone());
                     map.get(key)[0] = start;
                 }
