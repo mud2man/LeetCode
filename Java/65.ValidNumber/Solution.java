@@ -22,26 +22,22 @@ public class Solution{
             if(c >= '0' && c <= '9'){
                 if(!sawE){
                     sawBase = true;
-                }
-                else{
+                }else{
                     sawExp = true;
                 }
                 sawDigit = true;
-            }
-            else if(c == 'e'){
+            }else if(c == 'e'){
                 if(sawE == true){
                     return false;
                 }
                 sawE = true;
                 sawDigit = false;
-            }
-            else if(c == '+' || c == '-'){
+            }else if(c == '+' || c == '-'){
                 if(i != 0 && s.charAt(i - 1) != 'e'){
                     return false;
                 }
                 sawDigit = false;
-            }
-            else if(c == '.'){
+            }else if(c == '.'){
                 if(sawPoint == true || sawE == true){
                     return false;
                 }
@@ -50,14 +46,13 @@ public class Solution{
                 }
                 sawPoint = true;
                 sawDigit = false;
-            }
-            else{
+            }else{
                 return false;
             }
         }
         return sawE? (sawBase&sawExp): true;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         String S = "2e10";
