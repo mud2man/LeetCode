@@ -8,13 +8,6 @@
 
 import java.util.*;
 
-class Point {
-    int x;
-    int y;
-    Point() { x = 0; y = 0; }
-    Point(int a, int b) { x = a; y = b; }
-}
-
 public class Solution{
     private int gcd(int x, int y){
         int small = Math.min(x, y);
@@ -22,59 +15,48 @@ public class Solution{
         return (big % small == 0)? small: gcd(small, big % small);
     }
     
-    public int maxPoints(Point[] points) {
+    public int maxPoints(int[][] points) {
         int globalMaxCount = 0;
         for(int i = 0; i < points.length; ++i){
-            HashMap<Integer, HashMap<Integer,Integer>> countMap = new HashMap<Integer, HashMap<Integer,Integer>>();
-            Point source = points[i];
+            HashMap<Integer, HashMap<Integer,Integer>> countMap = new HashMap<>();
+            int[] source = points[i];
             int duplicateCount = 1;
             int localMaxCount = 1;
             for(int j = i + 1; j < points.length; ++j){
-                Point target = points[j];
-                if(target.x == source.x && target.y == source.y){
+                int[] target = points[j];
+                if(target[1] == source[1] && target[0] == source[0]){
                     duplicateCount++;
                     localMaxCount++;
                     continue;
                 }
-                
-                Point right = (target.x > source.x)? target: source;
-                Point left = (target.x > source.x)? source: target;
-                int denominator = right.x - left.x;
-                int numerator = right.y - left.y;
+                int[] left = (source[1] <= target[1])? source: target;
+                int[] right = (source[1] <= target[1])? target: source;
+                int denominator = right[1] - left[1];
+                int numerator = right[0] - left[0];
                 if(denominator == 0){
                     numerator = 1;
-                }
-                else if(numerator == 0){
+                }else if(numerator == 0){
                     denominator = 1;
-                }
-                else{
+                }else{
                     int maxfactor = gcd(Math.abs(denominator), Math.abs(numerator));
                     denominator = denominator / maxfactor;
                     numerator = numerator / maxfactor;
                 }
-                
-                countMap.putIfAbsent(denominator, new HashMap<>());
-                HashMap<Integer,Integer> innerMap = countMap.get(denominator);
-                innerMap.putIfAbsent(numerator, 0);
-                innerMap.put(numerator, innerMap.get(numerator) + 1);
-                localMaxCount = Math.max(localMaxCount, duplicateCount + innerMap.get(numerator));
+                countMap.computeIfAbsent(denominator, key -> new HashMap<>()).putIfAbsent(numerator, 0);
+                countMap.get(denominator).put(numerator, countMap.get(denominator).get(numerator) + 1);
+                localMaxCount = Math.max(localMaxCount, duplicateCount + countMap.get(denominator).get(numerator));
             }
             globalMaxCount = Math.max(globalMaxCount, localMaxCount);
         }
         return globalMaxCount;
     }
-
+ 
     public static void main(String[] args){
-        Point[] points = new Point[4];
+        int[][] points = {{1, 1},{2, 2}, {3, 3}};
         Solution sol = new Solution();
-        points[0] = new Point(0, 0); 
-        points[1] = new Point(1, 2); 
-        points[2] = new Point(2, 4); 
-        points[3] = new Point(1, 5); 
-
         System.out.println("points");
-        for(Point point: points){
-            System.out.println("(" + point.x + ", " + point.y + ")");
+        for(int[] point: points){
+            System.out.println("(" + point[0] + ", " + point[1] + ")");
         }
         System.out.println("maximum number of points on a line: " + sol.maxPoints(points));
     }
