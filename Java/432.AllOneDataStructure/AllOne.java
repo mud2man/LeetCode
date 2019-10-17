@@ -28,8 +28,7 @@ public class AllOne {
     private void add(Node prev, int freq, String key){
         if(prev.next.freq == freq){
             key2Node.put(key, prev.next);
-        }
-        else{
+        }else{
             Node newNode = new Node(freq);
             key2Node.put(key, newNode);
             Node next = prev.next;
@@ -56,8 +55,7 @@ public class AllOne {
     public void inc(String key) {
         if(!key2Node.containsKey(key)){
             add(head, 1, key);
-        }
-        else{
+        }else{
             Node curr = key2Node.get(key);
             add(curr, curr.freq + 1, key);
             delete(curr, key);
@@ -73,8 +71,7 @@ public class AllOne {
         Node curr = key2Node.get(key);
         if(key2Node.get(key).freq == 1){
             delete(curr, key);
-        }
-        else{
+        }else{
             add((curr.prev.freq < curr.freq - 1)? curr.prev : curr.prev.prev, curr.freq - 1, key);
             delete(curr, key);
         }
