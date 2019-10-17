@@ -9,18 +9,18 @@
 import java.util.*;
 
 public class LFUCache {
+    Map<Integer, Integer> key2Val;
+    Map<Integer, Integer> key2Freq;
+    Map<Integer, Set<Integer>> freq2Keys;
+    int reamin;
     int minFreq;
-    int remain;
-    HashMap<Integer, Integer> key2Val;
-    HashMap<Integer, Integer> key2Freq;
-    HashMap<Integer, LinkedHashSet<Integer>> freq2Keys;
     
     public LFUCache(int capacity) {
-        this.remain = capacity;
-        this.minFreq = 0;
-        this.key2Val = new HashMap<Integer, Integer>();
-        this.key2Freq = new HashMap<Integer, Integer>();
-        this.freq2Keys = new HashMap<Integer, LinkedHashSet<Integer>>();
+        key2Val = new HashMap<>();
+        key2Freq = new HashMap<>();
+        freq2Keys = new HashMap<>();
+        reamin = capacity;
+        minFreq = Integer.MAX_VALUE;
     }
     
     public int get(int key) {
@@ -28,17 +28,15 @@ public class LFUCache {
             return -1;
         }
         else{
+            int val = key2Val.get(key);
             int freq = key2Freq.get(key);
             key2Freq.put(key, freq + 1);
-            LinkedHashSet<Integer> keys = freq2Keys.get(freq);
-            keys.remove(key);
-            if(keys.isEmpty() && minFreq == freq){
-                minFreq = freq + 1;
+            freq2Keys.get(freq).remove(key);
+            freq2Keys.computeIfAbsent(freq + 1, k -> new LinkedHashSet()).add(key);
+            if(minFreq == freq && freq2Keys.get(freq).isEmpty()){
+                minFreq++;
             }
-            freq++;
-            freq2Keys.putIfAbsent(freq, new LinkedHashSet<Integer>());
-            freq2Keys.get(freq).add(key);
-            return key2Val.get(key);
+            return val;
         }
     }
     
@@ -48,36 +46,33 @@ public class LFUCache {
             get(key);
         }
         else{
-            if(this.remain > 0){
-                this.remain--;
-            }
-            else{
-                LinkedHashSet<Integer> keys = freq2Keys.get(this.minFreq);
-                if(keys == null || keys.isEmpty()){
+            if(reamin > 0){
+                key2Val.put(key, value);
+                key2Freq.put(key, 1);
+                freq2Keys.computeIfAbsent(1, k -> new LinkedHashSet()).add(key);
+                minFreq = 1;
+                reamin--;
+            }else{
+                if(!freq2Keys.containsKey(minFreq)){
                     return;
                 }
-                Iterator<Integer> itr = keys.iterator();
-                int removeKey = itr.next();
-                itr.remove();
-                key2Val.remove(removeKey);
-                key2Freq.remove(removeKey);
+                int deleteKey = freq2Keys.get(minFreq).iterator().next();
+                freq2Keys.get(minFreq).remove(deleteKey);
+                key2Val.remove(deleteKey);
+                key2Freq.remove(deleteKey);
+                
+                key2Val.put(key, value);
+                minFreq = 1;
+                freq2Keys.computeIfAbsent(1, k -> new LinkedHashSet()).add(key);
+                key2Freq.put(key, 1);
             }
-            key2Val.put(key, value);
-            key2Freq.put(key, 1);
-            freq2Keys.putIfAbsent(1, new LinkedHashSet<Integer>());
-            freq2Keys.get(1).add(key);
-            this.minFreq = 1;
         }
     }
 
     public static void main(String[] args){
-        LFUCache cache;
-        int key, value;
-
-        cache = new LFUCache(2);
-
-        key = 1;
-        value = 1;
+        LFUCache cache = new LFUCache(2);
+        int key = 1;
+        int value = 1;
         cache.put(key, value);
         System.out.println("put(" + key + ", " + value + ")");
 
