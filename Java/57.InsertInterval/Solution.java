@@ -1,73 +1,58 @@
-/* Binary Search: Time:O(n), Space:O(1), Don't have to use binary search
- * 1. Find the first interval overlapped with "newInterval" or the insert position
- * 2. Append all the intervals before insert position "index"
+/* Time:O(n), Space:O(1), Don't have to use binary search
+ * 1. Add the non-overlap intervals on the left side of newInterval
  * 3. Update newInterval as long as there is overlapping 
  * 4. Append all the intervals which is no overlap with newInterval
  */
 
 import java.util.*;
 public class Solution{
-    static private class Interval {
-        int start;
-        int end;
-        Interval() { start = 0; end = 0; }
-        Interval(int s, int e) { start = s; end = e; }
-    }
-
-    private boolean isOverlap(Interval x, Interval y){
-        return !(x.end < y.start || y.end < x.start);
+    private boolean isOverlap(int[] x, int[] y){
+        return !(x[1] < y[0] || x[0] > y[1]);
     }
     
-    public List<Interval> insert(List<Interval> intervals, Interval newInterval) {
-        int lb = 0;
-        int hb = intervals.size() - 1;
-        while(lb <= hb){
-            int mid = (lb + hb) / 2;
-            Interval interval = intervals.get(mid);
-            if(interval.end < newInterval.start){
-                lb = mid + 1;
-            }
-            else{
-                hb = mid - 1;
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        List<int[]> merged = new ArrayList<>();
+        int i = 0;
+        for(i = 0; i < intervals.length; ++i){
+            if(intervals[i][1] < newInterval[0]){
+                merged.add(intervals[i]);
+            }else{
+                break;
             }
         }
         
-        int index = lb;
-        List<Interval> merged = new ArrayList<>();
-        for(int i = 0; i < index; ++i){
-            merged.add(intervals.get(i));
-        }
-        
-        while(index >= 0 && index < intervals.size() && isOverlap(intervals.get(index), newInterval)){
-            newInterval.start = Math.min(newInterval.start, intervals.get(index).start);
-            newInterval.end = Math.max(newInterval.end, intervals.get(index).end);
-            index++;
+        while(i < intervals.length && isOverlap(intervals[i], newInterval)){
+            newInterval[0] = Math.min(newInterval[0], intervals[i][0]);
+            newInterval[1] = Math.max(newInterval[1], intervals[i][1]);
+            ++i;
         }
         merged.add(newInterval);
         
-        for(int i = index; i < intervals.size(); ++i){
-            merged.add(intervals.get(i));   
+        for(int j = i; j < intervals.length; ++j){
+            merged.add(intervals[j]);
         }
-        return merged;
+        
+        int[][] ret = new int[merged.size()][2];
+        for(int j = 0; j < ret.length; ++j){
+            ret[j] = merged.get(j);
+        }
+        return ret;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        List<Interval> intervals = new ArrayList<Interval>();
-        Interval newInterval = new Interval(2, 5);
-        intervals.add(new Interval(1, 3));
-        intervals.add(new Interval(6, 9));
+        Solution sol = new Solution();
+        int[][] intervals = {{1,3}, {6, 9}};
+        int[] newInterval = {2, 5};
 
-        sol = new Solution();
-        System.out.println("new interval:" + " (" + newInterval.start + ", " + newInterval.end + ")");
+        System.out.println("new interval:" + " (" + newInterval[0] + ", " + newInterval[1] + ")");
         System.out.println("before merged intervals: ");
-        for(Interval interval: intervals){
-            System.out.println("(" + interval.start + ", " + interval.end + ")");
+        for(int[] interval: intervals){
+            System.out.println("(" + interval[0] + ", " + interval[1] + ")");
         }
 
         System.out.println("after merged intervals: ");
-        for(Interval interval: sol.insert(intervals, newInterval)){
-            System.out.println("(" + interval.start + ", " + interval.end + ")");
+        for(int[] interval: sol.insert(intervals, newInterval)){
+            System.out.println("(" + interval[0] + ", " + interval[1] + ")");
         }
     }
 }
