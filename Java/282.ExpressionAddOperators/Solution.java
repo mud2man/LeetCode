@@ -20,7 +20,7 @@ public class Solution{
             long nextNum = Long.valueOf(num.substring(start, i));
             backtrack(num, i, sum + multiply, nextNum, target, path + "+" + num.substring(start, i), answer); //'+'
             backtrack(num, i, sum + multiply, -nextNum, target, path + "-" + num.substring(start, i), answer); //'-'
-            backtrack(num, i, sum, multiply * nextNum, target, path + "*" + num.substring(start, i), answer); //'-'
+            backtrack(num, i, sum, multiply * nextNum, target, path + "*" + num.substring(start, i), answer); //'*'
             if(nextNum == 0){
                 break;
             }
