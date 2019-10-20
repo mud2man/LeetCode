@@ -2,7 +2,8 @@
  * 1. dp[i][tail][head] = the count of different palindromic subsequences in S.substring(head, tail + 1), with two endpoints = 'a' + i
  * 2. Traverse on tail (0, n - 1), head = (0, tail), i = (0, 3)
  * 3. There are three cases: two endpoints = 'a' + i, S.charAt(head) != ('a' + i), and others
- * 4. In case0: differentiate with head and tail
+ * 4. In case0: Accumulate sentecne# with zero ('a' + i) to one ('a' + i) from dp[j][tail - 1][head + 1], where j != i.
+ *    Accumulate sentecne# with one or more ('a' + i) to two or more from dp[i][tail - 1][head + 1]. Besides, we need to accumulate two cases (aa, a)
  * 5. In case1: dp[i][tail][head] = (head < tail)? dp[i][tail][head + 1]: 0
  * 6. In case2: dp[i][tail][head] = (head < tail)? dp[i][tail - 1][head]: 0;
  */
