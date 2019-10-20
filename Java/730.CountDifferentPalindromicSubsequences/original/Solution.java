@@ -19,11 +19,9 @@ public class Solution{
                     if(S.charAt(head) == ('a' + i) && S.charAt(tail) == ('a' + i)){
                         if(head == tail){
                             dp[i][tail][head] = 1;
-                        }
-                        else if(head == tail - 1){
+                        }else if(head == tail - 1){
                             dp[i][tail][head] = 2;
-                        }
-                        else{
+                        }else{
                             for(int j = 0; j < 4; ++j){
                                 dp[i][tail][head] += dp[j][tail - 1][head + 1];
                                 dp[i][tail][head] = dp[i][tail][head] % 1000000007;
@@ -32,11 +30,9 @@ public class Solution{
                             //case1: only take S.charAt(head);
                             dp[i][tail][head]+=2;
                         }
-                    }
-                    else if(S.charAt(head) != ('a' + i)){
+                    }else if(S.charAt(head) != ('a' + i)){
                         dp[i][tail][head] = (head < tail)? dp[i][tail][head + 1]: 0;
-                    }
-                    else{
+                    }else{
                         dp[i][tail][head] = (head < tail)? dp[i][tail - 1][head]: 0;
                     }
                 }
