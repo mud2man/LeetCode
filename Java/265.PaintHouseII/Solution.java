@@ -7,19 +7,11 @@
 
 import java.util.*;
 
-
-//Definition for singly-linked list.
 public class Solution{
-        private class Node{
+    private class Node{
         int color;
         int cost;
         Node(int cr, int ct){color = cr; cost = ct;}
-    }
-    
-    private class MaxHeapComparator implements Comparator<Node>{
-        public int compare(Node x, Node y){
-            return y.cost - x.cost;
-        }
     }
     
     public int minCostII(int[][] costs) {
@@ -31,7 +23,7 @@ public class Solution{
         Node[][] dp = new Node[length + 1][2];
         dp[0][0] = new Node(-1, 0);
         dp[0][1] = new Node(-2, 0);
-        PriorityQueue<Node> maxHeap = new PriorityQueue(new MaxHeapComparator());
+        PriorityQueue<Node> maxHeap = new PriorityQueue<>((x, y) -> y.cost - x.cost);
         for(int i = 0; i < length; ++i){
             for(int color = 0; color < depth; ++color){
                 int cost = costs[i][color];
@@ -39,8 +31,7 @@ public class Solution{
                 
                 if(maxHeap.size() < 2){
                     maxHeap.add(new Node(color, cost));
-                }
-                else{
+                }else{
                     if(maxHeap.peek().cost > cost){
                         maxHeap.poll();
                         maxHeap.add(new Node(color, cost));
@@ -51,8 +42,7 @@ public class Solution{
             if(maxHeap.size() == 2){
                 dp[i + 1][1] = maxHeap.poll();
                 dp[i + 1][0] = maxHeap.poll();
-            }
-            else{
+            }else{
                 Node top = maxHeap.poll();
                 dp[i + 1][1] = top;
                 dp[i + 1][0] = top;
@@ -60,7 +50,7 @@ public class Solution{
         }
         return dp[length][0].cost; 
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int [][] costs = {{1, 2, 3},
