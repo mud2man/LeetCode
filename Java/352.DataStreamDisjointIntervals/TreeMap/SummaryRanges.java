@@ -50,17 +50,19 @@ public class SummaryRanges {
         }
     }
     
-    public List<Interval> getIntervals() {
-        List<Interval> intervals = new ArrayList<>();
+    public int[][] getIntervals() {
+        int[][] intervals = new int[map.entrySet().size()][2];
+        int i = 0;
         for(Map.Entry<Integer, Integer> entry: map.entrySet()){
-            intervals.add(new Interval(entry.getKey(), entry.getValue()));
+            intervals[i][0] = entry.getKey();
+            intervals[i++][1] = entry.getValue();
         }
         return intervals;
     }
-
-    private void dump(List<Interval> intervals){
-        for(Interval i: intervals){
-            System.out.print("[" + i.start + ", " + i.end + "], ");
+ 
+    private void dump(int[][] intervals){
+        for(int[] i: intervals){
+            System.out.print("[" + i[0] + ", " + i[1] + "], ");
         }
         System.out.println();
     }
