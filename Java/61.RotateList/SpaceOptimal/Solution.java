@@ -1,6 +1,6 @@
-/* Time:O(n), Space:O(n)
- * 1. Find the length, and store the node into arraylist
- * 2. Reconnect the top and bottom half, given the reduced k
+/* Space optimal: Time:O(n), Space:O(1)
+ * 1. Find the length and old tail in the first shot
+ * 2. Find the break point, and new tail. Then, do break and concatenate
  */
 
 import java.util.*; // Stack
@@ -17,25 +17,34 @@ public class Solution {
             return head;
         }
         
-        List<ListNode> list = new ArrayList<>();
+        int len = 0;
         ListNode itr = head;
+        ListNode oldTail = null;
         while(itr != null){
-            list.add(itr);
+            oldTail = itr;
             itr = itr.next;
+            len++;
         }
         
-        k = k % list.size();
-        if(k == 0){
+        if(k % len == 0){
             return head;
         }
+        k = k % len;
+        ListNode newHead = head;
+        ListNode newTail = null;
+        int step = len - k;
+        for(int i = 0; i < step; ++i){
+            newTail = newHead;
+            newHead = newHead.next;
+        }
         
-        ListNode newHead = list.get(list.size() - k);
-        ListNode newTail = list.get(list.size() - k - 1);
+        //break
         newTail.next = null;
-        list.get(list.size() - 1).next = head;
+        //concatenate
+        oldTail.next = head;
         return newHead;
     }
-
+ 
     public static void main(String[] args){
         int k = 2;
         ListNode head;
