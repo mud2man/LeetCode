@@ -1,4 +1,4 @@
-/* DFS: O(n)
+/* DFS: Time:O(n), Space:O(h). Onather solution: We can put node into list inorderly, and confirm if thre previous has smaller val
  * 1. Traverse all nodes using DFS with lower and upper bound
  */
 
