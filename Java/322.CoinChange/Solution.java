@@ -8,7 +8,6 @@ import java.util.*;
 public class Solution{
     public int coinChange(int[] coins, int amount) {
         int dp[] = new int[amount + 1];
-        
         for(int i = 1; i <= amount; ++i){
             dp[i] = Integer.MAX_VALUE;
             for(int coin: coins){
@@ -20,21 +19,17 @@ public class Solution{
         
         if(dp[amount] == Integer.MAX_VALUE){
             return -1;
-        }
-        else{
+        }else{
             return dp[amount];
         }
     }
 
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         int[] coins = {1, 2, 5};
         int amount = 11;
-
         System.out.println("coins: " + Arrays.toString(coins));
         System.out.println("amount: " + amount);
-        
-        sol = new Solution();    
         System.out.println("fewest number of coins: " + sol.coinChange(coins, amount));
     }
 }
