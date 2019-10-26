@@ -1,6 +1,6 @@
-/* Dynamic programming: O(n)
- * 1. Use dp[][], where dp[i][0] is the minimum product containing nums[i], dp[i][1] is the maximum product containing nums[i]
- * 2. Traverse nums and keeping update dp[i][0] and dp[i][1]
+/* Dynamic programming: Time:O(n), Space:O(1)
+ * 1. Use minMax[], where minMax[0] is the minimum product containing nums[i], mixMax[1] is the maximum product containing nums[i]
+ * 2. Traverse nums and keeping update minMax
  */
 
 import java.util.*;
@@ -8,20 +8,14 @@ import java.util.*;
 
 public class Solution {
 	public int maxProduct(int[] nums) {
-        int[][] dp = new int[nums.length][2];
+        int[] minMax = {nums[0], nums[0]};
         int globalMax = nums[0];
-        
-        dp[0][0] = nums[0];
-        dp[0][1] = nums[0];
         for(int i = 1; i < nums.length; ++i){
-            int num0 = nums[i];
-            int num1 = nums[i] * dp[i - 1][0];
-            int num2 = nums[i] * dp[i - 1][1];
-            int localMax = Math.max(num2, Math.max(num0, num1));
-            int localMin = Math.min(num2, Math.min(num0, num1));
+            int localMax = Math.max(nums[i], Math.max(nums[i] * minMax[0], nums[i] * minMax[1]));
+            int localMin = Math.min(nums[i], Math.min(nums[i] * minMax[0], nums[i] * minMax[1]));
             globalMax = Math.max(localMax, globalMax);
-            dp[i][0] = localMin;
-            dp[i][1] = localMax;
+            minMax[0] = localMin;
+            minMax[1] = localMax;
         }
         return globalMax; 
     }
