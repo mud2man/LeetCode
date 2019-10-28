@@ -1,6 +1,6 @@
 /* Binary search: Average: Time:O(logn), Worst:O(n), Space:O(1)
- * 1. If nums[mid] > nums[lb], then mid is on left slope, then check if target in left slope. If so, search the left
- * 2. If nums[mid] < nums[hb], then mid is on right slope, then check if target in right slope. If so, search the right
+ * 1. If nums[mid] >= nums[lb], then mid is on left slope, then check if target in left slope. If so, search the left
+ * 2. If nums[mid] <= nums[hb], then mid is on right slope, then check if target in right slope. If so, search the right
  * 3. Otherwise, check if nums[lb] == target, if not, lb++
  */         
 
@@ -16,34 +16,25 @@ public class Solution {
                 return true;
             }
             
-            //left slope
-            if(nums[mid] >= nums[lb] && target >= nums[lb] && target < nums[mid]){
+            if(nums[mid] >= nums[lb] && target >= nums[lb] && target < nums[mid]){ //left slope
                 hb = mid - 1;
-            }
-            // right slope
-            else if(nums[mid] <= nums[hb] && target > nums[mid] && target <= nums[hb]){
+            }else if(nums[mid] <= nums[hb] && target > nums[mid] && target <= nums[hb]){ // right slope
                 lb = mid + 1;
-            }
-            else{
+            }else{
                 if(nums[lb] == target){
                     return true;
-                }
-                else{
+                }else{
                     lb++;
                 }
             }
         }
         return false;
-    }
-  
-    public static void main(String[] args){
-        Solution sol;
-        int[] nums = {4, 5, 5, 6, 7, 0, 1, 1, 2};
-        int target;
-        
-        target = 7;
-        sol = new Solution();
+    }  
 
+    public static void main(String[] args){
+        Solution sol = new Solution();
+        int[] nums = {4, 5, 5, 6, 7, 0, 1, 1, 2};
+        int target = 7;
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("target: " + target);
         System.out.println("position: " + sol.search(nums, target));
