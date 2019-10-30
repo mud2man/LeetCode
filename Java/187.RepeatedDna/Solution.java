@@ -23,28 +23,18 @@ public class Solution {
             String segment = slideWindow.toString();
             if(onceDNAs.contains(segment)){
                 twiceDNAs.add(segment);
-            }
-            else{
+            }else{
                 onceDNAs.add(segment);
             }
         }
         return new ArrayList(twiceDNAs);
     }
  
-    public static void main(String[] args)
-    {
+    public static void main(String[] args){
         String s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT";
-        Solution sol;
-        List<String> repeatedSeqs;
-        
-        System.out.print("string: ");
-        System.out.println(s);
-
-        sol = new Solution();
-        repeatedSeqs = sol.findRepeatedDnaSequences(s);
-
-        System.out.println("Repeated sub-sequences: ");
-        System.out.println(repeatedSeqs);
+        Solution sol = new Solution();
+        System.out.println("string:" + s);
+        System.out.println("Repeated sub-sequences:" + sol.findRepeatedDnaSequences(s));
         
     }
 }
