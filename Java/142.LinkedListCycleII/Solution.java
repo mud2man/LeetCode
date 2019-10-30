@@ -22,31 +22,24 @@ class ListNode {
  
 public class Solution{
     public ListNode detectCycle(ListNode head) {
-        ListNode slowPtr = head;
-        ListNode fastPtr = head;
-        ListNode intersectPtr = null;
-        
-        while(fastPtr != null){
-            slowPtr = slowPtr.next;
-            fastPtr = (fastPtr != null && fastPtr.next != null)? fastPtr.next.next: null;
-            if(fastPtr == slowPtr){
-                intersectPtr = fastPtr;
-                break;
+        ListNode fast = head;
+        ListNode slow = head;
+        do{
+            if(fast == null || fast.next == null){
+                return null;
             }
+            fast = fast.next.next;
+            slow = slow.next;
+        }while(fast != slow);
+            
+        ListNode interset = fast;
+        ListNode ptr0 = head;
+        ListNode ptr1 = interset;
+        while(ptr0 != ptr1){
+            ptr0 = ptr0.next;
+            ptr1 = ptr1.next;
         }
-        
-        if(intersectPtr == null){
-            return null;
-        }
-        else{
-            ListNode ptr1 = head;
-            ListNode ptr2 = intersectPtr;
-            while(ptr1 != ptr2){
-                ptr1 = ptr1.next;
-                ptr2 = ptr2.next;
-            }
-            return ptr1;
-        }
+        return ptr0;
     }
   
     public static void main(String[] args){
