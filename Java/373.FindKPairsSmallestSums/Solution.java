@@ -28,27 +28,19 @@ public class Solution{
         Pair(int i, int j, int k){idx1 = i; idx2 = j; sum = k;}
     }
     
-    private class sumComparator implements Comparator<Pair>{
-        @Override
-        public int compare(Pair o1, Pair o2){
-            return o1.sum - o2.sum;
-        }
-    }
-    
-    public List<int[]> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+    public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
         PriorityQueue<Pair> minHeap;        
-        minHeap = new PriorityQueue<Pair>(new sumComparator());
+        minHeap = new PriorityQueue<Pair>((x, y) -> (x.sum - y.sum));
         for(int i = 0; i < nums1.length && nums2.length > 0 && i < k; ++i){
             Pair pair = new Pair(i, 0, nums1[i] + nums2[0]);
             minHeap.add(pair);
         }
         
-        List<int[]> kPairs = new ArrayList<>();
+        List<List<Integer>> kPairs = new ArrayList<>();
         for(int i = 0; (i < k) && (!minHeap.isEmpty()); ++i){
             Pair pair = minHeap.poll();
-            int[] p = new int[]{nums1[pair.idx1], nums2[pair.idx2]};
+            List<Integer> p = new ArrayList<>(Arrays.asList(nums1[pair.idx1], nums2[pair.idx2]));
             kPairs.add(p);
-            
             if(pair.idx2 < (nums2.length - 1)){
                 pair.idx2 = pair.idx2 + 1;
                 pair.sum = nums1[pair.idx1] + nums2[pair.idx2];
@@ -57,27 +49,16 @@ public class Solution{
         }
         return kPairs;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         int[] nums1 = {1, 7, 11};
         int[] nums2 = {2, 4, 6};
         List<int[]> kPairs;
-        int k;
-
-        k = 3;
-        sol = new Solution();
-        
+        int k = 3;
         System.out.println("nums1: " + Arrays.toString(nums1));
         System.out.println("nums2: " + Arrays.toString(nums2));
         System.out.println("k: " + k);
-        
-        kPairs = sol.kSmallestPairs(nums1, nums2, k);
-        
-        System.out.print("kPairs: ");
-        for(int i = 0; i < k; ++i){
-            System.out.print(Arrays.toString(kPairs.get(i)) + ", ");
-        }
-        System.out.println("");
+        System.out.println("kPairs: " + sol.kSmallestPairs(nums1, nums2, k));
     }
 }
