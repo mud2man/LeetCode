@@ -15,7 +15,7 @@ class TreeNode {
 }
 
 public class Solution {
-    private void dfs(TreeNode node, int level, List<List<Integer>> levels){
+    private void dfs(TreeNode node, int level, List<Deque<Integer>> levels){
         if(node == null){
             return;
         }
@@ -26,20 +26,20 @@ public class Solution {
         
         if(level % 2 == 0){
             levels.get(level).add(node.val);
-        }
-        else{
-            levels.get(level).add(0, node.val);
+        }else{
+            levels.get(level).addFirst(node.val);
         }
         dfs(node.left, level + 1, levels);
         dfs(node.right, level + 1, levels);
     }
     
     public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
-        List<List<Integer>> levels = new ArrayList<>();
+        List<Deque<Integer>> levels = new ArrayList<>();
         dfs(root, 0, levels);
-        return levels;
+        List<List<Integer>> ret = levels.stream().map(level -> new ArrayList<>(level)).collect(Collectors.toList());
+        return ret;
     }
-
+ 
     public static void main(String[] args){
         TreeNode root;
         Solution sol = new Solution();
