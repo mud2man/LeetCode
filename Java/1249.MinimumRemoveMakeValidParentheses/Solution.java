@@ -1,4 +1,4 @@
-/* Math: Time:O(n), Space:O(n). Leetcode has a one-shot solution
+/* Math: Time:O(n), Space:O(n). Leetcode has stack-version solution
  * 1. Scan from left and append ')' only the score >= 0
  * 2. Use the same logic, scan again from right, and append '(' only score >= 0
  * 3. Reverse "ret"
