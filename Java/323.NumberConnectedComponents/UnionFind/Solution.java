@@ -13,11 +13,9 @@ public class Solution{
         if(roots[node] == node){
             return node;
         }    
-        else{
-            //compression
-            roots[node] = roots[roots[node]];
-            return getRoot(roots, roots[node]);
-        }
+        //compression
+        roots[node] = roots[roots[node]];
+        return getRoot(roots, roots[node]);
     }
     
     public int countComponents(int n, int[][] edges) {
@@ -40,16 +38,13 @@ public class Solution{
                 if(ranks[leftRoot] == ranks[rightRoot]){
                     roots[leftRoot] = rightRoot;
                     ranks[rightRoot]++;
-                }
-                else if(ranks[leftRoot] < ranks[rightRoot]){
+                }else if(ranks[leftRoot] < ranks[rightRoot]){
                     roots[leftRoot] = rightRoot;
-                }
-                else{
+                }else{
                     roots[rightRoot] = leftRoot;
                 }
             }
         }
-        
         return count;
     }
 

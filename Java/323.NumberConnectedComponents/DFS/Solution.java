@@ -12,7 +12,7 @@ public class Solution{
             return;
         }    
         visited[start] = true;
-        List<Integer> neighbors = adjList.containsKey(start)? adjList.get(start): new ArrayList();
+        List<Integer> neighbors = adjList.getOrDefault(start, new ArrayList<>());
         for(int nb: neighbors){
             dfs(nb, visited, adjList);
         }
