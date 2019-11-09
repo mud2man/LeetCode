@@ -6,68 +6,47 @@
 import java.util.*;
 
 public class Solution{
-    private HashMap<String, List<Integer>> posList;
-
+    HashMap<String, List<Integer>> indexDictionary; 
+    
     public Solution(String[] words) {
-        int idx;
-        
-        posList = new HashMap<String, List<Integer>>();
-        
-        for(idx = 0; idx < words.length; ++idx){
-            if(!posList.containsKey(words[idx])){
-                posList.put(words[idx], new ArrayList<Integer>(Arrays.asList(idx)));
+        indexDictionary = new HashMap<String, List<Integer>>();
+        for(int index = 0; index < words.length; ++index){
+            String word = words[index];
+            if(!indexDictionary.containsKey(word)){
+                indexDictionary.put(word, new ArrayList<Integer>());
             }
-            else{
-                posList.get(words[idx]).add(idx);
-            }
+            indexDictionary.get(word).add(index);
         }
     }
     
-    int shortestDis(List<Integer> word1Pos, List<Integer> word2Pos){
-        int minDis;
-        int idx1;
-        int idx2;
-        int currIdx;
-        
-        minDis = Integer.MAX_VALUE;
-        
-        idx1 = 0;
-        idx2 = 0;
-        while((idx1 < word1Pos.size()) && (idx2 < word2Pos.size())){
-            minDis = Math.min(minDis, Math.abs(word1Pos.get(idx1) - word2Pos.get(idx2))); 
-            
-            if(word1Pos.get(idx1) > word2Pos.get(idx2)){
-                ++idx2;
-            }
-            else{
-                ++idx1;
+    private int getShortest(List<Integer> word1Indexs, List<Integer> word2Indexs){
+        int word1Index = 0;
+        int word2Index = 0;
+        int minDistance = Integer.MAX_VALUE;
+        while(word1Index < word1Indexs.size() && word2Index < word2Indexs.size()){
+            minDistance = Math.min(minDistance, Math.abs(word1Indexs.get(word1Index) - word2Indexs.get(word2Index)));
+            if(word1Indexs.get(word1Index) > word2Indexs.get(word2Index)){
+                word2Index++;
+            }else{
+                word1Index++;
             }
         }
-        return minDis; 
+        return minDistance;
     }
-
+    
     public int shortest(String word1, String word2) {
-        List<Integer> word1Pos;
-        List<Integer> word2Pos;
-        
-        word1Pos = posList.get(word1);
-        word2Pos = posList.get(word2);
-        
-        return shortestDis(word1Pos, word2Pos);
+        List<Integer> word1Indexs = indexDictionary.get(word1);
+        List<Integer> word2Indexs = indexDictionary.get(word2);
+        return getShortest(word1Indexs, word2Indexs);
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
         String[] words = {"practice", "makes", "perfect", "coding", "makes"};
-        String word1;
-        String word2;        
-
-        sol = new Solution(words);
-        
+        Solution sol = new Solution(words);
         System.out.println("words: " + Arrays.toString(words));
         
-        word1 = "practice";
-        word2 = "coding";
+        String word1 = "practice";
+        String word2 = "coding";
         System.out.println("distence between " + word1 + " and " + word2 + ": " + sol.shortest(word1, word2));
         
         word1 = "makes";
