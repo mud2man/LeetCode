@@ -8,22 +8,23 @@ import java.util.*;
 
 public class Solution{
     public List<String> topKFrequent(String[] words, int k) {
-        LinkedList<String> topK = new LinkedList<String>();
         HashMap<String, Integer> frequencyMap = new HashMap<String, Integer>();
-        PriorityQueue<Map.Entry<String, Integer>> minHeap = new PriorityQueue<>((x, y) -> {
-            return (x.getValue() != y.getValue())? x.getValue().compareTo(y.getValue()): y.getKey().compareTo(x.getKey());
-        });
-    
         for(String word: words){
             frequencyMap.putIfAbsent(word, 0);
             frequencyMap.put(word, frequencyMap.get(word) + 1);
-        }   
+        } 
+        
+        PriorityQueue<Map.Entry<String, Integer>> minHeap = new PriorityQueue<>((x, y) -> {
+            return (x.getValue() != y.getValue())? x.getValue().compareTo(y.getValue()): y.getKey().compareTo(x.getKey());
+        });
         for(Map.Entry<String, Integer> entry: frequencyMap.entrySet()){
             minHeap.add(entry);
             if(minHeap.size() > k){
                 minHeap.poll();
             }
         }
+        
+        LinkedList<String> topK = new LinkedList<String>();
         while(!minHeap.isEmpty()){
             Map.Entry<String, Integer> entry = minHeap.poll();
             topK.addFirst(entry.getKey());
