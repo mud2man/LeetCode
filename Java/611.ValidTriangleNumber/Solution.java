@@ -1,28 +1,30 @@
 /* Greedy: Time:O(n^2), Space:O(1).
- * 1. Sort numbers, and fixed i and j, then shift k until (nums[i] + nums[j]) <= nums[k]
- * 2. Accumulate count with (k - j - 1)
- * 3. Since j and k only move right, so the inner loop is O(n)
+ * 1. Sort numbers, and fixed k, accumulate count by (j - i) if nums[k] < (nums[i] + nums[j]) and decrease j
+ * 2. Otherwise, increase i
  */
 
 import java.util.*;
 
 public class Solution{
-    public <T extends Number> int triangleNumber(T[] nums) {
+    public int triangleNumber(int[] nums) {
         Arrays.sort(nums);
         
         int count = 0;
-        for(int i = 0; i < nums.length - 2; ++i){
-            int k = i + 2;
-            for(int j = i + 1; j < nums.length - 1; ++j){
-                while(k < nums.length && (nums[i].doubleValue() + nums[j].doubleValue()) > nums[k].doubleValue()){
-                    ++k;
+        for(int k = nums.length - 1; k >= 2; --k){
+            int i = 0;
+            int j = k - 1;
+            while(i < j){
+                if(nums[k] < (nums[i] + nums[j])){
+                    count += (j - i);
+                    j--;
+                }else{
+                    i++;
                 }
-                count += ((k - j) > 1)? (k - j - 1): 0;
             }
         }
         return count;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         Integer nums[] = {2, 2, 3, 4};
