@@ -19,31 +19,30 @@ public class Solution {
     
     public int findKthLargest(int[] nums, int k) {
         shuffle(nums);
-        int l = 0;
-        int r = nums.length - 1;
-        k = k - 1;
-        while(l < r){
-            int pivot = nums[r];
-            int i = l - 1;
-            for(int j = l; j < r; ++j){
-                if(nums[j] > pivot){
-                    int tmp = nums[j];
-                    nums[j] = nums[++i];
+        int start = 0;
+        int end = nums.length - 1;
+        while(start <= end){
+            int pivot = nums[end];
+            int tail = start - 1;
+            for(int i = start; i < end; ++i){
+                if(nums[i] >= pivot){
+                    int tmp = nums[tail + 1];
+                    nums[++tail] = nums[i];
                     nums[i] = tmp;
                 }
             }
-            nums[r] = nums[++i];
-            nums[i] = pivot;
-            
-            if(i == k){
-                return nums[i];
-            }else if(i > k){
-                r = i - 1;
+            int tmp = nums[tail + 1];
+            nums[++tail] = pivot;
+            nums[end] = tmp;
+            if(tail == k - 1){
+                return pivot;
+            }else if(tail < k - 1){
+                start = tail + 1;
             }else{
-                l = i + 1;
+                end = tail - 1;
             }
         }
-        return nums[l];
+        return -1;
     }
   
     public static void main(String[] args){

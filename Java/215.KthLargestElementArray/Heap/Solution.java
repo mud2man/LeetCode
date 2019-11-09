@@ -9,8 +9,7 @@ public class Solution {
         for(int num: nums){
             if(minHeap.size() < k){
                 minHeap.add(num);
-            }
-            else{
+            }else{
                 if(minHeap.peek() < num){
                     minHeap.poll();
                     minHeap.add(num);
