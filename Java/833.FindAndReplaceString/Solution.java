@@ -1,59 +1,38 @@
-/* Sort: Time:O(n*logn + m), Space:O(k), n:indexes number, m:the length of S, k:the characters count
- * 1. Have a "list" to store index, source, and target. And sort based on index
- * 2. Traverse index and do replacement if pattern match
+/* Map: Time:O(n*k), Space:O(n*k), n:length of S, k:longest length of target
+ * 1. Have a map "index2Pair", key is indexes[i], pair is {source[i], target[i]}
+ * 2. Have a pointer "prevIdx" to remember the last untranslated index
+ * 3. Scan idx from 0 to S.length(), do translate if index2Pair.containsKey(idx) and S.startsWith(source, idx)
+ * 4. Update prevIdx properly
  */
 
 import java.util.*;
 
 public class Solution{
-    private class Node{
-        int index;
-        String source;
-        String target;
-        Node(int i, String s, String t){index = i; source = s; target = t;}
-    }
-    
-    private class IndexComparator implements Comparator<Node>{
-        public int compare(Node x, Node y){
-            return x.index - y.index;
-        }
-    }
-    
     public String findReplaceString(String S, int[] indexes, String[] sources, String[] targets) {
-        List<Node> list = new ArrayList<Node>();
+        Map<Integer, String[]> index2Pair = new HashMap<>();
         for(int i = 0; i < indexes.length; ++i){
-            list.add(new Node(indexes[i], sources[i], targets[i]));
+            index2Pair.put(indexes[i], new String[]{sources[i], targets[i]});
         }
-        Collections.sort(list, new IndexComparator());
-        
-        String ret = S.substring(0, list.get(0).index);
-        
-        for(int i = 0; i < (list.size() - 1); ++i){
-            int index = list.get(i).index;
-            String source = list.get(i).source;
-            String target = list.get(i).target;
-            
-            if(S.startsWith(source, index)){
-                ret += target;
-                ret += S.substring(index + source.length(), list.get(i + 1).index);
+
+        int prevIdx = 0;
+        String ret = "";
+        for(int idx = 0; idx < S.length(); ++idx){
+            if(index2Pair.containsKey(idx)){
+                String source = index2Pair.get(idx)[0];
+                String target = index2Pair.get(idx)[1];
+                ret += S.substring(prevIdx, idx);
+                if(S.startsWith(source, idx)){
+                    ret += target;
+                }else{
+                    ret += S.substring(idx, idx + source.length());
+                }
+                prevIdx = idx + source.length();
             }
-            else{
-                ret += S.substring(index, list.get(i + 1).index);
-            }
         }
-        
-        int lastIndex = list.get(list.size() - 1).index;
-        if(S.startsWith(list.get(list.size() - 1).source, lastIndex)){
-            ret += list.get(list.size() - 1).target;
-            ret += S.substring(lastIndex + list.get(list.size() - 1).source.length());
-        }
-        else{
-            ret += S.substring(lastIndex);
-        }
-        
+        ret += S.substring(prevIdx);
         return ret;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         String S = "abcd";
