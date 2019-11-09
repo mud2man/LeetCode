@@ -19,8 +19,7 @@ public class Solution{
                     stack.peekLast()[1] += (pair[0] - stack.peekLast()[0]);
                 }
                 stack.addLast(pair);
-            }
-            else{
+            }else{
                 int id = Integer.valueOf(filed[0]);
                 int endTime = Integer.valueOf(filed[2]) + 1;
                 int[] top = stack.pollLast();
