@@ -25,7 +25,6 @@ public class Solution{
                 }
             }
         }
-        
         for(int x = 0; x < widthB; ++x){
             mapB.add(new HashMap<>());
             for(int y = 0; y < lengthB; ++y){
@@ -43,46 +42,38 @@ public class Solution{
                     int val = 0;
                     for(Map.Entry<Integer, Integer> entry: row.entrySet()){
                         int index = entry.getKey();
-                        if(col.containsKey(index)){
-                            val += row.get(index) * col.get(index);
-                        }
+                        val +=col.containsKey(index)? row.get(index) * col.get(index): 0;
                     }
                     AB[y][x] = val;
-                }
-                else{
+                }else{
                     AB[y][x] = 0;
                 }
             }
         }
         return AB;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        int i;
-        int[][] result;
+        Solution sol = new Solution();
         int[][] A = {{1, 0, 0},
                      {-1, 0, 3}};
         int[][] B = {{7, 0, 0},
                      {0, 0, 0},
                      {0, 0, 1}};
 
-        sol = new Solution();
-        
         System.out.println("A[][]: ");    
-        for(i = 0; i < A.length; ++i){
+        for(int i = 0; i < A.length; ++i){
             System.out.println(Arrays.toString(A[i]));
         }
         
         System.out.println("B[][]: ");    
-        for(i = 0; i < B.length; ++i){
+        for(int i = 0; i < B.length; ++i){
             System.out.println(Arrays.toString(B[i]));
         }
 
-        result = sol.multiply(A, B);
-
+        int[][] result = sol.multiply(A, B);
         System.out.println("result[][]: ");    
-        for(i = 0; i < result.length; ++i){
+        for(int i = 0; i < result.length; ++i){
             System.out.println(Arrays.toString(result[i]));
         }
     }
