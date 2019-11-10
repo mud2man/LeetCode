@@ -6,20 +6,13 @@
 import java.util.*;
 
 public class Solution {
-    private class FreqComparator implements Comparator <Map.Entry<Integer, Integer>>{
-        public int compare(Map.Entry<Integer, Integer> x, Map.Entry<Integer, Integer> y){
-            return x.getValue() - y.getValue();
-        }    
-    }
-    
     public List<Integer> topKFrequent(int[] nums, int k) {
         HashMap<Integer, Integer> frequencyMap = new HashMap<Integer, Integer>();
-        PriorityQueue<Map.Entry<Integer, Integer>> minHeap = new PriorityQueue(new FreqComparator());
+        PriorityQueue<Map.Entry<Integer, Integer>> minHeap = new PriorityQueue<>((x, y) -> (x.getValue() - y.getValue()));
         HashSet<Integer> heap = new HashSet<Integer>();
         
         for(int num: nums){
-            frequencyMap.putIfAbsent(num, 0);
-            frequencyMap.put(num, frequencyMap.get(num) + 1);
+            frequencyMap.put(num, frequencyMap.getOrDefault(num, 0) + 1);
         }
         
         for(Map.Entry<Integer, Integer> entry: frequencyMap.entrySet()){
@@ -38,7 +31,6 @@ public class Solution {
         for(Map.Entry<Integer, Integer> entry: minHeap){
             topK.add(entry.getKey());
         }
-        
         return topK;
     }
 

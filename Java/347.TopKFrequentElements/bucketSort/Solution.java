@@ -10,8 +10,7 @@ public class Solution {
     public List<Integer> topKFrequent(int[] nums, int k) {
         Map<Integer, Integer> num2Freq = new HashMap<>();
         for(int num: nums){
-            num2Freq.putIfAbsent(num, 0);
-            num2Freq.put(num, num2Freq.get(num) + 1);
+            num2Count.put(num, num2Count.getOrDefault(num, 0) + 1);
         }
         Map<Integer, List<Integer>> freq2Nums = new HashMap<>();
         for(Map.Entry<Integer, Integer> entry: num2Freq.entrySet()){
