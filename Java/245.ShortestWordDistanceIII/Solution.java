@@ -10,24 +10,14 @@ import java.util.*;
 public class Solution{
     public int shortestWordDistance(String[] words, String word1, String word2) {
         int minDistance = words.length;
-        
         if(!word1.equals(word2)){
-            int[] maxIndex = new int[2];
-            maxIndex[0] = -words.length;
-            maxIndex[1] = -words.length;
-            
+            int[] maxIndex = {-words.length, words.length};            
             for(int index = 0; index < words.length; ++index){
-                if(words[index].equals(word1)){
-                    minDistance = Math.min(minDistance, index - maxIndex[1]); 
-                    maxIndex[0] = index;
-                }
-                if(words[index].equals(word2)){
-                    minDistance = Math.min(minDistance, index - maxIndex[0]); 
-                    maxIndex[1] = index;
-                }
+                maxIndex[0] =words[index].equals(word1)? index: maxIndex[0];
+                maxIndex[1] =words[index].equals(word2)? index: maxIndex[1];
+                minDistance = Math.min(minDistance, Math.abs(maxIndex[0] - maxIndex[1])); 
             }
-        }
-        else{
+        }else{
             int maxIndex = -words.length;
             for(int index = 0; index < words.length; ++index){
                 if(words[index].equals(word1)){
@@ -36,17 +26,15 @@ public class Solution{
                 }
             }
         }
-        
         return minDistance;
     }
- 
+  
     public static void main(String[] args){
-        Solution sol;
+        Solution sol = new Solution();
         int n = 2;
         String[] words = {"practice", "makes", "perfect", "coding", "makes"};
         String word1 = "makes";
         String word2 = "coding";
-        sol = new Solution();
 
         System.out.println("words: " + Arrays.toString(words));
         System.out.println("word1: " + word1);
