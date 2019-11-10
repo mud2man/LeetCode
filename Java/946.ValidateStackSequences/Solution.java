@@ -1,6 +1,7 @@
-/* Stack: Time:O(n), Space:O(n)
+/* Greedy: Time:O(n), Space:O(n)
  * 1. Have 2 pointers pushIdx, and popIdx
- * 2. In the loop, we check if the top of stack is equal to popped[popIdx]. If so we do pop
+ * 2. In the loop, we check if the top of stack is equal to popped[popIdx]. 
+ * 3. If so we do pop, since there must exist a vlaid solution which can swap pop to the eariler one (if the eariler one exist)
  * 3. Otherwise, we do push
  * 4. In the loop, either pop or push has to be happended
  */
@@ -16,12 +17,10 @@ public class Solution{
             if(!stack.isEmpty() && stack.peekLast() == popped[popIdx]){
                 stack.pollLast();
                 popIdx++;
-            }
-            else{
+            }else{
                 if(pushIdx < pushed.length){
                     stack.addLast(pushed[pushIdx++]);
-                }
-                else{
+                }else{
                    return false; 
                 }
             }
