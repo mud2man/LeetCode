@@ -10,16 +10,14 @@ public class Solution {
     public String frequencySort(String s) {
         Map<Character, Integer> char2Count = new HashMap<>();
         for(char c: s.toCharArray()){
-            char2Count.putIfAbsent(c, 0);
-            char2Count.put(c, char2Count.get(c) + 1);
+            char2Count.put(c, char2Count.getOrDefault(c, 0) + 1);
         }
         
         Map<Integer, Set<Character>> count2Chars = new HashMap<>();
         for(Map.Entry<Character, Integer> entry: char2Count.entrySet()){
             int count = entry.getValue();
             char c = entry.getKey();
-            count2Chars.putIfAbsent(count, new HashSet<>());
-            count2Chars.get(count).add(c);
+            count2Chars.computeIfAbsent(count, key -> new HashSet<>()).add(c);
         }
         
         StringBuilder sb = new StringBuilder("");
@@ -36,14 +34,10 @@ public class Solution {
         }
         return sb.toString();
     }
-    
+  
     public static void main(String[] args){
-        Solution sol;
-        String s;
-
-        s = "aAbb";
-        sol = new Solution();
-        
+        Solution sol = new Solution();
+        String s = "aAbb";
         System.out.println("before sorting: " + s);
         System.out.println("after sorting: " + sol.frequencySort(s));
     }
