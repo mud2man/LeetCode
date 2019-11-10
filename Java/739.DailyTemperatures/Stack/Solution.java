@@ -1,20 +1,21 @@
 /* Monotonous Stack: Time:O(n), Space:O(k)
- * 1. Have a stack in decending order, with element = {temp, index}
- * 2. Traverse from rightest, and pop stack until encounter a higher temp. And then push the current {temp[i], i} to stack
+ * 1. Have a stack of index in decending order in terms of temperatures[idx]
+ * 2. Traverse from left, and pop stack as long as temperatures[stack.peekLast()] < temperatures[i], and update daysOfWait[idx] as (i - idx)
  */
 
 import java.util.*;
 
 public class Solution{
     public int[] dailyTemperatures(int[] temperatures) {
-        Deque<int[]> stack = new LinkedList<>();
+        Deque<Integer> stack = new LinkedList<>();
         int[] daysOfWait = new int[temperatures.length];
-        for(int i = temperatures.length - 1; i >= 0; --i){
-            while(!stack.isEmpty() && stack.peekLast()[0] <= temperatures[i]){
-                stack.pollLast();
+        for(int i = 0; i < temperatures.length; ++i){
+            int currTemp = temperatures[i];
+            while(!stack.isEmpty() && temperatures[stack.peekLast()] < currTemp){
+                int idx = stack.pollLast();
+                daysOfWait[idx] = i - idx;
             }
-            daysOfWait[i] = (!stack.isEmpty())? stack.peekLast()[1] - i: 0;
-            stack.add(new int[]{temperatures[i], i});
+            stack.add(i);
         }
         return daysOfWait;
     }
