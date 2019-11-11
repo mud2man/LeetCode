@@ -17,8 +17,7 @@ public class Solution {
         if(node == null){
             if(farther.val > val){
                 farther.left = new TreeNode(val);
-            }
-            else{
+            }else{
                 farther.right = new TreeNode(val);
             }
             return;
@@ -26,8 +25,7 @@ public class Solution {
         
         if(node.val > val){
             helper(node, node.left, val);
-        }
-        else{
+        }else{
             helper(node, node.right, val);
         }
     } 
