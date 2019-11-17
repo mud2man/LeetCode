@@ -2,6 +2,7 @@
  * 1. Walk back from target point (tx, ty), because there is only one way back if tx != ty
  * 2. If ty > tx and two point are not the same, the possible back is (tx, ty - tx) and vice versa
  * 3. We can speed up the process by (tx, ty % tx) if sx != tx, and vice versa
+ * 4. If ty == tx, we return true if sy == sx == ty == tx
  */
 
 import java.util.*;
@@ -11,27 +12,21 @@ public class Solution {
     public boolean reachingPoints(int sx, int sy, int tx, int ty) {
         if(sx == tx && sy == ty){
             return true;
-        }
-        else if(tx == ty){
-            return (sx == tx || sx == 0) & (sy == tx || sy == 0);
-        }
-        else if(sx > tx || sy > ty){
+        }else if(tx == ty){
+            return (sx == tx && sy == tx);
+        }else if(sx > tx || sy > ty){
             return false;
-        }
-        else{
+        }else{
             if(ty > tx){
                 if(sx == tx){
                     return ((ty - sy) % tx == 0)? true: false;
-                }
-                else{
+                }else{
                     return reachingPoints(sx, sy, tx, ty % tx);
                 }
-            }
-            else{
+            }else{
                 if(sy == ty){
                     return ((tx - sx) % ty == 0)? true: false;
-                }
-                else{
+                }else{
                     return reachingPoints(sx, sy, tx % ty, ty);
                 }
             }
