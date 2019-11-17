@@ -1,4 +1,4 @@
-/* Lowest common ancestor: Time:O(n), Space:O(n) 
+/* Lowest common ancestor: Time:O(n), Space:O(n). LeetCode has 16-line solution 
  * 1. Construct a N-Tree given region list
  * 2. Run getLca as long as the current node has no parent(root)
  */
