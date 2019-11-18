@@ -21,25 +21,25 @@ public class Solution{
     private int eval(String s, int[] idx){
         idx[0] += (s.charAt(idx[0]) == '(')? 1: 0;
         int[] sumAndMultiply = {0, 1}; //{sum, multiply}
-        boolean isDivide = false;
+        boolean isPrevDivide = false;
         while(idx[0] < s.length()){
             int nextNum = (s.charAt(idx[0]) == '(')? eval(s, idx): getNextNum(s, idx);
             char operator = s.charAt(idx[0]++);
             switch (operator){
                 case '+':
                 case '-':
-                    sumAndMultiply[1] = (isDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
+                    sumAndMultiply[1] = (isPrevDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
                     sumAndMultiply[0] = sumAndMultiply[0] + sumAndMultiply[1];
                     sumAndMultiply[1] = (operator == '-')? -1: 1;
-                    isDivide = false;
+                    isPrevDivide = false;
                     break;
                 case '*':
                 case '/':
-                    sumAndMultiply[1] = (isDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
-                    isDivide = (operator == '*')? false: true;
+                    sumAndMultiply[1] = (isPrevDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
+                    isPrevDivide = (operator == '*')? false: true;
                     break;
                 case ')':
-                    sumAndMultiply[1] = (isDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
+                    sumAndMultiply[1] = (isPrevDivide)? sumAndMultiply[1] / nextNum: sumAndMultiply[1] * nextNum;
                     return sumAndMultiply[0] + sumAndMultiply[1];
             }
         }
