@@ -34,8 +34,7 @@ public class FreqStack {
             newNode.next = head;
             newNode.prev = node;
             val2Node.put(x, newNode);
-        }
-        else{
+        }else{
             Node nextNode = node.next;
             nextNode.stack.add(x);
             val2Node.put(x, nextNode);
@@ -47,8 +46,7 @@ public class FreqStack {
         int top = node.stack.pollLast();
         if(node.prev != head){
             val2Node.put(top, node.prev);
-        }
-        else{
+        }else{
             val2Node.remove(top);
         }
         
