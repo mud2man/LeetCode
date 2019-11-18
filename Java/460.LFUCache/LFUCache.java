@@ -26,8 +26,7 @@ public class LFUCache {
     public int get(int key) {
         if(!key2Val.containsKey(key)){
             return -1;
-        }
-        else{
+        }else{
             int val = key2Val.get(key);
             int freq = key2Freq.get(key);
             key2Freq.put(key, freq + 1);
@@ -44,8 +43,7 @@ public class LFUCache {
         if(key2Val.containsKey(key)){
             key2Val.put(key, value);
             get(key);
-        }
-        else{
+        }else{
             if(reamin > 0){
                 key2Val.put(key, value);
                 key2Freq.put(key, 1);
