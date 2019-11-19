@@ -1,4 +1,4 @@
-/* Math:O(n^2*logn), Space:O(n^2)
+/* Math:O(n^2*logn), Space:O(n^2). However, we should implement the O(n^3) solution as well
  * 1. Classify all pairs of points by center and their distance
  * 2. In the same category, any two pairs can form a retangle
  * 3. So we can get the area from the two pairs, and update minArea
