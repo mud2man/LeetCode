@@ -1,4 +1,4 @@
-/* : Hahset and LinkedList: O(1)
+/* Hahset and LinkedList: Time:O(1), Space:O(n)
  * 1. Encode the position in matrix from 0 to width*height - 1
  * 2. Use HashSet to store the body of snake, and then use it to check if it bites itself
  * 3. Use LinedList to store the position of snack body, and use it to move snake
@@ -6,9 +6,9 @@
 
 import java.util.*;
 public class SnakeGame {
-    private HashSet<Integer> snakeHash;
-    private LinkedList<Integer> snakePosition;
-    private LinkedList<Integer> foods;
+    private Set<Integer> snakeHash;
+    private Deque<Integer> snakePosition;
+    private Deque<Integer> foods;
     int width;
     int height;
     
@@ -30,19 +30,17 @@ public class SnakeGame {
         this.snakePosition.add(0);
     }
     
-    private boolean isValid(int headPosition, int tailPosition, int[] offset, HashSet<Integer> snakeHash, int width, int height){
+    private boolean isValid(int headPosition, int tailPosition, int[] offset, Set<Integer> snakeHash, int width, int height){
         int y = headPosition / width + offset[0];
         int x = headPosition % width + offset[1];
         
         if(y < 0 || y >= height || x < 0 || x >= width){
             return false;
         }
-        
         int nextHeadPosition = y * width + x;
         if(nextHeadPosition != tailPosition && snakeHash.contains(nextHeadPosition)){
             return false;
         }
-        
         return true;
     }
     
@@ -76,14 +74,13 @@ public class SnakeGame {
         if(!isValid(headPosition, tailPosition, offset, snakeHash, width, height)){
             return -1;
         }
-        
+
         int nextHeadPosition = headPosition + offset[0] * width + offset[1];
         if(nextHeadPosition == food){
             snakePosition.add(nextHeadPosition);
             snakeHash.add(nextHeadPosition);
             foods.pollFirst();
-        }
-        else{
+        }else{
             snakePosition.pollFirst();
             snakePosition.add(nextHeadPosition);
             snakeHash.remove(tailPosition);
@@ -91,24 +88,18 @@ public class SnakeGame {
         }
         return snakePosition.size() - 1;
     }
-
+ 
     public static void main(String[] args){
-        int width;
-        int height;
-        SnakeGame snake;
         int[][] food = {{1,2}, {0,1}};
-        
-        width = 3;
-        height = 2;
-        snake = new SnakeGame(width, height, food);
-        
+        int width = 3;
+        int height = 2;
+        SnakeGame snake = new SnakeGame(width, height, food);
         System.out.println("width: " + width + ", height: " + height);
         System.out.print("food: ");
         for(int[] f: food){
             System.out.print(Arrays.toString(f));
         }
         System.out.println("");
-        
         System.out.println("move right: " + snake.move("R"));
         System.out.println("move down: " + snake.move("D"));
         System.out.println("move right: " + snake.move("R"));
