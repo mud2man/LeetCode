@@ -12,18 +12,13 @@ public class TimeMap{
     }
     
     public void set(String key, String value, int timestamp) {
-        db.putIfAbsent(key, new TreeMap<Integer, String>());
-        db.get(key).put(timestamp, value);
+        db.computeIfAbsent(key, k -> new TreeMap<Integer, String>()).put(timestamp, value);
     }
     
     public String get(String key, int timestamp) {
         if(db.containsKey(key)){
             Integer floorKey = db.get(key).floorKey(timestamp);
-            if(floorKey == null){
-                return "";
-            }else{
-                return db.get(key).get(floorKey);
-            }
+            return (floorKey == null)? "": db.get(key).get(floorKey);
         }else{
             return "";
         }
