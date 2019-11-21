@@ -28,38 +28,26 @@ class ListNode {
 public class Solution{
     public ListNode deleteDuplicates(ListNode head) {
         ListNode dummy = new ListNode(0);
-        ListNode tail, curr;
-        int preVal;
-        dummy.next = head;
-        
-        curr = head;
-        tail = dummy;
-        
-        while(curr != null){
+        ListNode tail = dummy;
+        int duplicateCount = 0;
+        for(ListNode curr = head; curr != null; curr = curr.next){
             if(curr.next == null || curr.val != curr.next.val){
-                tail.next = curr;
-                tail = curr;
-                curr = curr.next;
-            }
-            else{
-                preVal = curr.val;
-                while(curr != null && curr.val == preVal){
-                    curr = curr.next;
+                if(duplicateCount == 0){
+                    tail.next = curr;
+                    tail = curr;
                 }
+                duplicateCount = 0;
+            }else{
+                duplicateCount++;
             }
-        } 
+        }
         tail.next = null;
-        return dummy.next; 
+        return dummy.next;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        ListNode head;
-        ListNode node;
-        int m, n;
-
-        sol = new Solution();
-        head = new ListNode(1);
+        Solution sol = new Solution();
+        ListNode head = new ListNode(1);
         head.next = new ListNode(2);
         head.next.next = new ListNode(3);
         head.next.next.next = new ListNode(3);
@@ -69,7 +57,7 @@ public class Solution{
         head.next.next.next.next.next.next.next = new ListNode(5);
         
         System.out.println("before remove duplictes: ");
-        node = head;
+        ListNode node = head;
         while(node != null){    
             System.out.print(node.val + "->");
             node = node.next;
@@ -77,7 +65,6 @@ public class Solution{
         System.out.println("");
         
         head = sol.deleteDuplicates(head);
-
         System.out.println("after remove duplictes: ");
         node = head;
         while(node != null){
