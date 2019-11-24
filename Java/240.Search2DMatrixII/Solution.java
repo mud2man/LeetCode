@@ -16,8 +16,7 @@ public class Solution{
             for(y = y; y >= 0; --y){
                 if(matrix[y][x] == target){
                     return true;
-                }
-                else if(matrix[y][x] < target){
+                }else if(matrix[y][x] < target){
                     break;
                 }
             }
