@@ -1,9 +1,6 @@
-/* Backtrack: Time:O(9^n), where n is the number of empty cells
- * 1. Have candidate sets for every row, column, and box
- * 2. Have a list of empty cells, and link the associated candidate sets to the node
- * 3. Use "backtrack" method to visit the list
- * 4. During backtrack, select the intersection of the three candidates set, and traverse the intersection
- * 5. Remove the intersect candidate from the three candidates set, and put it back when the recursive backtrack return
+/* Time:O(9*9), Space:O(9*9)
+ * 1. Have 3 mpas "rows", "columns" and "blocks" to record the seen number with repect to rowId, columnId, and blockId
+ * 2. Check if we have conflic in the 3 maps
  */
 
 import java.util.*;
