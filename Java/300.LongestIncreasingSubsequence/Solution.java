@@ -31,28 +31,18 @@ public class Solution{
                 if(idx == size){
                     increaseList.add(num);
                     maxLen = size + 1;
-                }
-                else{
+                }else{
                     increaseList.set(idx, num);
                 }
             }
         }
-
         return maxLen;
     }
 
     public static void main(String[] args){
-        int i;
-        Solution sol;
-        int len;
         int[] nums = {10, 9, 2, 5, 3, 7, 101, 18};
-        
-        sol = new Solution();
-
+        Solution sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
-
-        len = sol.lengthOfLIS(nums);
-        
-        System.out.println("maximum increasing length: " + len);
+        System.out.println("maximum increasing length: " + sol.lengthOfLIS(nums));
     }
 }
