@@ -23,20 +23,17 @@ public class Solution{
                     if(rows.containsKey(rowIndex) && rows.get(rowIndex).contains(c)){
                         return false;
                     }
-                    rows.putIfAbsent(rowIndex, new HashSet<>());
-                    rows.get(rowIndex).add(c);
+                    rows.computeIfAbsent(rowIndex, key -> new HashSet<>()).add(c);
                     int columnIndex = x;
                     if(columns.containsKey(columnIndex) && columns.get(columnIndex).contains(c)){
                         return false;
                     }
-                    columns.putIfAbsent(columnIndex, new HashSet<>());
-                    columns.get(columnIndex).add(c);
+                    columns.computeIfAbsent(columnIndex, key -> new HashSet<>()).add(c);
                     int blockIndex = (y / 3) * 3 + x / 3;
                     if(blocks.containsKey(blockIndex) && blocks.get(blockIndex).contains(c)){
                         return false;
                     }
-                    blocks.putIfAbsent(blockIndex, new HashSet<>());
-                    blocks.get(blockIndex).add(c);
+                    blocks.computeIfAbsent(blockIndex, key -> new HashSet<>()).add(c);
                 }
             }
         }
@@ -54,7 +51,6 @@ public class Solution{
                           {'.','6','.','.','.','.','2','8','.'},
                           {'.','.','.','4','1','9','.','.','5'},
                           {'.','.','.','.','8','.','.','7','9'}};
- 
         System.out.println("board: ");
         for(char[] row: board){
             System.out.println(Arrays.toString(row));
