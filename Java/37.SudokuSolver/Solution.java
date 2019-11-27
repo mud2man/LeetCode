@@ -57,8 +57,7 @@ public class Solution{
             for(int x = 0; x < 9; ++x){
                 if(board[y][x] == '.'){
                     emptyCells.add(new int[]{y, x});
-                }
-                else{
+                }else{
                     candidates.get(0).get(y).remove(board[y][x] - '0');
                     candidates.get(1).get(x).remove(board[y][x] - '0');
                     candidates.get(2).get((y / 3) * 3 + (x / 3)).remove(board[y][x] - '0');
@@ -84,9 +83,7 @@ public class Solution{
         for(char[] row: board){
             System.out.println(Arrays.toString(row));
         }
-
         sol.solveSudoku(board);
-
         System.out.println("after: ");
         for(char[] row: board){
             System.out.println(Arrays.toString(row));
