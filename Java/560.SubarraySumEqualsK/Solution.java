@@ -17,10 +17,10 @@ public class Solution{
             sum += num;
             if(sum == k){
                 count++;
-                count += sum2Count.containsKey(0)? sum2Count.get(0): 0;
+                count += sum2Count.getOrDefault(0, 0);
             }else{
                 int target = sum - k;
-                count += sum2Count.containsKey(target)? sum2Count.get(target): 0;
+                count += sum2Count.getOrDefault(target, 0);
             }
             sum2Count.putIfAbsent(sum, 0);
             sum2Count.put(sum, sum2Count.get(sum) + 1);
