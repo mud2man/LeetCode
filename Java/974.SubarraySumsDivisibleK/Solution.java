@@ -1,7 +1,6 @@
 /* Hash: Time:O(n), Space:O(n)
- * 1. Without losing generality, we add base (((10000 / K) + 1) * K) to each number
- * 2. Record the map sum2Count
- * 3. The subarray ending with A[i] has sum divisible by K, if and only if sum2Count contains sum
+ * 1. Record the map sum2Count, where sum is module by K
+ * 2. Accumulate count of the subarray ending with A[i] has sum with target and K - target(target > 0) / K + target(target < 0)
  */
 
 import java.util.*; // Stack
@@ -12,16 +11,17 @@ public class Solution {
         sum2Count.put(0, 1);
         int sum = 0;
         int count = 0;
-        int base = ((10000 / K) + 1) * K;
         for(int a: A){
-            a = a + base;
             sum = (sum + a) % K;
             int target = sum;
             count += sum2Count.getOrDefault(target, 0);
+            if(target != 0){
+               count += sum2Count.getOrDefault((target > 0)? -(K - target): (K + target), 0); 
+            }
             sum2Count.putIfAbsent(sum, 0);
             sum2Count.put(sum, sum2Count.get(sum) + 1);
         }
-        return count;
+        return count; 
     }
   
     public static void main(String[] args){
