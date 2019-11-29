@@ -10,7 +10,7 @@ public class Solution{
         List<int[]> mergedPairs = new ArrayList<>();
         if(start >= end){
             if(start == end){
-              mergedPairs.add(pairs.get(start));  
+                mergedPairs.add(pairs.get(start));  
             }
             return mergedPairs;
         }
@@ -53,7 +53,6 @@ public class Solution{
     public static void main(String[] args){
         int[] nums = {5, 2, 6, 1};
         Solution sol = new Solution();
-        
         System.out.println("nums:" + Arrays.toString(nums));
         System.out.println("count: " + sol.countSmaller(nums));
     }
