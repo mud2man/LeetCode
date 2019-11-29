@@ -1,4 +1,4 @@
-/* Heap: O(nlogn)
+/* Heap: Time:O(nlogk), Space:O(k)
  * 1. Have a maxHeap to store the smaller half
  * 2. Have a minHeap to store the bigger half
  */
@@ -6,26 +6,17 @@
 import java.util.*;
 
 public class Solution{
-    private class MaxHeapComparator implements Comparator<Integer>{
-        public int compare(Integer x, Integer y){
-            return (x > y)? -1: (x == y)? 0: 1;
-        }
-    }
-    
     private void update(PriorityQueue<Integer> maxHeap, PriorityQueue<Integer> minHeap, int val, boolean isInsert){
         if(isInsert){
             if(maxHeap.isEmpty() || maxHeap.peek() >= val){
                 maxHeap.add(val);
-            }
-            else{
+            }else{
                 minHeap.add(val);
             }
-        }
-        else{
+        }else{
             if(maxHeap.peek() >= val){
                 maxHeap.remove(val);
-            }
-            else{
+            }else{
                 minHeap.remove(val);
             }
         }
@@ -39,7 +30,7 @@ public class Solution{
     }
     
     public double[] medianSlidingWindow(int[] nums, int k) {
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(new MaxHeapComparator());
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((x, y) -> (y.compareTo(x)));
         PriorityQueue<Integer> minHeap = new PriorityQueue<>();
         for(int i = 0; i < k - 1; ++i){
             update(maxHeap, minHeap, nums[i], true);
@@ -48,17 +39,12 @@ public class Solution{
         double[] medians = new double[nums.length - k + 1];
         for(int i = k - 1, j = 0; i < nums.length; ++i, ++j){
             update(maxHeap, minHeap, nums[i], true);
-            if(k % 2 == 1){
-                medians[j] = (double)maxHeap.peek();
-            }
-            else{
-                medians[j] = ((double)maxHeap.peek() + (double)minHeap.peek()) / 2.0;
-            }
+            medians[j] =(k % 2 == 1)? (double)maxHeap.peek(): ((double)maxHeap.peek() + (double)minHeap.peek()) / 2.0;
             update(maxHeap, minHeap, nums[i - k + 1], false);
         }
         return medians;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution() ;
         int k = 3;
