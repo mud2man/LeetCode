@@ -10,15 +10,14 @@ import java.util.*;
 public class Solution {
     public boolean canCross(int[] stones) {
         HashMap<Integer, Integer> pos2Idx = new HashMap<Integer, Integer>();
-        List<Set<Integer>> dp = new ArrayList<Set<Integer>>();
         for(int i = 0; i < stones.length; ++i){
-            dp.add(new HashSet<Integer>());
             pos2Idx.put(stones[i], i);
         }
         
-        dp.get(0).add(0);
+        Map<Integer, Set<Integer>> dp = new HashMap<>();
+        dp.computeIfAbsent(0, key -> new HashSet<>()).add(0);
         for(int i = 0; i < stones.length; ++i){
-            Set<Integer> prevSteps = dp.get(i);
+            Set<Integer> prevSteps = dp.getOrDefault(i, new HashSet<>());
             int currPos = stones[i];
             for(int prevStep: prevSteps){
                 for(int j = -1; j < 2; ++j){
@@ -32,14 +31,14 @@ public class Solution {
                         if(nextIdx == stones.length - 1){
                             return true;
                         }
-                        dp.get(nextIdx).add(nextPos - currPos);
+                        dp.computeIfAbsent(nextIdx, key -> new HashSet<>()).add(nextPos - currPos);
                     }
                 }
             }
         }
-        return (dp.get(stones.length - 1).size() > 0);
+        return (dp.getOrDefault(stones.length - 1, new HashSet<>()).size() > 0);
     }
-  
+ 
     public static void main(String[] args){
         Solution sol= new Solution();
         int[] stones = {0, 1, 3, 5, 6, 8, 12, 17}; 
