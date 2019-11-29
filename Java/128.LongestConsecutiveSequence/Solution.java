@@ -1,7 +1,7 @@
 /* Hash: Time:O(n), Space:O(n). LeetCode has simpler solution
- * 1. Keep a hashMap "lengthsMap" to store the mapping between node and length. e.g.,{1, 2, 3, 4, 5}, map.get(1) = 5, map.get(5) = 5
+ * 1. Keep a hashMap "point2Length" to store the mapping between node and length. e.g.,{1, 2, 3, 4, 5}, map.get(1) = 5, map.get(5) = 5
  * 2. In each loop, check if the new node can be attached to the begin or end of existing sequence
- * 3. Then, update lengthsMap and maxLength
+ * 3. Then, update point2Length and maxLength
  * 4. Because we prevent duplicated, the nodes on the "leftLength" and "rightLength" will not overlap
  */         
 
@@ -10,31 +10,26 @@ import java.util.*;
 public class Solution {
     public int longestConsecutive(int[] nums) {
         int maxLength = 0;
-        HashMap<Integer, Integer> lengthsMap = new HashMap<Integer, Integer>();
-        
+        HashMap<Integer, Integer> point2Length = new HashMap<Integer, Integer>();
         for(int num: nums){
-            if(lengthsMap.containsKey(num)){
+            if(point2Length.containsKey(num)){
                 continue;
-            }
-            else{
-                int leftLength = lengthsMap.containsKey(num - 1)? lengthsMap.get(num - 1): 0;
-                int rightLength = lengthsMap.containsKey(num + 1)? lengthsMap.get(num + 1): 0;
+            }else{
+                int leftLength = point2Length.getOrDefault(num - 1, 0);
+                int rightLength = point2Length.getOrDefault(num + 1, 0); 
                 int sum = leftLength + rightLength + 1;
-                lengthsMap.put(num, 0);
-                lengthsMap.put(num - leftLength, sum);
-                lengthsMap.put(num + rightLength, sum);
+                point2Length.put(num, 0);
+                point2Length.put(num - leftLength, sum);
+                point2Length.put(num + rightLength, sum);
                 maxLength = Math.max(maxLength, sum);
             }
         }
-        
         return maxLength;
     }
 
     public static void main(String[] args){
-        Solution sol; 
         int[] nums = {100, 4, 200, 1, 3, 2};
-        sol = new Solution();
-        
+        Solution sol = new Solution();
         System.out.println("nums: " + Arrays.toString(nums));
         System.out.println("longest consecutive length: " + sol.longestConsecutive(nums));
     }
