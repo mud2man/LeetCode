@@ -19,13 +19,9 @@ import java.util.*;
 
 public class Solution{
     public int trap(int[] height) {
-        if(height == null || height.length == 0){
-            return 0;
-        }
-        
         int water = 0;
         Deque<int[]> stack = new LinkedList<>();
-        int[] top = new int[]{height[0], 0};
+        int[] top = new int[]{(height.length == 0)? 0: height[0], 0};
         for(int i = 1; i < height.length; ++i){
             int[] nextTop = new int[]{height[i], i};
             if(nextTop[0] < top[0]){
@@ -49,7 +45,7 @@ public class Solution{
                 }
             }
         }
-        return water; 
+        return water;
     }
 
     public static void main(String[] args){
