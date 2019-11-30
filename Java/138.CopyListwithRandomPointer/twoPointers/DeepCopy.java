@@ -6,28 +6,30 @@
 
 import java.util.*;
 
-class RandomListNode {
-    int label;
-    RandomListNode next, random;
-    
-    RandomListNode(int x) {
-        this.label = x;
+class Node {
+    public int val;
+    public Node next;
+    public Node random;
+    public Node() {}
+    public Node(int _val,Node _next,Node _random) {
+        val = _val;
+        next = _next;
+        random = _random;
     }
-}
+};
 
 public class DeepCopy {
-    public RandomListNode copyRandomList(RandomListNode head) {
+    public Node copyRandomList(Node head) {
         if(head == null){
             return null;
         }
         
         //put the clone node to its node's next
-        RandomListNode ptr0 = head;
-        RandomListNode ptr1 = head.next;
+        Node ptr0 = head;
+        Node ptr1 = head.next;
         while(ptr0 != null){
-            RandomListNode clone = new RandomListNode(ptr0.label);
+            Node clone = new Node(ptr0.val, ptr1, null);
             ptr0.next = clone;
-            clone.next = ptr1;
             ptr0 = ptr1;
             ptr1 = (ptr1 != null)? ptr1.next: null;
         }
@@ -42,7 +44,7 @@ public class DeepCopy {
         }
         
         //recover the original list, and retrieve the clone list
-        RandomListNode cloneHead = head.next;
+        Node cloneHead = head.next;
         ptr0 = head;
         ptr1 = head.next;
         while(ptr1 != null){
@@ -54,35 +56,29 @@ public class DeepCopy {
     }
  
     public static void main(String[] args){
-        RandomListNode head;
-        RandomListNode cloneHead;
-        RandomListNode node;
-        DeepCopy dc;
-
-        dc = new DeepCopy();
-
-        head = new RandomListNode(1);
-        head.next = new RandomListNode(2);
-        head.next.next = new RandomListNode(3);
+        DeepCopy dc = new DeepCopy();
+        Node head = new Node(1, null, null);
+        head.next = new Node(2, null, null);
+        head.next.next = new Node(3, null, null);
         head.random = head.next;
         head.next.random = head.next.next;
         head.next.next.random = head;
 
         System.out.println("head:");
-        node = head;
+        Node node = head;
         while(node != null){
-            System.out.println("node.label:" + node.label);
-            System.out.println("node.random.label:" + node.random.label);
+            System.out.println("node.val:" + node.val);
+            System.out.println("node.random.val:" + node.random.val);
             node = node.next;
         }
 
-        cloneHead = dc.copyRandomList(head);
+        Node cloneHead = dc.copyRandomList(head);
         
         System.out.println("cloneHead:");
         node = cloneHead;
         while(node != null){
-            System.out.println("node.label:" + node.label);
-            System.out.println("node.random.label:" + node.random.label);
+            System.out.println("node.val:" + node.val);
+            System.out.println("node.random.val:" + node.random.val);
             node = node.next;
         }
 
