@@ -8,19 +8,18 @@ import java.util.*;
 
 public class Solution {
     public int lengthOfLongestSubstring(String s) {
-        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        HashMap<Character, Integer> char2Idx = new HashMap<Character, Integer>();
         int maxLen = 0;
         int currLen = 0;
-        
         for(int idx = 0; idx < s.length(); idx++){
             char c = s.charAt(idx);
-            if(!map.containsKey(c)){
+            if(!char2Idx.containsKey(c)){
                 maxLen = Math.max(++currLen, maxLen);
             }else{
-                currLen = Math.min(++currLen, idx - map.get(c));
+                currLen = Math.min(++currLen, idx - char2Idx.get(c));
                 maxLen = Math.max(currLen, maxLen);
             }
-            map.put(c, idx);
+            char2Idx.put(c, idx);
         }
         return maxLen;
     }
