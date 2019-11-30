@@ -17,11 +17,9 @@ public class Solution {
         if(root == null){
             return true;
         }
-        
         if((lb != null && root.val <= lb.val) || (hb != null && root.val >= hb.val)){
             return false;
         }
-  
         return preOrder(root.left, lb, root) & preOrder(root.right, root, hb);
     }
 
@@ -30,9 +28,6 @@ public class Solution {
     } 
 
     public static void main(String[] args){
-        TreeNode root;
-        Solution sol;
-        
         /* Generate a input tree
          *     8
          *    / \
@@ -42,7 +37,7 @@ public class Solution {
          *    / \  /
          *   4   7 13 
          */
-        root = new TreeNode(8);
+        TreeNode root = new TreeNode(8);
         root.left = new TreeNode(3);
         root.right = new TreeNode(10);
         root.left.left = new TreeNode(1);
@@ -52,8 +47,7 @@ public class Solution {
         root.left.right.right = new TreeNode(7);
         root.right.right.left = new TreeNode(13);
 
-        sol = new Solution();
-        
+        Solution sol = new Solution();
         System.out.println("isValid: " + sol.isValidBST(root));
     }
 }
