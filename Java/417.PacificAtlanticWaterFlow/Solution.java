@@ -7,11 +7,10 @@
 import java.util.*;
 
 public class Solution{
-    private HashSet<Integer> bfs(int[][] matrix, LinkedList<Integer> queue, HashSet<Integer> visited){
+    private HashSet<Integer> bfs(int[][] matrix, Deque<Integer> queue, HashSet<Integer> visited){
         int depth = matrix.length;
         int width = matrix[0].length;
-        int[][] offsets = new int[][]{{0, -1}, {-1, 0}, {0, 1}, {1, 0}}; //left, up, right, down
-                    
+        int[][] offsets = new int[][]{{0, -1}, {-1, 0}, {0, 1}, {1, 0}}; //left, up, right, down      
         while(!queue.isEmpty()){
             int size = queue.size();
             for(int i = 0; i < size; ++i){
@@ -34,18 +33,16 @@ public class Solution{
         return visited;
     }
     
-    public List<int[]> pacificAtlantic(int[][] matrix) {
+    public List<List<Integer>> pacificAtlantic(int[][] matrix) {
         if(matrix.length == 0){
-            return new LinkedList<int[]>();
+            return new LinkedList<>();
         }
         
         int depth = matrix.length;
         int width = matrix[0].length;
-        LinkedList<Integer> queue;
-        List<int[]> edges = new LinkedList<int[]>();
-        
+
         //climb from Atlantic
-        queue = new LinkedList<Integer>();
+        Deque<Integer> queue = new LinkedList<Integer>();
         HashSet<Integer> fromAtlantic = new HashSet<Integer>();
         for(int y = 0; y < depth; ++y){
             fromAtlantic.add(y * width +  width - 1);
@@ -70,36 +67,28 @@ public class Solution{
         }
         fromPacific = bfs(matrix, queue, fromPacific);
         
+        List<List<Integer>> edges = new LinkedList<>();
         for(int atlantic: fromAtlantic){
             if(fromPacific.contains(atlantic)){
-                edges.add(new int[]{(atlantic / width), (atlantic % width)});
+                edges.add(Arrays.asList(atlantic / width, atlantic % width));
             }
         }
         return edges;
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
-        List<int[]> topList;
         int[][] matrix = {{1, 2, 2, 3, 5},
                           {3, 2, 3, 4, 4},
                           {2, 4, 5, 3, 1},
                           {6, 7, 1, 4, 5},
                           {5, 1, 1, 2, 4}};
         
-        sol = new Solution();
-        topList = sol.pacificAtlantic(matrix);
-        
         System.out.println("matrix: ");
         for(int[] row: matrix){
             System.out.println(Arrays.toString(row));
         }
         System.out.println("");
-
-        System.out.println("topList: ");
-        for(int[] pos: topList){
-            System.out.print(Arrays.toString(pos) + ", ");
-        }
-        System.out.println("");
+        Solution sol = new Solution();
+        System.out.println("topList: " + sol.pacificAtlantic(matrix));
     }
 }
