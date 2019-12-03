@@ -1,4 +1,4 @@
-/* BFS: O(n)
+/* BFS: Time:O(n), Space:O(h)
  * 1. Call connect level by level
  * 2. Iterate and link all nodes on the same level
  */
@@ -6,39 +6,51 @@
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeLinkNode  
-{
-	int val;
-	TreeLinkNode left, right, next;
-	TreeLinkNode(int x) { val = x; }
-}
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node next;
+
+    public Node() {}
+    
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _left, Node _right, Node _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
 
 public class Solution {
-    public void connect(TreeLinkNode root) {
+    public Node connect(Node root) {
         if(root == null){
-            return;
+            return null;
         }   
         
-        for(TreeLinkNode itr = root; itr != null; itr = itr.next){
-            TreeLinkNode predecesor = null; 
+        for(Node itr = root; itr != null; itr = itr.next){
+            Node predecesor = null; 
             if(itr.left != null && itr.right != null){
                 itr.left.next = itr.right;
                 predecesor = itr.right;
             }
             
-            TreeLinkNode succesor = (itr.next != null && itr.next.left != null)? itr.next.left: null;
+            Node succesor = (itr.next != null && itr.next.left != null)? itr.next.left: null;
             if(predecesor != null){
                 predecesor.next = succesor;
             }
         }
-        
         connect(root.left);
+        return root;
     }
 
      
-    public void dumpByLevel(TreeLinkNode root) {
-        TreeLinkNode curr;
-
+    public void dumpByLevel(Node root) {
+        Node curr;
         if(root == null){
             return;
         }
@@ -48,17 +60,11 @@ public class Solution {
             System.out.print(curr.val + "->");
             curr = curr.next;
         }
-        
         System.out.println("");
-        
         dumpByLevel(root.left);
     }
 
-    public static void main(String[] args)
-    {
-        TreeLinkNode root;
-        Solution sol;
- 
+    public static void main(String[] args){
         /* Generate a input tree
          *     1
          *    / \
@@ -66,16 +72,14 @@ public class Solution {
          *  / \  / \
          * 4  5 6   7
          */
-        root = new TreeLinkNode(1);
-        root.left = new TreeLinkNode(2);
-        root.right = new TreeLinkNode(3);
-        root.left.left = new TreeLinkNode(4);
-        root.left.right = new TreeLinkNode(5);
-        root.right.left = new TreeLinkNode(6);
-        root.right.right = new TreeLinkNode(7);
-
-        sol = new Solution();
-
+        Node root = new Node(1);
+        root.left = new Node(2);
+        root.right = new Node(3);
+        root.left.left = new Node(4);
+        root.left.right = new Node(5);
+        root.right.left = new Node(6);
+        root.right.right = new Node(7);
+        Solution sol = new Solution();
         sol.connect(root);
         sol.dumpByLevel(root);
 	}
