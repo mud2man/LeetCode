@@ -1,6 +1,7 @@
-/* BFS: O(n)
- * 1. Get the left range and right range
- * 1. Use BFS traverse all nodes with the index of verticalOrders
+/* BFS: Time:O(n), Space:O(n)
+ * 1. Have a map "index2Column" to store index-to-column pair
+ * 2. Use BFS traverse all nodes with the index of verticalOrders, and visit left child first. 
+ * 3. Therefore, we can guarantee the order which follows top > bottom and left > right
  * ex: 
  *     3
  *    / \
@@ -16,8 +17,7 @@
 import java.util.*; // Stack
 
 /* Definition for binary tree */
-class TreeNode 
-{
+class TreeNode {
     int val;
     TreeNode left;
     TreeNode right;
@@ -25,65 +25,42 @@ class TreeNode
 }
 
 public class Solution {
-    private class QueueNode{
-        int idx;
-        TreeNode treeNode;
-        QueueNode(int i, TreeNode t){idx = i; treeNode = t;}
-    }
-    
-    private void getRange(TreeNode root, int idx, int[] range){
-        if(root == null){
-            return;
-        }
-        range[0] = Math.min(range[0] , idx);
-        range[1] = Math.max(range[1] , idx);
-        getRange(root.left, idx - 1, range);
-        getRange(root.right, idx + 1, range);
+    private class IndexAndNode{
+        int index;
+        TreeNode node;
+        IndexAndNode(int i, TreeNode n){index = i; node = n;}
     }
     
     public List<List<Integer>> verticalOrder(TreeNode root) {
-        //[left, right]  
-        int[] range = new int[2];   
-        int rootWidth = (root == null)? 0: 1;
-        List<List<Integer>> verticalOrders = new ArrayList<List<Integer>>();
-        
-        getRange(root, 0, range);
-        range[0] = -range[0];
-        
-        for(int i = 0; i < (range[0] + range[1] + rootWidth); ++i){
-            verticalOrders.add(new ArrayList<Integer>());
+        if(root == null){
+            return new ArrayList<List<Integer>>();
         }
         
-        LinkedList<QueueNode> queue= new LinkedList<QueueNode>();
-        
-        // BFS
-        if(root != null){
-            queue.add(new QueueNode(range[0], root));
-        }
-        
+        int[] range = new int[2];
+        Map<Integer, List<Integer>> index2Column = new HashMap<>();
+        Deque<IndexAndNode> queue = new LinkedList<IndexAndNode>();
+        queue.add(new IndexAndNode(0, root));
         while(!queue.isEmpty()){
-            int size = queue.size();
-            for(int i = 0; i < size; ++i){
-                QueueNode queueNode = queue.pollFirst();
-                verticalOrders.get(queueNode.idx).add(queueNode.treeNode.val);
-                if(queueNode.treeNode.left != null){
-                    queue.add(new QueueNode(queueNode.idx - 1, queueNode.treeNode.left));
-                }
-                
-                if(queueNode.treeNode.right != null){
-                    queue.add(new QueueNode(queueNode.idx + 1, queueNode.treeNode.right));
-                }
+            IndexAndNode currNode =  queue.pollFirst();
+            index2Column.computeIfAbsent(currNode.index, key -> new ArrayList<>()).add(currNode.node.val);
+            range[0] = Math.min(range[0], currNode.index);
+            range[1] = Math.max(range[1], currNode.index);
+            if(currNode.node.left != null){
+                queue.add(new IndexAndNode(currNode.index - 1, currNode.node.left));
+            }
+            if(currNode.node.right != null){
+                queue.add(new IndexAndNode(currNode.index + 1, currNode.node.right));
             }
         }
-
-        return verticalOrders;
-    }
-
-    public static void main(String[] args){
-        List<List<Integer>> list;
-        TreeNode root;
-        Solution sol;
         
+        List<List<Integer>> columns = new ArrayList<>();
+        for(int i = range[0]; i <= range[1]; ++i){
+            columns.add(index2Column.get(i));
+        }
+        return columns;
+    }
+ 
+    public static void main(String[] args){
         /* Generate a input tree
          *     3
          *    / \
@@ -91,18 +68,12 @@ public class Solution {
          *       / \
          *      15  7
          */
-        root = new TreeNode(3);
+        TreeNode root = new TreeNode(3);
         root.left = new TreeNode(9);
         root.right = new TreeNode(20);
         root.right.left = new TreeNode(15);
         root.right.right = new TreeNode(7);
-
-        sol = new Solution();
-        list = sol.verticalOrder(root);
-
-        System.out.println("vertical order traversal: ");
-        for(List<Integer> col: list){
-            System.out.println(col);
-        }
+        Solution sol = new Solution();
+        System.out.println("vertical order traversal:" + sol.verticalOrder(root));
     }
 }
