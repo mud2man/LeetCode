@@ -9,39 +9,34 @@
 import java.util.*;
 
 public class Solution{
+    private void swap(int[] nums, int source, int destination){
+        int temp = nums[source];
+        nums[source] = nums[destination];
+        nums[destination] = temp;
+    }
+    
     public void sortColors(int[] nums) {
-        int zeroIdx;
-        int oneIdx;
-        int idx;
+        int ptr0 = -1;
+        int ptr1 = -1;
         
-        zeroIdx = -1;
-        oneIdx = -1;
-        
-        for(idx = 0 ; idx < nums.length; ++idx){
-            switch (nums[idx]){
-                case 0:
-                    nums[idx]= nums[++oneIdx];
-                    nums[oneIdx] = nums[++zeroIdx];
-                    nums[zeroIdx] = 0;
-                    break;
-                case 1:
-                    nums[idx]= nums[++oneIdx];
-                    nums[oneIdx] = 1;
-                    break;
-                case 2:
-                    break;
+        for(int i = 0; i < nums.length; ++i){
+            if(nums[i] == 2){
+                continue;
+            }else if(nums[i] == 1){
+                swap(nums, ++ptr1, i);
+            }else{
+                swap(nums, ++ptr1, i);
+                swap(nums, ++ptr0, ptr1);
             }
         }
     }
- 
+  
     public static void main(String[] args){
-		Solution sol;
-		int[] nums = {0,2,1,1,0,2};
-		
-		sol = new Solution();
-		
+        int[] nums = {0,2,1,1,0,2};
+        Solution sol = new Solution();
+        
         System.out.println("before sort: " + Arrays.toString(nums));
-		sol.sortColors(nums);
-		System.out.println("after sort: " + Arrays.toString(nums));
+        sol.sortColors(nums);
+        System.out.println("after sort: " + Arrays.toString(nums));
 	}
 }
