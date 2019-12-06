@@ -29,12 +29,12 @@ public class Solution {
     }
  
     public static void main(String[] args){
-		Solution sol = new Solution();
-		int[][] intervals = {{0, 30}, {5, 10}, {15, 20}};
+        Solution sol = new Solution();
+        int[][] intervals = {{0, 30}, {5, 10}, {15, 20}};
 		
         System.out.println("intervals[]: ");	
         for(int[] i: intervals){
-			System.out.print(Arrays.toString(i) + ", ");	
+        	System.out.print(Arrays.toString(i) + ", ");	
         }
         System.out.println("\nrooms#: " + sol.minMeetingRooms(intervals));	
 	}
