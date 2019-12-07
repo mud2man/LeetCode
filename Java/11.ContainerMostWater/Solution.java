@@ -17,8 +17,7 @@ public class Solution{
             maxArea = Math.max(maxArea, currArea);
             if(height[left] < height[right]){
                 left++;
-            }
-            else{
+            }else{
                 right--;
             }
         }
@@ -26,14 +25,9 @@ public class Solution{
     }
  
     public static void main(String[] args){
-        Solution sol;
         int[] height = {3, 2, 1, 5, 1};
-        int maxArea;
-        
-        sol = new Solution();
-
+        Solution sol = new Solution();
         System.out.println("height =" +Arrays.toString(height));
-        maxArea = sol.maxArea(height);
-        System.out.println("maxArea = " + maxArea);
+        System.out.println("maxArea = " + sol.maxArea(height));
     }
 }
