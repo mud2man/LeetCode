@@ -1,56 +1,39 @@
 /* Time:O(n^2), Space:O(1)
- * 1. Have a utility method "fillRing" to fill the ring of the matrix
- * 2. Every time, start fill the ring from top-left corner, and update ring's length and start
+ * 1. Have a "start" position to start fill "val" following 4 directions until val > n^2
  */
 
 import java.util.*;
 
 
 public class Solution{
-    private void fillRing(int[][] matrix, int y, int x, int start, int len){
-        if(len == 1){
-            matrix[y][x] = start;
-            return;
-        }
-        
-        //top
-        for(int i = 1; i < len; ++i){
-            matrix[y][x++] = start++;
-        }
-        //right
-        for(int i = 1; i < len; ++i){
-            matrix[y++][x] = start++;
-        }
-        //bottom
-        for(int i = 1; i < len; ++i){
-            matrix[y][x--] = start++;
-        }
-        //left
-        for(int i = 1; i < len; ++i){
-            matrix[y--][x] = start++;
-        }
-    }
-    
     public int[][] generateMatrix(int n) {
         int[][] matrix = new int[n][n];
-        int start = 1;
-        int length = n;
-        int y = 0;
-        int x = 0;
-        while(length >= 0){
-            fillRing(matrix, y, x, start, length);
-            ++y;
-            ++x;
-            start += (length - 1) * 4;
-            length -= 2;
+        int[][] dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        int width = n - 1;
+        int val = 1;
+        int[] start = {0, 0};
+        while(val <= n * n){
+            int[] curr = start;
+            if(width == 0){
+                matrix[curr[0]][curr[1]] = val++;
+                break;
+            }
+            for(int[] dir: dirs){
+                for(int i = 0; i < width && val <= n * n; ++i){
+                    matrix[curr[0]][curr[1]] = val++;
+                    curr[0] += dir[0];
+                    curr[1] += dir[1];
+                }
+            }
+            start = new int[]{start[0] + 1, start[1] + 1};
+            width -= 2;
         }
         return matrix;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();
         int n = 3;
-
         int[][] matrix = sol.generateMatrix(n);
         System.out.println("n: " + n);
         System.out.println("matrix: ");
