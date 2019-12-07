@@ -35,6 +35,7 @@ public class Solution{
         postOrder(root, countMap, duplicates);
         return duplicates;
     }
+
     public static void main(String[] args){
         /* Generate a input tree
          *     1
