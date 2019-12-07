@@ -3,7 +3,8 @@
  * 2. Apply BFS starting from target, to find all the K-distance nodes
  */
 
-import java.util.*; // Stack
+import java.util.*;
+import java.util.stream.*;
 
 /* Definition for binary tree */
 class TreeNode {
@@ -25,18 +26,15 @@ public class Solution {
         }
     }
     
-    private void bfs(TreeNode target, int K, Map<TreeNode, TreeNode> parent, List<Integer> ret){
+    private List<Integer> bfs(TreeNode target, int K, Map<TreeNode, TreeNode> parent){
         int dis = 0;
-        LinkedList<TreeNode> queue = new LinkedList<TreeNode>();
+        Deque<TreeNode> queue = new LinkedList<TreeNode>();
         queue.add(target);
         Set<TreeNode> visted = new HashSet<TreeNode>();
         while(!queue.isEmpty()){
             int size = queue.size();
             if(dis == K){
-                for(TreeNode n: queue){
-                    ret.add(n.val);
-                }
-                return;
+                return queue.stream().map(node -> node.val).collect(Collectors.toList());
             }
             for(int i = 0; i < size; ++i){
                 TreeNode curr = queue.poll();
@@ -53,16 +51,15 @@ public class Solution {
             }
             dis++;
         }
+        return new ArrayList<>();
     }
     
     public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
         Map<TreeNode, TreeNode> parent = new HashMap<TreeNode, TreeNode>();
         dfs(root, parent);
-        List<Integer> ret = new ArrayList<Integer>();
-        bfs(target, K, parent, ret);
-        return ret;
+        return bfs(target, K, parent);
     }
- 
+  
     public static void main(String[] args){
         TreeNode root;
         
