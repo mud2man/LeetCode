@@ -8,17 +8,13 @@ import java.util.*;
 
 public class Solution{
     public int leastBricks(List<List<Integer>> wall) {
-        if(wall == null || wall.size() == 0){
-            return 0;
-        }
-        
-        int maxCount = 0;
-        HashMap<Integer, Integer> edgeMap = new HashMap<Integer, Integer>();
         int rowLength = 0;
         for(Integer num: wall.get(0)){
             rowLength += num;
         }
         
+        HashMap<Integer, Integer> edgeMap = new HashMap<Integer, Integer>();
+        int maxCount = 0;
         for(List<Integer> row: wall){
             int length = 0;
             for(Integer num: row){
@@ -32,7 +28,7 @@ public class Solution{
         }
         return wall.size() - maxCount;
     }
- 
+  
     public static void main(String[] args){
         List<List<Integer>> wall = new ArrayList<List<Integer>>();
         wall.add(Arrays.asList(1, 2, 2, 1));
