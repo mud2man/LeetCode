@@ -23,20 +23,12 @@ public class Solution {
             return root;
         }else{
             TreeNode leftResult = search(root.left, x);
-            if(leftResult != null){
-                return leftResult;
-            }else{
-                return search(root.right, x);
-            }
+            return (leftResult != null)? leftResult: search(root.right, x);
         }
     }
     
     private int getSize(TreeNode root){
-        if(root == null){
-            return 0;
-        }else{
-            return getSize(root.left) + getSize(root.right) + 1;
-        }
+        return (root == null)? 0: getSize(root.left) + getSize(root.right) + 1;
     }
     
     public boolean btreeGameWinningMove(TreeNode root, int n, int x) {
@@ -48,7 +40,7 @@ public class Solution {
         int redSize = n - blueSize;
         return (blueSize > redSize);
     }
-  
+ 
     public static void main(String[] args){
         /* Generate a input tree
          *     4
