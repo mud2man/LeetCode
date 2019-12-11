@@ -9,7 +9,7 @@
 import java.util.*;
 
 public class AllOne {
-        private class Node{
+    private class Node{
         int freq;
         Set<String> keys;
         Node next;
