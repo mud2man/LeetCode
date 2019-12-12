@@ -53,8 +53,7 @@ public class Codec {
             if(nodeString.equals("null")){
                 if(top == null){
                     stack.pollLast();
-                }
-                else{
+                }else{
                     stack.add(top);
                     top = null;
                 }
@@ -64,8 +63,7 @@ public class Codec {
                 if(top == null){
                     stack.pollLast().right = newNode;
                     top = newNode;
-                }
-                else{
+                }else{
                     top.left = newNode;
                     stack.add(top);
                     top = newNode;
@@ -76,9 +74,6 @@ public class Codec {
     }
   
     public static void main(String[] args){
-        TreeNode root;
-        Codec codec;
-        
         /* Generate a input tree
          *     8
          *    / \
@@ -88,7 +83,7 @@ public class Codec {
          *    / \  /
          *   4   7 13 
          */
-        root = new TreeNode(8);
+        TreeNode root = new TreeNode(8);
         root.left = new TreeNode(3);
         root.right = new TreeNode(10);
         root.left.left = new TreeNode(1);
@@ -97,8 +92,7 @@ public class Codec {
         root.left.right.left = new TreeNode(4);
         root.left.right.right = new TreeNode(7);
         root.right.right.left = new TreeNode(13);
-
-        codec = new Codec();
+        Codec codec = new Codec();
         codec.deserialize(codec.serialize(root));    
     }
 }

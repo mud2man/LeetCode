@@ -33,14 +33,11 @@ public class Codec {
     }
     
     private TreeNode preOrderDecode(String[] datas, int[] idx){
-        if(datas[idx[0]].equals("#")){
-            idx[0]++;
+        String val = datas[idx[0]++];
+        if(val.equals("#")){
             return null;
         }
-        
-        int val = Integer.valueOf(datas[idx[0]]);
-        idx[0]++;
-        TreeNode node = new TreeNode(val);
+        TreeNode node = new TreeNode(Integer.parseInt(val));
         node.left = preOrderDecode(datas, idx);
         node.right = preOrderDecode(datas, idx);
         return node;
@@ -54,9 +51,6 @@ public class Codec {
     }
 
     public static void main(String[] args){
-        TreeNode root;
-        Codec codec;
-        
         /* Generate a input tree
          *     8
          *    / \
@@ -66,7 +60,7 @@ public class Codec {
          *    / \  /
          *   4   7 13 
          */
-        root = new TreeNode(8);
+        TreeNode root = new TreeNode(8);
         root.left = new TreeNode(3);
         root.right = new TreeNode(10);
         root.left.left = new TreeNode(1);
@@ -75,8 +69,7 @@ public class Codec {
         root.left.right.left = new TreeNode(4);
         root.left.right.right = new TreeNode(7);
         root.right.right.left = new TreeNode(13);
-
-        codec = new Codec();
+        Codec codec = new Codec();
         codec.deserialize(codec.serialize(root));    
     }
 }
