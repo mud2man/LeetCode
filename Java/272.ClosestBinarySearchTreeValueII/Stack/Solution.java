@@ -18,67 +18,55 @@ class TreeNode {
 }
 
 public class Solution {
-    private void search(TreeNode root, Deque<TreeNode> list, double target, boolean isSmall){
+    private void insert(TreeNode root, double target, boolean isLessOrEqual, Deque<TreeNode> stack){
         if(root == null){
             return;
         }
-        else if((double)root.val == target){
-            if(isSmall){
-                list.add(root);
+        if((double)root.val <= target){
+            if(isLessOrEqual){
+                stack.add(root);
             }
-        }
-        else{
-            if((double)root.val < target){
-                if(isSmall){
-                    list.add(root);
-                }
-                search(root.right, list, target, isSmall);
+            if((double)root.val == target){
+                return;
+            }else{
+                insert(root.right, target, isLessOrEqual, stack);
             }
-            else{
-                if(!isSmall){
-                    list.add(root);
-                }
-                search(root.left, list, target, isSmall);
+        }else{
+            if(!isLessOrEqual){
+                stack.add(root);
             }
+            insert(root.left, target, isLessOrEqual, stack);
         }
     }
     
     public List<Integer> closestKValues(TreeNode root, double target, int k) {
-        Deque<TreeNode> small = new LinkedList<>();
-        Deque<TreeNode> big = new LinkedList<>();
-        search(root, small, target, true);
-        search(root, big, target, false);
-        
-        List<Integer> ret = new ArrayList<>();
-        for(int i = 0; i < k; ++i){
-            TreeNode smallNode = small.peekLast();
-            TreeNode bigNode = big.peekLast();
-            double smallDiff = (smallNode == null)? Double.MAX_VALUE: target - (double)smallNode.val;
-            double bigDiff = (bigNode == null)? Double.MAX_VALUE: (double)bigNode.val - target;
-            if(smallDiff < bigDiff){
-                ret.add(smallNode.val);
-                small.pollLast();
-                if(smallDiff == 0.0){
-                    search(smallNode.right, big, target, false);
-                }
-                search(smallNode.left, small, target, true);
-            }
-            else{
-                ret.add(bigNode.val);
-                big.pollLast();
-                search(bigNode.right, big, target, false);
+        Deque<TreeNode> smalls = new LinkedList<>();
+        Deque<TreeNode> bigs = new LinkedList<>();
+        insert(root, target, true, smalls);
+        insert(root, target, false, bigs);
+        List<Integer> closeK = new ArrayList<>();
+        while(closeK.size() < k){
+            double small2TargetDiff = smalls.isEmpty()? Double.MAX_VALUE: target - (double)smalls.peekLast().val;
+            double big2TargetDiff = bigs.isEmpty()? Double.MAX_VALUE: (double)bigs.peekLast().val - target;
+            if(small2TargetDiff == 0.0){
+                TreeNode node = smalls.pollLast();
+                closeK.add(node.val);
+                insert(node.left, target, true, smalls);
+                insert(node.right, target, false, bigs);
+            }else if(small2TargetDiff <= big2TargetDiff){
+                TreeNode node = smalls.pollLast();
+                closeK.add(node.val);
+                insert(node.left, target, true, smalls);
+            }else{
+                TreeNode node = bigs.pollLast();
+                closeK.add(node.val);
+                insert(node.right, target, false, bigs);
             }
         }
-        return ret;
+        return closeK;
     }
- 
+  
     public static void main(String[] args){
-        List<Integer> closestValues;
-        TreeNode root;
-        Solution sol;
-        double target = 16.0;
-        int k = 2;
-        
         /* Generate a input tree
          *     3
          *    / \
@@ -86,16 +74,16 @@ public class Solution {
          *       / \
          *      15  7
          */
-        root = new TreeNode(3);
+        TreeNode root = new TreeNode(3);
         root.left = new TreeNode(9);
         root.right = new TreeNode(20);
         root.right.left = new TreeNode(15);
         root.right.right = new TreeNode(7);
-        sol = new Solution();
-        
+        double target = 16.0;
+        int k = 2;
+        Solution sol = new Solution();
         System.out.println("target: " + target);
         System.out.println("k: " + k);
-        closestValues = sol.closestKValues(root, target, k);
-        System.out.println("closestValues: " + closestValues);
+        System.out.println("closestValues: " + sol.closestKValues(root, target, k));
     }
 }
