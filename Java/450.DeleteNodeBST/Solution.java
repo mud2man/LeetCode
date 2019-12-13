@@ -15,7 +15,7 @@ class TreeNode {
 }
 
 public class Solution {
-        private void search(TreeNode[] fartherSon, int key){
+    private void search(TreeNode[] fartherSon, int key){
         if(fartherSon[1] == null || fartherSon[1].val == key){
             return;
         }else if(fartherSon[1].val > key){
@@ -29,47 +29,43 @@ public class Solution {
         }
     }
     
-    private void delete(TreeNode[] fartherSon){
-        if(fartherSon[1] == null){
-            return;
-        }
-        
-        if(fartherSon[1].right == null){
-            if(fartherSon[0].left == fartherSon[1]){
-                fartherSon[0].left = fartherSon[1].left;
-            }else{
-                fartherSon[0].right = fartherSon[1].left;
-            }
-        }else{
-            if(fartherSon[1].right.left == null){
-                if(fartherSon[1] == fartherSon[0].left){
-                    fartherSon[0].left = fartherSon[1].right;
-                }else{
-                    fartherSon[0].right = fartherSon[1].right;
-                }
-                fartherSon[1].right.left = fartherSon[1].left;
-            }else{
-                TreeNode ptr0 = fartherSon[1].right;
-                TreeNode ptr1 = ptr0.left;
-                while(ptr1.left != null){
-                    ptr0 = ptr1;
-                    ptr1 = ptr1.left;
-                }
-                fartherSon[1].val = ptr1.val;
-                ptr0.left = ptr1.right;
-            }
-        }
-    }
-    
     public TreeNode deleteNode(TreeNode root, int key) {
         TreeNode dummy = new TreeNode(0);
         dummy.left = root;
         TreeNode[] fartherSon = {dummy, root};
         search(fartherSon, key);
-        delete(fartherSon);
+        TreeNode farther = fartherSon[0];
+        TreeNode son = fartherSon[1];
+        if(son == null){
+            return root;
+        }else if(son.left == null){
+            if(farther.left == son){
+                farther.left = son.right;
+            }else{
+                farther.right = son.right;
+            }
+        }else if(son.right == null){
+            if(farther.left == son){
+                farther.left = son.left;
+            }else{
+                farther.right = son.left;
+            }
+        }else{
+            fartherSon = new TreeNode[]{son, son.right};
+            while(fartherSon[1].left != null){
+                fartherSon[0] = fartherSon[1];
+                fartherSon[1] = fartherSon[1].left;
+            }
+            son.val = fartherSon[1].val;
+            if(fartherSon[0] != son){
+                fartherSon[0].left = fartherSon[1].right;
+            }else{
+                fartherSon[0].right = fartherSon[1].right;
+            }
+        }
         return dummy.left;
     }
- 
+  
     public void inorder(TreeNode root){
         if(root == null){
             return;
