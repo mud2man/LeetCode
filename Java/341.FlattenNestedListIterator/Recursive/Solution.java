@@ -29,8 +29,7 @@ public class NestedIterator implements Iterator<Integer> {
         for(NestedInteger ni: nestedList){
             if(ni.isInteger()){
                 list.add(ni.getInteger());
-            }
-            else{
+            }else{
                 flattenHelper(ni.getList()); 
             }
         }
