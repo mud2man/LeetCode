@@ -30,8 +30,7 @@ public class Solution{
                 for(int i = 0; i < spaceLen; ++i){
                     line += " ";
                 }
-            }
-            else{
+            }else{
                 int space = spaceLen / (right - left);
                 int longSpaceCount = spaceLen - space * (right - left);
                 int count = 0;
@@ -58,8 +57,7 @@ public class Solution{
                 count += (1 + words[right].length());
                 if(count > maxWidth || right == words.length){
                     break;
-                }
-                else{
+                }else{
                     right++;
                 }
             }
