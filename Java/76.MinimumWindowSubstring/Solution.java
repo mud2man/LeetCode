@@ -12,8 +12,7 @@ public class Solution{
         Map<Character, int[]> char2count = new HashMap<>();
         for(int i = 0; i < t.length(); ++i){
             char c = t.charAt(i);
-            char2count.putIfAbsent(c, new int[2]);
-            char2count.get(c)[0]++;
+            char2count.computeIfAbsent(c, key -> new int[2])[0]++;
         }
         
         int left = 0;
@@ -37,14 +36,12 @@ public class Solution{
                     }
                     c = s.charAt(++left);
                 }
-                
                 if((right - left + 1) < minLength){
                     ret = s.substring(left, right + 1);
                     minLength = right - left + 1;
                 }
             }
         }
-        
         return ret;
     }
  
