@@ -16,8 +16,7 @@ public class Solution {
         for(int i = 1; i <= limit; ++i){
             if(i % 2 == 1){
                 count += (N % i == 0)? 1: 0;
-            }
-            else{
+            }else{
                 count += ((N + offset) % i == 0)? 1: 0;
                 offset++;
             }
