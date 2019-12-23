@@ -1,7 +1,8 @@
 /* Math: Time:O(square(n)), Space:O(1)
- * 1. Calculate the limit of number of consecutive numbers by getting the answer form equation: (1 + 2 + ... + limit) = N
- * 2. For odd consecutive numbers, N = (x - k) + ... (x) + (x + k). So N can be divide by the number of consecutive numbers 
- * 3. For even consecutive numbers, N = (x - k) + ... + x + (x + 1) + ... (x + k + 1). So N + (k + 1) can be divide by the number of consecutive numbers  
+ * 1. There is one unique consecutive numbers given the numbers count
+ * 2. Calculate the limit of number of consecutive numbers by getting the answer form equation: (1 + 2 + ... + limit) = N
+ * 3. For odd consecutive numbers, N = (x - k) + ... (x) + (x + k). So N can be divide by the number of consecutive numbers 
+ * 4. For even consecutive numbers, N = (x - k) + ... + x + (x + 1) + ... (x + k + 1). So N + (k + 1) can be divide by the number of consecutive numbers  
  */
 
 import java.util.*;
