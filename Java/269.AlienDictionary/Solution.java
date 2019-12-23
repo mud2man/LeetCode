@@ -6,7 +6,7 @@
 import java.util.*;
 
 public class Solution {
-    private void findEdge(String parent, String child, Map<Character, Set<Character>> ajdacencyList, int[] indegree){
+   private void findEdge(String parent, String child, Map<Character, Set<Character>> ajdacencyList, int[] indegree){
         for(int i = 0; i < Math.min(parent.length(), child.length()); ++i){
             char source = parent.charAt(i);
             char target = child.charAt(i);
@@ -20,6 +20,9 @@ public class Solution {
                 break;
             }
         }
+        for(int j = 0; j < parent.length(); ++j){
+            indegree[parent.charAt(j) - 'a'] = (indegree[parent.charAt(j) - 'a'] == -1)? 0: indegree[parent.charAt(j) - 'a'];
+        }
         for(int j = 0; j < child.length(); ++j){
             indegree[child.charAt(j) - 'a'] = (indegree[child.charAt(j) - 'a'] == -1)? 0: indegree[child.charAt(j) - 'a'];
         }
@@ -29,11 +32,8 @@ public class Solution {
         Map<Character, Set<Character>> ajdacencyList = new HashMap<>();
         int[] indegree = new int[26];
         Arrays.fill(indegree, -1);
-        for(int i = 0; i < words[0].length(); ++i){
-            indegree[words[0].charAt(i) - 'a'] = 0;
-        }
-        for(int i = 0; i < (words.length - 1); ++i){
-            findEdge(words[i], words[i + 1], ajdacencyList, indegree);
+        for(int i = 0; i < words.length; ++i){
+            findEdge(words[i], (i + 1 < words.length)? words[i + 1]: words[i], ajdacencyList, indegree);
         }
         
         // find nodes with indegree 0 as sources
@@ -63,7 +63,7 @@ public class Solution {
         }
         return (visitedCount == nodeCount)? order.toString(): "";
     }
- 
+  
     public static void main(String[] args){
         String[] words = {"wrt", "wrf", "er", "ett", "rftt"};
         Solution sol = new Solution();
