@@ -1,8 +1,8 @@
-/* Heap: Time:O(n*logn), Space:O(n)
+/* Sort + Heap: Time:O(n*logn), Space:O(n)
  * 1. Have a list to store all the free time interval, and sort with start
  * 2. Have a minimum heap sorted with end. 
  * 3. The heap contains overlapped intervals
- * 4. Because any tow intervals for the same employee never overlpa, the intervals in minHeap must belong to different employee
+ * 4. Because any tow intervals for the same employee never overlap, the intervals in minHeap must belong to different employee
  * 5. Poll the top if it no overlap with the current one
  * 6. New a interval if the current interval overlap with the peek interval in minHeap
  *
@@ -73,8 +73,7 @@ public class Solution {
                     }
                     minHeap.add(freeTime);
                     minHeap.poll();
-                }
-                else{
+                }else{
                     while(!minHeap.isEmpty() && minHeap.peek().end < freeTime.start){
                         minHeap.poll();
                     }
@@ -110,10 +109,8 @@ public class Solution {
         }
         System.out.println("");
 
-        intervals = sol.employeeFreeTime(schedule);
-
         System.out.print("common freee time: ");
-        for(Interval interval: intervals){
+        for(Interval interval: sol.employeeFreeTime(schedule)){
             System.out.print("[" + interval.start + "," + interval.end + "], ");
         }
         System.out.println("");
