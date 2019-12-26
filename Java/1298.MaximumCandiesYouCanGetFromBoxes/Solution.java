@@ -23,7 +23,6 @@ public class Solution {
             }
             status[box] = -1;
             count += candies[box];
-            candies[box] = 0;
             for(int key: keys[box]){
                 mykey.add(key); 
             }
@@ -33,7 +32,6 @@ public class Solution {
                 }
             }
         }
-        
         for(int nextBox: nextBoxes){
             if(status[nextBox] == 1 || (status[nextBox] == 0 && mykey.contains(nextBox))){
                 count += dfs(status, candies, keys, containedBoxes, nextBoxes, mykey);
