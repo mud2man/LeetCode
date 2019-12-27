@@ -10,27 +10,22 @@ import java.util.*;
 public class Solution{
     public String fractionToDecimal(int numerator, int denominator) {
         StringBuilder fraction = new StringBuilder("");
-        boolean isNegative = false;
-        if((numerator > 0 && denominator < 0) || (numerator < 0 && denominator > 0)){
-            isNegative = true;
-        }
-        
+        fraction.append(((long)numerator * (long)denominator < 0)? "-": "");
         long longNumerator = Math.abs((long)numerator);
         long longDenominator = Math.abs((long)denominator);
         if(longNumerator >= longDenominator){
             fraction.append(Long.toString(longNumerator / longDenominator));
             longNumerator = longNumerator % longDenominator;
-        }
-        else{
+        }else{
             fraction.append('0');
         }
+        
         fraction.append((longNumerator > 0)? ".": "");
         int offset = fraction.length();
         HashMap<Long, Integer> numeratorToIndex = new HashMap<Long, Integer>();
         longNumerator = longNumerator * 10;
         while(longNumerator > 0){
-            while(longNumerator < longDenominator && !numeratorToIndex.containsKey(longNumerator)){
-                numeratorToIndex.put(longNumerator, offset);
+            while(longNumerator < longDenominator){
                 longNumerator = longNumerator * 10;
                 fraction.append('0');
                 offset++;
@@ -41,23 +36,20 @@ public class Solution{
                 fraction.insert(insertIndex, '(');
                 fraction.append(')');
                 break;
-            }
-            else{
+            }else{
                 numeratorToIndex.put(longNumerator, offset);
                 fraction.append(Long.toString(longNumerator / longDenominator));
                 longNumerator = (longNumerator % longDenominator) * 10;
             }
             offset++;
         }
-        return (isNegative)? "-" + fraction.toString(): fraction.toString(); 
+        return fraction.toString();
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
         int numerator = 2;
         int denominator = 3;
-
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("numerator:" + numerator + ", denominator:" + denominator);
         System.out.println("answer: " + sol.fractionToDecimal(numerator, denominator));
     }
