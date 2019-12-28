@@ -40,38 +40,40 @@ public class Solution {
             return new NestedInteger(Integer.parseInt(s)); 
         }
         
-        Stack<NestedInteger> stack = new Stack<NestedInteger>();
+        Deque<NestedInteger> stack = new LinkedList<>();
         NestedInteger answer = new NestedInteger();
-        stack.push(answer);
-        
+        stack.add(answer);
         int ptr = 1;
         while(ptr < s.length()){
             switch (s.charAt(ptr)){
                 case '[':
-                    NestedInteger top = stack.peek();
                     NestedInteger newTop = new NestedInteger();
-                    top.add(newTop);
-                    stack.push(newTop);
+                    stack.peekLast().add(newTop);
+                    stack.add(newTop);
                     ptr++;
                     break;
                 case ']':
-                    stack.pop();
+                    stack.pollLast();
                     ptr++;
                     break;
                 case ',':
                     ptr++;
                     break;
                 default:
-                    int commaPtr = (s.indexOf(',', ptr) == -1)? Integer.MAX_VALUE: s.indexOf(',', ptr);
-                    int bracePtr = (s.indexOf(']', ptr) == -1)? Integer.MAX_VALUE: s.indexOf(']', ptr);
-                    int nextPtr = Math.min(commaPtr, bracePtr);
-                    int integer = Integer.parseInt(s.substring(ptr, nextPtr));
-                    NestedInteger ni = new NestedInteger(integer);
-                    stack.peek().add(ni);
-                    ptr = nextPtr;
+                    boolean isNegative = false;
+                    if(s.charAt(ptr) == '-'){
+                        isNegative = true;
+                        ptr++;
+                    }
+                    int num = 0;
+                    while(ptr < s.length() && Character.isDigit(s.charAt(ptr))){
+                        num = num * 10 + (int)(s.charAt(ptr++) - '0');
+                    }
+                    num = isNegative? -num: num;
+                    NestedInteger ni = new NestedInteger(num);
+                    stack.peekLast().add(ni);
             }
         }
-        
         return answer;
     }
 }
