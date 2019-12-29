@@ -15,12 +15,6 @@ public class Solution{
         Stop(int pst, int prc, int c){position = pst; price = prc; count = c;}
     }
     
-    private class MinHeapComparator implements Comparator<Stop>{
-        public int compare(Stop x, Stop y){
-            return x.price - y.price;
-        }
-    }
-    
     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) {
         int[][] stops = new int[n][2];
         for(int i = 0; i < n; ++i){
@@ -30,18 +24,16 @@ public class Solution{
         K++;
         HashMap<Integer, List<int[]>> edges = new HashMap<Integer, List<int[]>>();
         for(int[] flight: flights){
-            edges.putIfAbsent(flight[0], new ArrayList<int[]>());
-            edges.get(flight[0]).add(new int[]{flight[1], flight[2]});
+            edges.computeIfAbsent(flight[0], key -> new ArrayList<int[]>()).add(new int[]{flight[1], flight[2]});
         }
         
-        PriorityQueue<Stop> minHeap = new PriorityQueue<Stop>(new MinHeapComparator());
+        PriorityQueue<Stop> minHeap = new PriorityQueue<Stop>((x, y) -> (x.price - y.price));
         minHeap.add(new Stop(src, 0, 0));
         while(!minHeap.isEmpty()){
             Stop current = minHeap.poll();
             if(current.position == dst){
                 return current.price;
             }
-            
             if(current.count == K || !edges.containsKey(current.position)){
                 continue;
             }
@@ -56,19 +48,17 @@ public class Solution{
                 }
             }
         }
-        
         return -1;
     }
 
     public static void main(String[] args){
-        Solution sol;
         int[][] flights = {{0, 1, 100},{1, 2, 100},{0, 2, 500}};
         int n = 3;
         int src = 0;
         int dst = 2;
         int k = 1;
 
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("flights: ");
         for(int[] row: flights){
             System.out.println(Arrays.toString(row));
