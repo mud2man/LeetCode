@@ -4,46 +4,37 @@
 import java.util.*;
 
 public class WordDictionary {
-    public class TriexNode{
-        boolean isWord;
-        TriexNode[] children;
-        public TriexNode(){isWord = false; children = new TriexNode[26];}
+    private class TrieNode{
+        String word;
+        TrieNode[] children;
+        TrieNode(){word = ""; children = new TrieNode[26];}
     }
     
-    private TriexNode root;
+    private TrieNode root;
     
     /** Initialize your data structure here. */
     public WordDictionary() {
-        root = new TriexNode();
-    }
-    
-    private void insert(String word, int idx, TriexNode root){
-        if(idx == word.length()){
-            root.isWord = true;
-            return;
-        }
-        else{
-            char c = word.charAt(idx);
-            if(root.children[c - 'a'] == null){
-                root.children[c - 'a'] = new TriexNode();
-            }
-            insert(word, idx + 1, root.children[c - 'a']);
-        }
+        root = new TrieNode();
     }
     
     /** Adds a word into the data structure. */
     public void addWord(String word) {
-        insert(word, 0, root);
+        TrieNode node = root;
+        for(char c: word.toCharArray()){
+            if(node.children[c - 'a'] == null){
+                node.children[c - 'a'] = new TrieNode();
+            }
+            node = node.children[c - 'a'];
+        }
+        node.word = word;
     }
     
-    private boolean isExist(String word, int idx, TriexNode root){
+    private boolean isExist(String word, int idx, TrieNode root){
         if(root == null){
             return false;
-        }
-        else if(idx == word.length()){
-            return root.isWord;
-        }
-        else{
+        }else if(idx == word.length()){
+            return (root.word.length() > 0);
+        }else{
             char c = word.charAt(idx);
             if(c == '.'){
                 for(int i = 0; i < 26; ++i){
@@ -52,8 +43,7 @@ public class WordDictionary {
                     }
                 }
                 return false;
-            }
-            else{
+            }else{
                 return isExist(word, idx + 1, root.children[c - 'a']);
             }
         }
@@ -63,7 +53,7 @@ public class WordDictionary {
     public boolean search(String word) {
         return isExist(word, 0, root);
     }
-
+   
     public static void main(String[] args){
         WordDictionary dict = new WordDictionary();
         dict.addWord("namo"); 
