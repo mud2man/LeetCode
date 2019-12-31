@@ -1,59 +1,32 @@
 /* Lowest common ancestor: Time:O(n), Space:O(n). LeetCode has 16-line solution 
- * 1. Construct a N-Tree given region list
- * 2. Run getLca as long as the current node has no parent(root)
+ * 1. Construct map "child2Parent"
+ * 2. Put the chain of regions to "region1Chain"
+ * 3. Go upward from region2, and check if we hvae intersection between itr and region1Chain. Return itr if intersection found
  */
 
 import java.util.*; // Stack
 
 public class Solution {
-    private class TreeNode{
-        String name;
-        Set<TreeNode> children;
-        TreeNode(String n){name = n; children = new HashSet<>();}
-    }
-    
-    private TreeNode getLca(TreeNode root, TreeNode child1, TreeNode child2){
-        if(root == null){
-            return null;
-        }else if(root == child1 || root == child2){
-            return root;
-        }else{
-            List<TreeNode> nodes = new ArrayList<>();
-            for(TreeNode child: root.children){
-                TreeNode node = getLca(child, child1, child2);
-                if(node != null){
-                    nodes.add(node);
-                }
-            }
-            return (nodes.size() == 2)? root: (nodes.size() == 1)? nodes.get(0): null;
-        }
-    }
-    
     public String findSmallestRegion(List<List<String>> regions, String region1, String region2) {
-        Map<String, TreeNode> name2Node = new HashMap<>();
-        Set<String> childrenNames = new HashSet<>();
-        for(List<String> list: regions){
-            String parentName = list.get(0);
-            TreeNode parent = name2Node.getOrDefault(parentName, new TreeNode(parentName));
-            name2Node.put(parentName, parent);
-            for(int i = 1; i < list.size(); ++i){
-                String childName = list.get(i);
-                TreeNode child = name2Node.getOrDefault(childName, new TreeNode(childName));
-                name2Node.put(childName, child);
-                parent.children.add(child);
-                childrenNames.add(childName);
+        Map<String, String> child2Parent = new HashMap<>();
+        for(List<String> region: regions){
+            String parent = region.get(0);
+            for(int i = 1; i < region.size(); ++i){
+                child2Parent.put(region.get(i), parent);
             }
         }
-        for(Map.Entry<String, TreeNode> entry: name2Node.entrySet()){
-            String name = entry.getKey();
-            if(!childrenNames.contains(name)){
-                TreeNode lca = getLca(entry.getValue(), name2Node.get(region1), name2Node.get(region2));
-                if(lca != null){
-                    return lca.name;
-                }
-            }
+        
+        Set<String> region1Chain = new HashSet<>();
+        String itr = region1;
+        while(itr != null){
+            region1Chain.add(itr);
+            itr = child2Parent.get(itr);
         }
-        return null;
+        itr = region2;
+        while(!region1Chain.contains(itr)){
+            itr = child2Parent.get(itr);
+        }
+        return itr;
     }
   
     public static void main(String[] args){
