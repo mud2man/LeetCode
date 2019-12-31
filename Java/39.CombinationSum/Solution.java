@@ -8,7 +8,7 @@ public class Solution{
     public void backtrack(int[] candidates, int residure, Deque<Integer> path, List<List<Integer>> lists, int start){
         if(residure <= 0){
             if(residure == 0){
-                lists.add(new ArrayList<Integer> (path));
+                lists.add(new ArrayList<> (path));
             }
             return;
         }
