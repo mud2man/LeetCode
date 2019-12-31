@@ -26,14 +26,13 @@ public class Solution{
         }
         
         Set<String> candidates = builderMap.get(key);
+        boolean ret = false;
         for(String candidate: candidates){
             String nextBottom = "";
-            boolean ret = false;
             if(index == (bottom.length() - 2)){
                 nextBottom = bottom.substring(0, index) + candidate;
                 ret = dfs(nextBottom, 0, builderMap);
-            }
-            else{
+            }else{
                 nextBottom = bottom.substring(0, index) + candidate + bottom.substring(index + 1);
                 ret = dfs(nextBottom, index + 1, builderMap);
             }
@@ -42,7 +41,6 @@ public class Solution{
                 return true;
             }
         }
-        
         return false;
     }
     
@@ -54,16 +52,13 @@ public class Solution{
             builderMap.putIfAbsent(key, new HashSet<String>());
             builderMap.get(key).add(value);
         }
-        
         return dfs(bottom, 0, builderMap);
     }
 
     public static void main(String[] args){
-        Solution sol;
         List<String> allowed = new ArrayList<String>(Arrays.asList("XYD", "YZE", "DEA", "FFF"));
         String bottom = "XYZ";
-
-        sol = new Solution();
+        Solution sol = new Solution();
         System.out.println("allowed: " + allowed);
         System.out.println("bottom: " + bottom);
         System.out.println("can be pyramid: " + sol.pyramidTransition(bottom, allowed));

@@ -44,7 +44,6 @@ public class Solution{
             }
             bottomList = nextBottomList;
         }
-        
         return true;
     }
 
