@@ -8,39 +8,29 @@
 
 import java.util.*;
 public class Solution{
-
-    public void swap(int[] nums, int start, int end){
-        int tmp;
-        
-        tmp = nums[start];
-        nums[start] = nums[end];
-        nums[end] = tmp; 
+    private void swap(int[] nums, int source, int destination){
+        int temp = nums[source];
+        nums[source] = nums[destination];
+        nums[destination] = temp;
     }
     
     public void wiggleSort(int[] nums) {
-        int i;
-        int tmp;
-
-        for(i = 0; i < (nums.length - 1); i++){
-            if(i % 2 == 0){
+        for(int i = 0; i < (nums.length - 1); ++i){
+            if((i % 2) == 0){
                 if(nums[i] > nums[i + 1]){
-                    swap(nums, i, i + 1);
+                    swap(nums, i, i+1);
                 }
-            }
-            else{
+            }else{
                 if(nums[i] < nums[i + 1]){
-                    swap(nums, i, i + 1);
+                    swap(nums, i, i+1);
                 }
             }
-        }
+        }    
     }
-
+ 
     public static void main(String[] args){
-        Solution sol;
         int[] nums = {3, 5, 2, 1, 6, 4};
-        
-        sol = new Solution();
-
+        Solution sol = new Solution();
         System.out.println("before wiggle sort:" + Arrays.toString(nums));
         sol.wiggleSort(nums);
         System.out.println("after wiggle sort: " + Arrays.toString(nums));
