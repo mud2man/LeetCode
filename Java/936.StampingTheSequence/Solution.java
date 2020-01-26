@@ -2,8 +2,8 @@
  * 1. In the first round, we move window of size stamp.length() from left to right to map the target 
  * 2. Then move window back from right to left to see if we can cover sub string.
  * 3. We replace the covered char to '#', and we ignore '#' when we do "cover" method
- * 4. After the first round, we ignore '#' in cover method
- * 5. We give up if we cannot cover in the loop or cover all chars
+ * 4. After the first round, we ignore '#' in "cover" method
+ * 5. We give up if we cannot cover any char in the loop or terminated loop after covering all chars
  * 6. Reverse indexes, since we cover "target" in reversed order
  */
 
@@ -35,25 +35,21 @@ public class Solution{
         boolean covered = true;
         while(covered && coverageCount < targetSb.length()){
             covered = false;
-            int[] starts = {0, targetSb.length() - stamp.length()};
-            int[] offset = {1, -1};
-            for(int i = 0; i < 2; ++i){ //go from left end, and then go from right end
-                for(int j = starts[i]; j <= targetSb.length() - stamp.length() && j >= 0; j += offset[i]){
-                    String window = targetSb.substring(j, j + stamp.length());
-                    if(!window.equals(falsePattern)){
-                        int count = cover(window, stamp, allowDontCare);
-                        if(count > 0){
-                            coverageCount += count;
-                            for(int k = j; k < j + stamp.length(); ++k){
-                                targetSb.setCharAt(k, '#');
-                            }
-                            indexes.add(j);
-                            covered = true;
+            for(int i = 0; i <= targetSb.length() - stamp.length(); i++){
+                String window = targetSb.substring(i, i + stamp.length());
+                if(!window.equals(falsePattern)){
+                    int count = cover(window, stamp, allowDontCare);
+                    if(count > 0){
+                        coverageCount += count;
+                        for(int j = i; j < i + stamp.length(); ++j){
+                            targetSb.setCharAt(j, '#');
                         }
+                        indexes.add(i);
+                        covered = true;
                     }
                 }
-                allowDontCare = true;
             }
+            allowDontCare = true;
         }
         int[] ret = new int[indexes.size()];
         for(int i = indexes.size() - 1; i >= 0; --i){
