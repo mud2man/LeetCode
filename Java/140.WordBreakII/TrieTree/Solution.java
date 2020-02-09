@@ -49,9 +49,7 @@ public class Solution{
     }
     
     public List<String> wordBreak(String s, List<String> wordDict) {
-        for(String word: wordDict){
-            insert(word);
-        }
+        wordDict.forEach(word -> insert(word));
         Map<Integer, List<String>> idx2Words = new HashMap<>();
         idx2Words.put(-1, Collections.singletonList(""));
         for(int end = 0; end < s.length(); ++end){
