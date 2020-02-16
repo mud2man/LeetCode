@@ -22,8 +22,8 @@ public class Solution{
         return (count == 3)? true: (count == 2)? ((board[y][x] & 0x1) != 0): false;
     }
     
-    private void update(int y, int x, int[][] board){
-        if(y >= 0 && y < board.length && x >= 0 && x < board[0].length){
+    private void update(int y, int x, int[][] board, boolean confirm){
+        if(y >= 0 && y < board.length && x >= 0 && x < board[0].length && confirm){
             board[y][x] = board[y][x] >> 1;
         }
     }
@@ -31,25 +31,19 @@ public class Solution{
     public void gameOfLife(int[][] board) {
         int depth = board.length;
         int width = board[0].length;
-        
         for(int y = 0; y < depth; ++y){
             for(int x = 0; x < width; ++x){
                 if(willLive(y, x, board)){
                     board[y][x] |= 0x2;
                 }
-                
-                update(y - 1, x - 1, board);
-                if(x == (width - 1)){
-                    update(y - 1, x, board);
-                }
-                if(y == (depth - 1)){
-                    update(y, x - 1, board);
-                }
+                update(y - 1, x - 1, board, true);
+                update(y - 1, x, board, x == (width - 1));
+                update(y, x - 1, board, y == (depth - 1));
             }
         }
-        update(depth - 1, width - 1, board);
+        update(depth - 1, width - 1, board, true);
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         int[][] board = {{1, 1, 0},
