@@ -16,8 +16,7 @@ public class Solution {
         for(int[] lamp: lamps){
             int y = lamp[0];
             int x = lamp[1];
-            lampsMap.putIfAbsent(y, new HashSet<>());
-            lampsMap.get(y).add(x);
+            lampsMap.computeIfAbsent(y, key -> new HashSet<>()).add(x);
             lampsOnCol.putIfAbsent(x, 0);
             lampsOnCol.put(x, lampsOnCol.get(x) + 1);
             lampsOnRow.putIfAbsent(y, 0);
@@ -33,13 +32,12 @@ public class Solution {
         for(int i = 0; i < queries.length; ++i){
             int y = queries[i][0];
             int x = queries[i][1];
-            if((lampsOnCol.containsKey(x) && lampsOnCol.get(x) > 0) ||
-               (lampsOnRow.containsKey(y) && lampsOnRow.get(y) > 0) ||
-               (lampsOnDiagnal.containsKey(y - x) && lampsOnDiagnal.get(y - x) > 0) ||
-               (lampsOnAntidiagnal.containsKey(y + x) && lampsOnAntidiagnal.get(y + x) > 0)){
+            if(lampsOnCol.getOrDefault(x, 0) > 0 ||
+               lampsOnRow.getOrDefault(y, 0) > 0 ||
+               lampsOnDiagnal.getOrDefault(y - x, 0) > 0 ||
+               lampsOnAntidiagnal.getOrDefault(y + x, 0) > 0){
                 isOn[i] = 1;
             }
-            
             for(int[] offset: offsets){
                 int currY = y + offset[0];
                 int currX = x + offset[1];
@@ -54,7 +52,7 @@ public class Solution {
         }
         return isOn;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         int[][] lamps = {{0, 0}, {4, 4}};
