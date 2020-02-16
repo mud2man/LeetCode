@@ -1,5 +1,5 @@
-/* MinHeap: O(s), where s is 300 at worst case here
- * 1. Use minimum heap to store the secondary latest hit event(time stamp and count)
+/* MinHeap: Time:O(c), Space:O(c), where c is 300 at worst case
+ * 1. Use queue "times" to store the hit events(time stamp and count)
  * 2. Use current count to record the count on the current time
  * 3. Hitcount = the sum of all the hic count in minHeap and the hit count of current count
  */
