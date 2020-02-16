@@ -6,7 +6,7 @@
 import java.util.*;
 
 public class PhoneDirectory {
-    private LinkedList<Integer> avaNumQue;
+    private Deque<Integer> avaNumQue;
     private HashSet<Integer> avaNumTbl;
     
     /** Initialize your data structure here
