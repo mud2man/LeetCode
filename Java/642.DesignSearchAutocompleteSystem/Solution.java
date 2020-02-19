@@ -1,6 +1,6 @@
 /* Trie Tree: Time:O(nlogm), Space:O(n*m*l), where n is characters#, m is sentence#, l is length of snetence
- * 1. Have a trie tree, where the node contains "minHeap", and "child" array
- * 2. In the minHeap, the node contains "sentence" and its according hot degree. Also, we need have its comparator
+ * 1. Have a trie tree, where the node contains "maxHeap", and "child" array
+ * 2. In the maxHeap, the node contains "sentence" and its according hot degree. Also, we need have its comparator
  * 3. In constructor "AutocompleteSystem", insert all the sentecnes into trie tree, and "hotDegreeMap"
  * 4. In input, if character is '#', insert the new sentence into trie tree. Otherwise, retunr the minHeap of the current node
  */         
@@ -34,9 +34,7 @@ public class Solution {
         HeapNode oldHeapNode = sentence2HeapNode.getOrDefault(sentence, null);
         for(char c: sentence.toCharArray()){
             int idx = (c != ' ')? c - 'a': 26;
-            if(root.child[idx] == null){
-                root.child[idx] = new TrieNode();
-            }
+            root.child[idx] =(root.child[idx] == null)? new TrieNode(): root.child[idx];
             root = root.child[idx];
             root.maxHeap.remove(oldHeapNode);
             root.maxHeap.add(newHeapNode);
@@ -44,7 +42,7 @@ public class Solution {
         sentence2HeapNode.put(sentence, newHeapNode);
     }
 
-    public Solution(String[] sentences, int[] times) {
+    public AutocompleteSystem(String[] sentences, int[] times){
         root = new TrieNode();
         sentence2HeapNode = new HashMap<>();
         for(int i = 0; i < times.length; ++i){
@@ -67,9 +65,7 @@ public class Solution {
         }else{
             int idx = (c != ' ')? c - 'a': 26;
             path.append(c);
-            if(ptr.child[idx] == null){
-                ptr.child[idx] = new TrieNode();
-            }
+            ptr.child[idx] =(ptr.child[idx] == null)? new TrieNode(): ptr.child[idx];
             ptr = ptr.child[idx];
             Deque<HeapNode> temp = new LinkedList<>();
             PriorityQueue<HeapNode> maxHeap = ptr.maxHeap;
@@ -84,7 +80,7 @@ public class Solution {
         }
         return top3;
     }
-
+ 
     public static void main(String[] args){
         String[] sentences = {"i love you", "island", "ironman", "i love leetcode"};
         int[] times = {5, 3, 2, 2};
