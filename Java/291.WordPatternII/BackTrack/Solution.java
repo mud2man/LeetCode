@@ -18,36 +18,30 @@ import java.util.*;
 
 /* Definition for binary tree */
 public class Solution {
-        private boolean backtrack(int pIdx, String pattern, int strIdx, String str, String[] map, Set<String> used){
+    private boolean backtrack(int pIdx, String pattern, int strIdx, String str, String[] map, Set<String> used){
         if(pIdx == pattern.length() && strIdx == str.length()){
             return true;
-        }
-        else if(pIdx >= pattern.length() || strIdx >= str.length()){
+        }else if(pIdx >= pattern.length() || strIdx >= str.length()){
             return false;
-        }
-        else{
+        }else{
             char patternChar = pattern.charAt(pIdx);
             if(map[patternChar - 'a'] != null){
                 if(strIdx + map[patternChar - 'a'].length() > str.length()){
                     return false;
-                }
-                else{
+                }else{
                     String strSubstring = str.substring(strIdx, strIdx + map[patternChar - 'a'].length());
                     if(map[patternChar - 'a'].equals(strSubstring)){
                         return backtrack(pIdx + 1, pattern, strIdx + map[patternChar - 'a'].length(), str, map, used);
-                    }
-                    else{
+                    }else{
                         return false;
                     }
                 }
-            }
-            else{
+            }else{
                 for(int l = 1; l <= str.length() - strIdx; ++l){
                     String strSubstring = str.substring(strIdx, strIdx + l);
                     if(used.contains(strSubstring)){
                         continue;
-                    }
-                    else{
+                    }else{
                         map[patternChar - 'a'] = strSubstring;
                         used.add(strSubstring);
                         if(backtrack(pIdx + 1, pattern, strIdx + l, str, map, used)){
@@ -67,12 +61,11 @@ public class Solution {
         Set<String> used = new HashSet<>();
         return backtrack(0, pattern, 0, str, map, used);
     }
- 
+  
     public static void main(String[] args){
         String str = "redblueredblue";
         String pattern = "abab";
         Solution sol = new Solution();
-        
         System.out.println("str:" + str);
         System.out.println("pattern:" + pattern);
         System.out.println("is match ?:" + sol.wordPatternMatch(pattern, str));
