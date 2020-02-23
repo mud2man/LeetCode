@@ -36,9 +36,7 @@ public class Solution {
                 sb.append(s[i].charAt(idx++));
             }
             String content = sb.toString();
-            
-            content2Paths.putIfAbsent(content, new HashSet<>());
-            content2Paths.get(content).add(p + "/" + file);
+            content2Paths.computeIfAbsent(content, key -> new HashSet<>()).add(p + "/" + file);
         }
     }
     
@@ -56,7 +54,7 @@ public class Solution {
         }
         return ret; 
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         String[] paths = {"root/a 1.txt(abcd) 2.txt(efgh)", "root/c 3.txt(abcd)", "root/c/d 4.txt(efgh)", "root 4.txt(efgh)"};
