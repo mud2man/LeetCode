@@ -6,7 +6,7 @@
 import java.util.*;
 
 public class Solution{
-        private int find(Map<Integer, Integer> child2Parent, int child){
+   private int find(Map<Integer, Integer> child2Parent, int child){
         int parent = child2Parent.get(child);
         if(parent == child){
             return child;
@@ -19,57 +19,56 @@ public class Solution{
     
     public List<Integer> numIslands2(int m, int n, int[][] positions) {
         Set<Integer> islands = new HashSet<>();
+        Set<Integer> visited = new HashSet<>();
         Map<Integer, Integer> child2Parent = new HashMap<>();
         Map<Integer, Integer> child2rank = new HashMap<>();
         int[][] dirs = {{0, 0}, {0, 1}, {0, -1}, {1, 0}, {-1, 0}};
-        int number = 0;
         List<Integer> ret = new ArrayList<>();
-        
         for(int[] position: positions){
             int y = position[0];
             int x = position[1];
             int pos = y * n + x;
-            islands.add(pos);
+            if(visited.contains(pos)){
+                ret.add(islands.size());
+                continue;
+            }
+            visited.add(pos);
             child2Parent.put(pos, pos);
             child2rank.put(pos, 1);
             Set<Integer> roots = new HashSet<>();
-            int root = -1;
+            int rootWithMaxRank = -1;
             int maxRank = -1;
             for(int[] dir: dirs){
                 int nextY = y + dir[0];
                 int nextX = x + dir[1];
                 int nextPos = nextY * n + nextX;
-                if(nextY < 0 || nextY >= m || nextX < 0 || nextX >= n || !islands.contains(nextPos)){
+                if(nextY < 0 || nextY >= m || nextX < 0 || nextX >= n || !visited.contains(nextPos)){
                     continue;
                 }
                 //find
-                int r = find(child2Parent, nextPos);
-                if(child2rank.get(r) > maxRank){
-                    maxRank = child2rank.get(r);
-                    root = r;
+                int root = find(child2Parent, nextPos);
+                roots.add(root);
+                if(child2rank.get(root) > maxRank){
+                    maxRank = child2rank.get(root);
+                    rootWithMaxRank = root;
                 }
-                roots.add(r);
             }
+            islands.add(rootWithMaxRank);
             
             //union by rank
-            for(int r: roots){
-                if(r == root){
+            for(int root: roots){
+                if(root == rootWithMaxRank){
                     continue;
                 }
-                if(maxRank > child2rank.get(r)){
-                    child2Parent.put(r, root);
-                }
-                else{
-                    child2Parent.put(r, root);
-                    child2rank.put(root, ++maxRank);
-                }
+                islands.remove(child2Parent.get(root));
+                child2Parent.put(root, rootWithMaxRank);
+                child2rank.put(rootWithMaxRank, (maxRank == child2rank.get(root))? ++maxRank: maxRank);
             }
-            number -= (roots.size() - 2);
-            ret.add(number);
+            ret.add(islands.size());
         }
         return ret;
     }
-
+ 
     public static void main(String[] args){
         Solution sol = new Solution();;
         int[][] positions = {{0, 0}, {0, 1}, {1, 2}, {2, 1}};
