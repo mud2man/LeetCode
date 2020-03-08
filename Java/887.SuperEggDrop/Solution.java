@@ -1,4 +1,4 @@
-/* Dynamic programming(min-max):O(K*N), Space:O(N)
+/* Dynamic programming(min-max):O(K*N), Space:O(K*N)
  * 1. dp[y][x] = the minimum moves given K = y and N = x
  * 2. dp[y][x] = min(max(dp[y - 1][mid - 1](left), dp[y][x - mid](right))), where 1 <= mid <= x
  * 3. Given y and x, our goal is to fine the minimum of max("left", "right"), where "left" is an increasing function while right is decreasing function
