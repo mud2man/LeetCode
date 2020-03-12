@@ -16,7 +16,7 @@
 * Check Typo more carefully
 * Don’t return null, be sure use Optional<>
 * Don’t put the unrelated stuff into the same commit. However, it’s ok in the same CR
-* Don’t do duplicated log like https://code.amazon.com/reviews/CR-10314049/revisions/5#/comments
+* Don’t do duplicated log
 * Use switch if there are more than 2 branches
 * If need to implement public API, send out a short CR for signature in the early stage
 * Think refactoring the existing code (duplicated code) if we make change
