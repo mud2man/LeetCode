@@ -1,8 +1,8 @@
-/* Map:O(n), Space:O(1)
- * Iterate s char by char and keep the number % 2" of vowels 'a', 'e', 'i', 'o', and 'u'
- * Remeber the rightest index of encode {counts[0], counts[1], counts[2], counts[3], counts[4]} in "encodedCounts2Index"
- * The longest valid substring ending at s.charAt(i) is (i - encodedCounts2Index.get(encodedCounts))
- * We keep update max as max(max, i - encodedCounts2Index.get(encodedCounts))
+/* Map: Time:O(n), Space:O(1)
+ * 1. Iterate s char by char and keep the number % 2" of vowels 'a', 'e', 'i', 'o', and 'u'
+ * 2. Remeber the rightest index of encode {counts[0], counts[1], counts[2], counts[3], counts[4]} in "encodedCounts2Index"
+ * 3. The longest valid substring ending at s.charAt(i) is (i - encodedCounts2Index.get(encodedCounts))
+ * 4. We keep update max as max(max, i - encodedCounts2Index.get(encodedCounts))
  */
 
 import java.util.*;
