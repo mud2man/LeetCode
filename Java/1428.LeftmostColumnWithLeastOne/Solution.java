@@ -1,7 +1,7 @@
-/* Binary Search: Time:O(nlogm)), Space:O(1)
- * 1.Use binary search to find the left most index. 
- * 2.Update end by the left most index found from previous row
- * 3.We check if binaryMatrix.get(y, min - 1) == 1 before we run binary search, since we don't waste effor on the worse row
+/* Array: Time:O(n + m), Space:O(1)
+ * 1.Set y = 0, x = width - 1 in the beginning
+ * 2.Move x to left if binaryMatrix.get(y, x) == 1. Otherwise, move y to bottom
+ * 3.Repeat step2 until (y, x) is out of range
  */
 
 import java.util.*;
@@ -13,33 +13,20 @@ public class Solution {
         public List<Integer> dimensions();
     }
 
-    private int binarySearch(BinaryMatrix binaryMatrix, int y, int end){
-        int l = 0;
-        int r = end - 1;
-        while(l <= r){
-            int mid = (l + r) / 2;
-            if(binaryMatrix.get(y, mid) == 0){
-                l = mid + 1;
-            }else{
-                r = mid - 1;
-            }
-        }
-        return l;
-    }
-    
     public int leftMostColumnWithOne(BinaryMatrix binaryMatrix) {
         int depth = binaryMatrix.dimensions().get(0);
         int width = binaryMatrix.dimensions().get(1);
-        int min = width;
-        int end = width;
-        for(int y = 0; y < depth; ++y){
-            if(min == width || (min > 0 && binaryMatrix.get(y, min - 1) == 1)){
-                min = binarySearch(binaryMatrix, y, min);
-            }else if(min == 0){
-                return 0;
+        int y = 0;
+        int x = width - 1;
+        while(y < depth && x >= 0){
+            int val = binaryMatrix.get(y, x);
+            if(val == 1){
+                --x;
+            }else{
+                ++y;
             }
         }
-        return (min == width)? -1: min;
+        return (x == width - 1)? -1: x + 1;
     }
   
     public static void main(String[] args){
