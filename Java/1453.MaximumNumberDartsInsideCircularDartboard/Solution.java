@@ -1,8 +1,9 @@
-/* Math: Time:O(n^3), Space:O(1)
- * 1. Use point-slope-formulate to find the plumb line between two points
- * 2. Applying r to and the plumb line to locate the two centers
- * 3. Go through all points and count the number of points laid on/in the circle
- * 4. Update "max" while picking all centers and feed them to getPointNumberInCircle
+/* Greedy + Math: Time:O(n^3), Space:O(1)
+ * 1. We can prove there exists a circle laid on two points, which is enclosed by the optimal circle. So we can find the optimal circle given any two points
+ * 2. Use point-slope-formulate to find the plumb line between two points
+ * 3. Applying r to and the plumb line to locate the two centers
+ * 4. Go through all points and count the number of points laid on/in the circle
+ * 5. Update "max" while picking all centers and feed them to getPointNumberInCircle
  */     
 
 import java.util.*; // Stack
