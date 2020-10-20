@@ -13,7 +13,6 @@ public class Solution {
         }
         List<Integer> counts = new ArrayList<>(num2Count.values());
         Collections.sort(counts);
-        System.out.println(counts);
         for(int i = 0; i < counts.size(); ++i){
             if(k == 0){
                 return counts.size() - i;
