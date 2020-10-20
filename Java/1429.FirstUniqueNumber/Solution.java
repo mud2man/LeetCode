@@ -30,7 +30,8 @@ public class Solution {
         }else{
             uniques.add(value);  
         }
-    }  
+    } 
+
     public static void main(String[] args){
         int[] nums = {2, 3, 5};
         int n = 0;
