@@ -1,3 +1,9 @@
+/* Hash: Time:O(1), Space:O(n)
+ * 1. Implement LinkedHashSet "uniques" to remember the unique number
+ * 2. Use Map "duplicates" to remember the duplicates
+ * 3. Update LinkedHashSet and Map when add was called
+ */
+
 package main
 
 import "fmt"
