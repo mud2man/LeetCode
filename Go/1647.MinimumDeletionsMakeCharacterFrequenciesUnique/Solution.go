@@ -21,10 +21,7 @@ func minDeletions(s string) int {
     deleteNum := 0
     used := make(map[int]bool)
     for _,count := range char2Count {
-        if(count == 0) {
-            continue
-        }
-        if(used[count]){
+        if(count > 0 && used[count]){
             isFound := false
             for i := 1; i < 26 && count - i > 0; i++ {
                 if(!used[count - i]){
