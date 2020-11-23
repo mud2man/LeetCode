@@ -14,17 +14,11 @@ public class Solution {
             char2Counts[c - 'a']++;
         }
         
-        List<Integer> counts = new ArrayList<>();
-        for(int count: char2Counts){
-            if(count > 0){
-                counts.add(count);
-            }
-        }
-        Collections.sort(counts);
+        Arrays.sort(char2Counts);
         Set<Integer> used = new HashSet<>();
         int deleteNum = 0;
-        for(int count: counts){
-            if(used.contains(count)){
+        for(int count: char2Counts){
+            if(count > 0 && used.contains(count)){
                 boolean isFound = false;
                 for(int i = 1; i < 26 && count - i > 0; i++){
                     if(!used.contains(count - i)){
