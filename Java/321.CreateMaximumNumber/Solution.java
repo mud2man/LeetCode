@@ -58,8 +58,7 @@ public class Solution {
         int[] stack = new int[len];
         int top = -1;
         int remain = nums.length - len;
-        for(int i = 0; i < nums.length; i++){
-            int num = nums[i];
+        for(int num: nums){
             while(top >= 0 && stack[top] < num && remain > 0){
                 top--;
                 remain--;
