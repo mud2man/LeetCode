@@ -32,13 +32,10 @@ public class Solution {
             }
             while(!decreaseStack.isEmpty() && decreaseStack.peekLast()[1] < arr[i]){
                 int[] top = decreaseStack.pollLast(); //top[0] = idx, top[1] = hight
-                if(!idx2HighestLowers.containsKey(i)){
+                if(!idx2HighestLowers.containsKey(i) || idx2HighestLowers.get(i).get(0)[1] < top[1]){
                     idx2HighestLowers.put(i, new ArrayList<>());
                     idx2HighestLowers.get(i).add(new int[]{top[0], top[1]});
                 }else if(idx2HighestLowers.get(i).get(0)[1] == top[1]){
-                    idx2HighestLowers.get(i).add(new int[]{top[0], top[1]});
-                }else if(idx2HighestLowers.get(i).get(0)[1] < top[1]){
-                    idx2HighestLowers.get(i).clear();
                     idx2HighestLowers.get(i).add(new int[]{top[0], top[1]});
                 }
             }
