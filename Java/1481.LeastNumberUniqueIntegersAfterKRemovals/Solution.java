@@ -23,7 +23,7 @@ public class Solution {
             }
         }
         return (k >= 0)? 0: 1;
-    } 
+    }
     
     public static void main(String[] args){
         Solution sol = new Solution();
