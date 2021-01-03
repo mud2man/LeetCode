@@ -10,9 +10,9 @@ public class Solution {
     private int bfs(int[] start, int[] end, List<List<Integer>> forest){
         int depth = forest.size();
         int width = forest.get(0).size();
-        Set<Integer> visited = new HashSet<>();
+        boolean[][] visited = new boolean[depth][width];
         Deque<int[]> queue = new LinkedList<>();
-        visited.add(start[1] * width +  start[2]);
+        visited[start[1]][start[2]] = true;
         queue.add(new int[]{start[1], start[2]});
         int distance = 0;
         while(!queue.isEmpty()){
@@ -26,10 +26,9 @@ public class Solution {
                 for(int[] direction: directions){
                     int y = front[0] + direction[0];
                     int x = front[1] + direction[1];
-                    int hash = y * width + x;
-                    if(y >= 0 && y < depth && x >= 0 && x < width && !visited.contains(hash) && forest.get(y).get(x) > 0){
+                    if(y >= 0 && y < depth && x >= 0 && x < width && !visited[y][x] && forest.get(y).get(x) > 0){
                         queue.add(new int[]{y, x});
-                        visited.add(hash);
+                        visited[y][x] = true;
                     }
                 }
             }
@@ -61,7 +60,7 @@ public class Solution {
         }
         return (totlalDistance == 0)? -1: totlalDistance;
     }
- 
+  
     public static void main(String[] args){
         Solution sol = new Solution();
         int[][] arr = {{1, 2, 3}, {0, 0, 4}, {7, 6, 5}};
