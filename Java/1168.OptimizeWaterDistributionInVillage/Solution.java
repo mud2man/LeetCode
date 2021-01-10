@@ -53,7 +53,7 @@ public class Solution {
                         ranks[root0] +=(ranks[root0] == ranks[root1])? 1: 0;
                         roots[root1] = root0;
                         hasWater[root0] =(hasWater[root0] || hasWater[root1])? true : false;
-                    }else if(ranks[root0] < ranks[root1]){
+                    }else{
                         roots[root0] = root1;
                         hasWater[root1] =(hasWater[root0] || hasWater[root1])? true : false;
                     }
