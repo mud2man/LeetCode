@@ -40,10 +40,6 @@ public class Solution {
     }
 
     public static void main(String[] args){
-        List<List<Integer>> leavesGroup;
-        TreeNode root;
-        Solution sol;
-        
         /* Generate a input tree
          *     8
          *    / \
@@ -53,7 +49,7 @@ public class Solution {
          *    / \  /
          *   4   7 13 
          */
-        root = new TreeNode(8);
+        TreeNode root = new TreeNode(8);
         root.left = new TreeNode(3);
         root.right = new TreeNode(10);
         root.left.left = new TreeNode(1);
@@ -63,10 +59,8 @@ public class Solution {
         root.left.right.right = new TreeNode(7);
         root.right.right.left = new TreeNode(13);
 
-        sol = new Solution();
-        
-        leavesGroup = sol.findLeaves(root);
-        
+        Solution sol = new Solution();
+        List<List<Integer>> leavesGroup = sol.findLeaves(root);
         System.out.println("The group of leaves: ");
         for(List<Integer> leaves: leavesGroup){
             System.out.println(leaves);
