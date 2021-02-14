@@ -44,10 +44,10 @@ public class Solution {
     }
  
     public static void main(String[] args){
-        String word1 = "cabaa";
-        String word2 = "bcaaa";
+        int[] nums = {1, 1, 2, 1, 1};
+        int k = 3;
         Solution sol = new Solution();
-        System.out.println("word1" + word1 + ", word2:" + word2);
-        System.out.println("merge:" + sol.largestMerge(word1, word2));
+        System.out.println("nums:" + Arrays.toString(nums) + ", k:" + k);
+        System.out.println("count:" + sol.numberOfSubarrays(nums, k));
     }
 }
