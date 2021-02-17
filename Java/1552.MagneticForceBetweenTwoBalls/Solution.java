@@ -1,6 +1,6 @@
 /* Binary search: Time:O(m * logn), Space:O(1)
  * 1. Fix the distance and see if we can put m balls in one round
- * 2. Binary search the longest distance between 1 and (position[position.length - 1] - position[0])
+ * 2. Binary search the longest distance between 1 and (position[position.length - 1] - position[0]) / (m - 1)
  */
 
 import java.util.*; // Stack
@@ -22,7 +22,7 @@ public class Solution {
     public int maxDistance(int[] position, int m) {
         Arrays.sort(position);
         int lb = 1;
-        int hb = position[position.length - 1] - position[0];
+        int hb = (position[position.length - 1] - position[0]) / (m - 1);
         while(lb <= hb){
             int mid = (lb + hb) / 2;
             if(isFit(position, mid, m)){
