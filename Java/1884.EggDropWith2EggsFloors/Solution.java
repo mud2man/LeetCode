@@ -1,4 +1,4 @@
-/* Dynamic programming: Time:O(n^2), Space:O(n).
+/* Dynamic programming: Time:O(n^2), Space:O(n). LeetCode has O(n) math-based solution
  * 1. dp[i] = the minimum number of moves with i floors 
  * 2. dp[i] = min(max(firstDropFloor, dp[roof - firstDropFloor] + 1)), where 1 < firstDropFloor <= roof
  */
