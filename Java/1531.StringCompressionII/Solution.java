@@ -3,7 +3,7 @@
  * 2. When keeping currChar, dp[y][x] = min{dp[y - deleteCount][i - 1] + getEncodeLen(concatCount), ...} where 1 <= i <= x, 
  *    while considering the rightest group of 'currChar'
  * 3. When deleting currChar, dp[y][x] = min(dp[y][x],  dp[y - 1][x - 1])
- * 4. The key is to consider the rightest group of 'currChar' and increase its range
+ * 4. The key is to consider the rightest group of 'currChar' and increase its range since the optimal answer must be among the cases during increasing
  */
 
 import java.util.*; // Stack
