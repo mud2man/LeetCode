@@ -1,98 +1,44 @@
-/* Dynamic programming: Time:O(n * k * 26 * n), Space:O(n)
- * 1. 
- * 2. 
+/* Dynamic programming: Time:O(n ^ 2 * k), Space:O(n * k)
+ * 1. dp[y][x] = the minimum length of encoded with y deleted chars in s.substring(0, x)
+ * 2. When keeping currChar, dp[y][x] = min{dp[y - deleteCount][i - 1] + getEncodeLen(concatCount), ...} where 1 <= i <= x, 
+ *    while considering the rightest group of 'currChar'
+ * 3. When deleting currChar, dp[y][x] = min(dp[y][x],  dp[y - 1][x - 1])
+ * 4. The key is to consider the rightest group of 'currChar' and increase its range
  */
 
 import java.util.*; // Stack
 
 
 public class Solution {
-    private int getEncodeLen(int count){
+    private int getEncodeLen(int count) {
         return (count <= 1)? 1: 2 + (int)(Math.log(count) / Math.log(10));
     }
-    
+
     public int getLengthOfOptimalCompression(String s, int k) {
-        Map<Integer, Map<Integer, Map<Character, Map<Integer, Integer>>>> dp = new HashMap<>();
+        int[][] dp = new int[k + 1][s.length() + 1];
         for(int y = 0; y <= k; y++){
-            dp.put(y, new HashMap<>());
-            for(int x = 0; x < s.length(); x++){
-                char currChar = s.charAt(x);
-                dp.get(y).put(x, new HashMap<>());
-                if(x == 0){
-                    dp.get(y).get(x).put(currChar, new HashMap<>());
-                    dp.get(y).get(x).get(currChar).put(1, 1);
-                    if(y > 0){
-                        dp.get(y).get(x).put('#', new HashMap<>());
-                        dp.get(y).get(x).get('#').put(0, 0);
+            for(int x = 1; x <= s.length(); x++){
+                dp[y][x] = s.length();
+                char currChar = s.charAt(x - 1);
+                int deleteCount = 0;
+                int concatCount = 0;
+                //keep currChar, factor on rightest group of 'currChar'
+                for(int i = x; i > 0; i--){
+                    deleteCount +=(s.charAt(i - 1) != currChar)? 1: 0;
+                    concatCount +=(s.charAt(i - 1) == currChar)? 1: 0;
+                    if(deleteCount > y){
+                        break;
                     }
-                }else if(y == 0){
-                    Map.Entry<Character, Map<Integer, Integer>> entry = dp.get(y).get(x - 1).entrySet().iterator().next();
-                    char prevChar = entry.getKey();
-                    Map<Integer, Integer> prevCharCount2Len = entry.getValue();
-                    Map<Integer, Integer> currCharCount2Len = new HashMap<>();
-                    int prevCharCount = prevCharCount2Len.entrySet().iterator().next().getKey();
-                    int prevLen = prevCharCount2Len.entrySet().iterator().next().getValue();
-                    if(currChar == prevChar){
-                        int currCharCount = prevCharCount + 1;
-                        currCharCount2Len.put(currCharCount, prevLen + (getEncodeLen(currCharCount) - getEncodeLen(prevCharCount)));
-                    }else{
-                        currCharCount2Len.put(1, prevLen + 1);
-                    }
-                    dp.get(y).get(x).put(currChar, currCharCount2Len);
-                }else{
-                    dp.get(y).get(x).put(currChar, new HashMap<>());
-                    if(y > x){
-                        dp.get(y).get(x).put('#', new HashMap<>());
-                        dp.get(y).get(x).get('#').put(0, 0);
-                    }
-                    //not delete currChar
-                    if(dp.get(y).get(x - 1).containsKey('#')){
-                        dp.get(y).get(x).get(currChar).put(1, 1);
-                    }
-                    
-                    for(Map.Entry<Character, Map<Integer, Integer>> entry: dp.get(y).get(x - 1).entrySet()){
-                        char prevChar = entry.getKey();
-                        Map<Integer, Integer> count2Len = entry.getValue();
-                        if(prevChar == currChar){
-                            for(Map.Entry<Integer, Integer> innerEntry: count2Len.entrySet()){
-                                int count = innerEntry.getKey();
-                                int len = innerEntry.getValue();
-                                dp.get(y).get(x).get(prevChar).put(count + 1, len + getEncodeLen(count + 1) - getEncodeLen(count));
-                            } 
-                        }else{
-                            for(Map.Entry<Integer, Integer> innerEntry: count2Len.entrySet()){
-                                int count = innerEntry.getKey();
-                                int currLen = innerEntry.getValue() + 1;
-                                int prevLen = dp.get(y).get(x).get(currChar).getOrDefault(1, Integer.MAX_VALUE);
-                                dp.get(y).get(x).get(currChar).put(1, Math.min(currLen, prevLen));
-                            }
-                        }
-                    }
-                    
-                    //delete currChar
-                    for(Map.Entry<Character, Map<Integer, Integer>> entry: dp.get(y - 1).get(x - 1).entrySet()){
-                        char prevChar = entry.getKey();
-                        Map<Integer, Integer> count2Len = entry.getValue();
-                        for(Map.Entry<Integer, Integer> innerEntry: count2Len.entrySet()){
-                            int count = innerEntry.getKey();
-                            int prevLen = innerEntry.getValue();
-                            dp.get(y).get(x).computeIfAbsent(prevChar, key -> new HashMap<>());
-                            int currLen = dp.get(y).get(x).get(prevChar).getOrDefault(count, Integer.MAX_VALUE);
-                            dp.get(y).get(x).get(prevChar).put(count, Math.min(currLen, prevLen));
-                        }
-                    }
+                    int leftLength = dp[y - deleteCount][i - 1];
+                    dp[y][x] = Math.min(dp[y][x], leftLength + getEncodeLen(concatCount));
+                }
+                //delete currChar
+                if(y > 0){
+                    dp[y][x] = Math.min(dp[y][x], dp[y - 1][x - 1]);
                 }
             }
         }
-        
-        int min = Integer.MAX_VALUE;
-        for(Map.Entry<Character, Map<Integer, Integer>> entry: dp.get(k).get(s.length() - 1).entrySet()){
-            Map<Integer, Integer> count2Len = entry.getValue();
-            for(Map.Entry<Integer, Integer> innerEntry: count2Len.entrySet()){
-                min = Math.min(min, innerEntry.getValue());
-            }
-        }
-        return min;
+        return dp[k][s.length()];
     }
   
     public static void main(String[] args){
